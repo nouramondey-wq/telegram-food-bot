@@ -1,10 +1,10 @@
 /**
  * 🚀 Production API + Webhook Server for Telegram Bot
  *
- * Runs alongside the Telegram bot on Render (single service).
+ * Runs alongside the Telegram bot on Railway (single service).
  * - Serves Telegram webhook endpoint (POST /webhook)
  * - Handles Mini App API endpoints (POST /api/validate, /api/order/reorder)
- * - Health check for Render monitoring (GET /health)
+ * - Health check for Railway monitoring (GET /health)
  *
  * Architecture: Single Express server handles everything on one PORT.
  */

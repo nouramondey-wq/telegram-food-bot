@@ -41,8 +41,11 @@ exports.env = {
         rateLimitBlockSeconds: parseInt(process.env.RATE_LIMIT_BLOCK || '30', 10),
     },
     deployment: {
-        // Render automatically sets RENDER_EXTERNAL_URL
-        publicUrl: process.env.RENDER_EXTERNAL_URL || process.env.PUBLIC_URL || '',
+        // Railway automatically sets RAILWAY_PUBLIC_DOMAIN (e.g. my-app.up.railway.app)
+        // Prepends https:// for the full URL
+        publicUrl: process.env.RAILWAY_PUBLIC_DOMAIN
+            ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+            : process.env.PUBLIC_URL || '',
     },
 };
 // Validation
@@ -59,12 +62,16 @@ function validateEnv() {
     if (!exports.env.miniApp.url)
         missing.push('MINI_APP_URL');
     if (exports.env.bot.mode === 'webhook' && !exports.env.bot.webhookUrl && !exports.env.deployment.publicUrl) {
-        missing.push('WEBHOOK_URL or RENDER_EXTERNAL_URL (required in webhook mode)');
+        missing.push('WEBHOOK_URL or RAILWAY_PUBLIC_DOMAIN (required in webhook mode)');
     }
     if (missing.length > 0) {
         console.error(`❌ Missing environment variables: ${missing.join(', ')}`);
         console.error('📄 Please copy .env.example to .env and fill in the values');
         process.exit(1);
+    }
+    if (exports.env.bot.mode === 'webhook' && !exports.env.deployment.publicUrl) {
+        console.warn('⚠️ RAILWAY_PUBLIC_DOMAIN not set — webhook will not be configured');
+        console.warn('   Set it in Railway Dashboard: https://railway.app/dashboard');
     }
 }
 //# sourceMappingURL=env.js.map

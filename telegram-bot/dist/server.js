@@ -2,10 +2,10 @@
 /**
  * 🚀 Production API + Webhook Server for Telegram Bot
  *
- * Runs alongside the Telegram bot on Render (single service).
+ * Runs alongside the Telegram bot on Railway (single service).
  * - Serves Telegram webhook endpoint (POST /webhook)
  * - Handles Mini App API endpoints (POST /api/validate, /api/order/reorder)
- * - Health check for Render monitoring (GET /health)
+ * - Health check for Railway monitoring (GET /health)
  *
  * Architecture: Single Express server handles everything on one PORT.
  */
@@ -118,9 +118,9 @@ function getAllowedOrigins() {
     ];
     if (env_1.env.miniApp.url)
         origins.push(env_1.env.miniApp.url);
-    // Render public URL (for development/testing)
-    if (process.env.RENDER_EXTERNAL_URL) {
-        origins.push(`https://${process.env.RENDER_EXTERNAL_URL}`);
+    // Railway public URL (for webhook / CORS)
+    if (process.env.RAILWAY_PUBLIC_DOMAIN) {
+        origins.push(`https://${process.env.RAILWAY_PUBLIC_DOMAIN}`);
     }
     // Local development
     origins.push('http://localhost:3000', 'http://localhost:3001');
@@ -143,7 +143,7 @@ function createApp(bot) {
         console.log(`[API] ${new Date().toISOString()} ${req.method} ${req.path}`);
         next();
     });
-    // ── Health Check (for Render monitoring) ──
+    // ── Health Check (for Railway / uptime monitoring) ──
     app.get('/health', (_req, res) => {
         res.json({
             status: 'ok',
