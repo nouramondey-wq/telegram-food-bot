@@ -14,7 +14,7 @@ import cors from 'cors';
 import { Telegraf } from 'telegraf';
 import * as crypto from 'crypto';
 import { env } from './config/env';
-import { getFirestore } from './config/firebase';
+import { getFirestore, admin } from './config/firebase';
 
 // ============================================================
 // Rate Limiter (in-memory, per-IP)
@@ -223,6 +223,121 @@ export function createApp(bot?: Telegraf): express.Application {
     } catch (error) {
       console.error('[API] Validation error:', error);
       res.status(500).json({ valid: false, error: 'فشل التحقق' });
+    }
+  });
+
+  // ── POST /api/seed — Seed database with categories and menu items ──
+  // ⚠️ TEMPORARY: Remove after seeding. Call: curl -X POST https://your-url.up.railway.app/api/seed
+  app.post('/api/seed', async (_req: Request, res: Response) => {
+    try {
+      const db = getFirestore();
+
+      // Check if already seeded
+      const existing = await db.collection('categories').limit(1).get();
+      if (!existing.empty) {
+        const count = (await db.collection('categories').get()).size;
+        const itemCount = (await db.collection('menu_items').get()).size;
+        return res.json({ message: '✅ Database already seeded', categories: count, items: itemCount });
+      }
+
+      console.log('[SEED] Starting database seed...');
+
+      // Categories
+      const categories = [
+        { name_ar: 'مقبلات', name_en: 'Appetizers', image_url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400', sort_order: 1, is_active: true },
+        { name_ar: 'سلطات', name_en: 'Salads', image_url: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400', sort_order: 2, is_active: true },
+        { name_ar: 'برغر', name_en: 'Burgers', image_url: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400', sort_order: 3, is_active: true },
+        { name_ar: 'بيتزا', name_en: 'Pizza', image_url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400', sort_order: 4, is_active: true },
+        { name_ar: 'مشاوي', name_en: 'Grilled', image_url: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400', sort_order: 5, is_active: true },
+        { name_ar: 'مشروبات', name_en: 'Drinks', image_url: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400', sort_order: 6, is_active: true },
+        { name_ar: 'حلويات', name_en: 'Desserts', image_url: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400', sort_order: 7, is_active: true },
+      ];
+
+      const catRefs: Record<string, string> = {};
+      for (const cat of categories) {
+        const ref = await db.collection('categories').add({
+          ...cat,
+          created_at: admin.firestore.FieldValue.serverTimestamp(),
+          updated_at: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        catRefs[cat.name_ar] = ref.id;
+        console.log(`[SEED] Category: ${cat.name_ar} -> ${ref.id}`);
+      }
+
+      // Menu items with per-category sort_order
+      const menuItemGroups: Record<string, { name_ar: string; name_en: string; desc_ar: string; price: number; featured?: boolean }[]> = {
+        'مقبلات': [
+          { name_ar: 'حمص', name_en: 'Hummus', desc_ar: 'حمص بالطحينة مع زيت الزيتون', price: 15, featured: true },
+          { name_ar: 'متبل', name_en: 'Mutabbal', desc_ar: 'باذنجان مشوي مع الطحينة', price: 18 },
+          { name_ar: 'ورق عنب', name_en: 'Stuffed Grape Leaves', desc_ar: 'ورق عنب محشي أرز وخضار', price: 22 },
+          { name_ar: 'سمبوسك', name_en: 'Samosas', desc_ar: 'سمبوسك مقلي بحشوة اللحم والجبنة (4 حبات)', price: 16 },
+        ],
+        'سلطات': [
+          { name_ar: 'فتوش', name_en: 'Fattoush', desc_ar: 'سلطة خضار مع خبز مقرمش', price: 20 },
+          { name_ar: 'تبولة', name_en: 'Tabbouleh', desc_ar: 'برغل مع بقدونس وطماطم', price: 18, featured: true },
+          { name_ar: 'سلطة يونانية', name_en: 'Greek Salad', desc_ar: 'خس، طماطم، خيار، زيتون وجبنة فيتا', price: 22 },
+        ],
+        'برغر': [
+          { name_ar: 'برغر كلاسيك', name_en: 'Classic Burger', desc_ar: 'لحم بقري 200 جرام مع جبن وخس وطماطم', price: 35, featured: true },
+          { name_ar: 'برغر دجاج', name_en: 'Chicken Burger', desc_ar: 'صدر دجاج مقرمش مع مايونيز وخس', price: 32 },
+          { name_ar: 'دبل برغر', name_en: 'Double Burger', desc_ar: 'طبقتين لحم بقري مع جبن مزدوج', price: 45 },
+        ],
+        'بيتزا': [
+          { name_ar: 'بيتزا مارغريتا', name_en: 'Margherita', desc_ar: 'صلصة طماطم، موزاريلا، ريحان', price: 40, featured: true },
+          { name_ar: 'بيتزا بيبروني', name_en: 'Pepperoni', desc_ar: 'صلصة طماطم، موزاريلا، بيبروني', price: 45 },
+          { name_ar: 'بيتزا خضار', name_en: 'Vegetable Pizza', desc_ar: 'فلفل، زيتون، مشروم، بصل', price: 42 },
+        ],
+        'مشاوي': [
+          { name_ar: 'شيش طاووق', name_en: 'Shish Tawook', desc_ar: 'أسياخ دجاج مشوية مع الخضار', price: 38, featured: true },
+          { name_ar: 'كفتة', name_en: 'Kofta', desc_ar: 'كفتة لحم مشوية على الفحم', price: 35 },
+          { name_ar: 'شيش كباب', name_en: 'Shish Kebab', desc_ar: 'لحم بقري مشوي مع الأرز', price: 42 },
+        ],
+        'مشروبات': [
+          { name_ar: 'عصير برتقال طازج', name_en: 'Orange Juice', desc_ar: 'عصير برتقال طبيعي 100%', price: 12 },
+          { name_ar: 'كوكتيل', name_en: 'Fruit Cocktail', desc_ar: 'كوكتيل فواكه مشكلة', price: 15 },
+          { name_ar: 'ميرندا', name_en: 'Mirinda', desc_ar: 'مشروب غازي بنكهة البرتقال', price: 5 },
+          { name_ar: 'مياه معدنية', name_en: 'Water', desc_ar: 'مياه معدنية 500 مل', price: 3 },
+        ],
+        'حلويات': [
+          { name_ar: 'كنافة', name_en: 'Kunafa', desc_ar: 'كنافة نابلسية بالجبن', price: 25, featured: true },
+          { name_ar: 'أم علي', name_en: 'Om Ali', desc_ar: 'حلى أم علي بالعجين والمكسرات', price: 22 },
+          { name_ar: 'تشيز كيك', name_en: 'Cheesecake', desc_ar: 'تشيز كيك طبقة علوية من التوت', price: 28 },
+        ],
+      };
+
+      let itemCount = 0;
+      for (const [catName, items] of Object.entries(menuItemGroups)) {
+        const catId = catRefs[catName];
+        if (!catId) {
+          console.warn(`[SEED] No category ID for "${catName}"`);
+          continue;
+        }
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i];
+          await db.collection('menu_items').add({
+            category_id: catId,
+            name_ar: item.name_ar,
+            name_en: item.name_en,
+            description_ar: item.desc_ar,
+            description_en: '',
+            price: item.price,
+            image_url: '',
+            is_available: true,
+            is_featured: item.featured || false,
+            sort_order: i + 1,
+            has_addons: false,
+            created_at: admin.firestore.FieldValue.serverTimestamp(),
+            updated_at: admin.firestore.FieldValue.serverTimestamp(),
+          });
+          itemCount++;
+        }
+      }
+
+      console.log(`[SEED] Done: ${categories.length} categories, ${itemCount} items`);
+      res.json({ success: true, categories: categories.length, items: itemCount });
+    } catch (error: any) {
+      console.error('[SEED] Error:', error);
+      res.status(500).json({ success: false, error: error.message });
     }
   });
 

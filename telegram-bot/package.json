@@ -13,6 +13,7 @@
     "dev:watch": "ts-node-dev --respawn src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -rf dist",
+    "seed": "npx ts-node src/seed.ts",
     "typecheck": "node node_modules/typescript/bin/tsc --noEmit"
   },
   "keywords": ["telegram", "bot", "restaurant", "telegraf"],
