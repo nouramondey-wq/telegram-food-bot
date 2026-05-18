@@ -16,7 +16,7 @@ import {
 } from 'firebase/firestore';
 import { initFirebase } from '@/lib/firebase';
 import { useCartStore } from '@/stores/cart-store';
-import { getTelegramUser } from '@/lib/telegram';
+import { getTelegramUser, getTelegramWebApp } from '@/lib/telegram';
 
 // ============================================================
 // أنواع البيانات
@@ -63,11 +63,24 @@ export async function createOrder(): Promise<{ success: boolean; orderId?: strin
     return { success: false, error: 'السلة فارغة' };
   }
 
-  const telegramUser = getTelegramUser();
+  // ─── التحقق من وجود Telegram WebApp + initData + مستخدم مع إعادة المحاولة ───
+  // قد لا تكون حزمة Telegram WebApp SDK قد اكتمل تحميلها عند أول محاولة
+  let tg = getTelegramWebApp();
+  let telegramUser = getTelegramUser();
+
+  if (!tg?.initData || !telegramUser?.id) {
+    // إعادة المحاولة حتى 1.5 ثانية
+    for (let i = 0; i < 3; i++) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      tg = getTelegramWebApp();
+      telegramUser = getTelegramUser();
+      if (tg?.initData && telegramUser?.id) break;
+    }
+  }
 
   try {
-    // التحقق من وجود مستخدم Telegram
-    if (!telegramUser?.id) {
+    // التحقق النهائي — يجب وجود كل من initData والمستخدم
+    if (!tg?.initData || !telegramUser?.id) {
       return { success: false, error: 'يرجى فتح التطبيق من داخل Telegram' };
     }
 

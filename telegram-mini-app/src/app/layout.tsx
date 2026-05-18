@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { Cairo } from 'next/font/google';
 import './globals.css';
 import { TelegramThemeScript } from '@/components/telegram-theme';
@@ -60,10 +61,10 @@ export default function RootLayout({
           <Toaster />
         </ToastProvider>
 
-        {/* سكربت Telegram WebApp */}
-        <script
+        {/* سكربت Telegram WebApp - beforeInteractive to load before React hydrates */}
+        <Script
           src="https://telegram.org/js/telegram-web-app.js"
-          async
+          strategy="beforeInteractive"
         />
       </body>
     </html>

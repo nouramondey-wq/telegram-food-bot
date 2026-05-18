@@ -48,6 +48,21 @@ export default function CartPage() {
     setIsCheckingOut(true);
     setError(null);
 
+    // ─── التحقق المباشر من Telegram WebApp SDK مع fallback آمن ───
+    // التأكد من وجود initData قبل محاولة إنشاء الطلب
+    const tg = typeof window !== 'undefined' ? (window as any).Telegram?.WebApp : null;
+    if (!tg || !tg.initData) {
+      // إعادة المحاولة مرة بعد 500ms (قد يكون السكريبت لا يزال قيد التحميل)
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const tgRetry = typeof window !== 'undefined' ? (window as any).Telegram?.WebApp : null;
+      if (!tgRetry || !tgRetry.initData) {
+        setError('يرجى فتح التطبيق من داخل Telegram');
+        hapticNotification('error');
+        setIsCheckingOut(false);
+        return;
+      }
+    }
+
     const result = await createOrder();
 
     if (result.success) {
