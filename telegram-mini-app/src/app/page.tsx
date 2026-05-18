@@ -45,19 +45,17 @@ function MenuPageSkeleton() {
           ))}
         </div>
       </div>
-      {/* Skeleton grid */}
+      {/* Skeleton grid — single column to match horizontal card layout */}
       <div className="px-4 py-4 pb-32">
-        <div className="grid grid-cols-2 gap-3">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="rounded-2xl overflow-hidden bg-white shadow-sm">
-              <div className="skeleton aspect-[4/3]" />
-              <div className="p-3 space-y-2">
+        <div className="flex flex-col gap-3">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex rounded-2xl overflow-hidden bg-white shadow-sm h-[100px]">
+              <div className="skeleton w-[110px] shrink-0" />
+              <div className="flex-1 p-3 space-y-2">
                 <div className="skeleton h-4 w-3/4" />
                 <div className="skeleton h-3 w-full" />
-                <div className="flex items-center justify-between pt-1">
-                  <div className="skeleton h-5 w-16" />
-                  <div className="skeleton h-8 w-14 rounded-full" />
-                </div>
+                <div className="skeleton h-3 w-1/2" />
+                <div className="skeleton h-8 w-full rounded-xl mt-1" />
               </div>
             </div>
           ))}
@@ -217,20 +215,18 @@ function MenuPageContent() {
       />
 
       {/* محتوى القائمة */}
-      <div className="px-4 py-4 pb-32">
+      <div className="px-4 py-4 pb-36">
         {isLoading ? (
-          /* Skeleton loading */
-          <div className="grid grid-cols-2 gap-3">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="rounded-2xl overflow-hidden bg-white shadow-sm">
-                <div className="skeleton aspect-[4/3]" />
-                <div className="p-3 space-y-2">
+          /* Skeleton loading — horizontal card shape */
+          <div className="flex flex-col gap-3">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex rounded-2xl overflow-hidden bg-white shadow-sm h-[100px]">
+                <div className="skeleton w-[110px] shrink-0" />
+                <div className="flex-1 p-3 space-y-2">
                   <div className="skeleton h-4 w-3/4" />
                   <div className="skeleton h-3 w-full" />
-                  <div className="flex items-center justify-between pt-1">
-                    <div className="skeleton h-5 w-16" />
-                    <div className="skeleton h-8 w-14 rounded-full" />
-                  </div>
+                  <div className="skeleton h-3 w-1/2" />
+                  <div className="skeleton h-8 w-full rounded-xl mt-1" />
                 </div>
               </div>
             ))}
@@ -247,13 +243,13 @@ function MenuPageContent() {
             </p>
           </div>
         ) : (
-          /* شبكة المواد */
-          <div className="grid grid-cols-2 gap-3">
+          /* قائمة المواد — عمود واحد بكروت أفقية */
+          <div className="flex flex-col gap-3">
             {filteredItems.map((item, idx) => (
               <div
                 key={item.id}
                 className="animate-fade-in-up"
-                style={{ animationDelay: `${(idx % 6) * 0.04}s` }}
+                style={{ animationDelay: `${(idx % 8) * 0.035}s` }}
               >
                 <MenuItemCard
                   id={item.id}

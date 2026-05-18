@@ -1,0 +1,9 @@
+
+cd telegram-mini-app
+npm run build && npx firebase deploy --only hosting
+
+
+cd ..
+git add .
+git commit -m "Fix RTL layout bugs, text clipping, and bottom nav overlap via Antigravity"
+git push origin main
