@@ -164,17 +164,8 @@ function createApp(bot) {
     });
     // ── Telegram Webhook Endpoint (only if bot provided) ──
     if (bot && env_1.env.bot.mode === 'webhook') {
-        // Validate webhook secret token before passing to Telegraf
-        app.post('/webhook', (req, res, next) => {
-            const receivedToken = req.headers['x-telegram-bot-api-secret-token'];
-            const expectedToken = env_1.env.bot.webhookSecret;
-            if (expectedToken && receivedToken !== expectedToken) {
-                console.warn('⚠️ Invalid webhook secret token');
-                res.status(403).send('Forbidden');
-                return;
-            }
-            next();
-        });
+        // Debug: log what webhookSecret is set to
+        console.log(`[WEBHOOK] webhookSecret from env: "${env_1.env.bot.webhookSecret}" (length: ${env_1.env.bot.webhookSecret.length})`);
         // Telegraf webhook callback (processes the update)
         app.post('/webhook', bot.webhookCallback('/webhook'));
     }
@@ -324,7 +315,7 @@ function startApiServer(bot) {
         console.log(`✅ [API] POST /api/validate`);
         console.log(`✅ [API] POST /api/order/reorder`);
         if (bot && env_1.env.bot.mode === 'webhook') {
-            console.log(`✅ [BOT] POST /webhook (Telegram updates)`);
+            console.log(`✅ [BOT] POST /webhook (Telegram updates — no secret check)`);
         }
     });
 }

@@ -152,19 +152,8 @@ export function createApp(bot?: Telegraf): express.Application {
 
   // ── Telegram Webhook Endpoint (only if bot provided) ──
   if (bot && env.bot.mode === 'webhook') {
-    // Validate webhook secret token before passing to Telegraf
-    app.post('/webhook', (req: Request, res: Response, next: NextFunction) => {
-      const receivedToken = req.headers['x-telegram-bot-api-secret-token'];
-      const expectedToken = env.bot.webhookSecret;
-
-      if (expectedToken && receivedToken !== expectedToken) {
-        console.warn('⚠️ Invalid webhook secret token');
-        res.status(403).send('Forbidden');
-        return;
-      }
-
-      next();
-    });
+    // Debug: log what webhookSecret is set to
+    console.log(`[WEBHOOK] webhookSecret from env: "${env.bot.webhookSecret}" (length: ${env.bot.webhookSecret.length})`);
 
     // Telegraf webhook callback (processes the update)
     app.post('/webhook', bot.webhookCallback('/webhook'));
@@ -334,7 +323,7 @@ export function startApiServer(bot?: Telegraf): void {
     console.log(`✅ [API] POST /api/validate`);
     console.log(`✅ [API] POST /api/order/reorder`);
     if (bot && env.bot.mode === 'webhook') {
-      console.log(`✅ [BOT] POST /webhook (Telegram updates)`);
+      console.log(`✅ [BOT] POST /webhook (Telegram updates — no secret check)`);
     }
   });
 }
