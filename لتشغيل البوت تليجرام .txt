@@ -1,0 +1,1 @@
+cd telegram-bot && npx ts-node src/index.ts

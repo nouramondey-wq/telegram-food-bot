@@ -1,0 +1,99 @@
+// ============================================================
+// Firebase Security Rules - مطعم الذواقة
+// ============================================================
+// هذه القواعد تحمي قاعدة بيانات المطعم مع الحفاظ على
+// سهولة الوصول للتطبيقات المختلفة
+// ============================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================================
+    // التحقق من المصادقة
+    // ============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated()
+        && request.auth.token.email != null
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.email == request.auth.token.email;
+    }
+
+    function isTelegramUser() {
+      return isAuthenticated()
+        && request.auth.token.provider == 'anonymous';
+    }
+
+    // ============================================================
+    // الطلبات - Orders
+    // ============================================================
+    match /orders/{orderId} {
+
+      // أي مستخدم (حتى غير مسجل) يمكنه إنشاء طلب
+      allow create: if true;
+
+      // قراءة: المسؤول يقرأ الكل، المستخدم العادي يقرأ طلباته فقط
+      allow read: if isAdmin()
+        || (isTelegramUser() && resource.data.customer.telegram_id == request.auth.uid);
+
+      // تحديث: المسؤول فقط، أو المستخدم لإلغاء طلبه المعلق
+      allow update: if isAdmin()
+        || (isTelegramUser()
+            && resource.data.customer.telegram_id == request.auth.uid
+            && resource.data.status == 'pending'
+            && request.resource.data.status == 'cancelled');
+
+      // حذف: المسؤول فقط
+      allow delete: if isAdmin();
+    }
+
+    // ============================================================
+    // القائمة - Menu Items
+    // ============================================================
+    match /menu_items/{itemId} {
+      // الجميع يقرأ، المسؤول فقط يكتب
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ============================================================
+    // الفئات - Categories
+    // ============================================================
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ============================================================
+    // الإعدادات - Settings
+    // ============================================================
+    match /settings/{settingId} {
+
+      // order_counter يحتاج للقراءة والكتابة من الجميع
+      allow read: if true;
+      allow write: if settingId == 'order_counter'
+        || isAdmin();
+
+      // المستخدمون المسجلون يقرأون الإعدادات العامة
+      allow read: if isAuthenticated();
+    }
+
+    // ============================================================
+    // المسؤولون - Admins
+    // ============================================================
+    match /admins/{adminId} {
+      allow read: if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // ============================================================
+    // رفض كل شيء آخر
+    // ============================================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
