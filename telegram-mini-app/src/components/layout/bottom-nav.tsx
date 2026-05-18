@@ -12,47 +12,29 @@ export function BottomNav() {
   const totalItems = useCartStore((s) => s.totalItems());
 
   const navItems = [
-    {
-      label: 'القائمة',
-      href: '/',
-      icon: UtensilsCrossed,
-    },
-    {
-      label: 'السلة',
-      href: '/cart',
-      icon: ShoppingCart,
-      badge: totalItems > 0 ? totalItems : undefined,
-    },
-    {
-      label: 'طلباتي',
-      href: '/orders',
-      icon: ClipboardList,
-    },
-    {
-      label: 'حسابي',
-      href: '/profile',
-      icon: User,
-    },
+    { label: 'القائمة', href: '/',        icon: UtensilsCrossed },
+    { label: 'السلة',   href: '/cart',    icon: ShoppingCart, badge: totalItems > 0 ? totalItems : undefined },
+    { label: 'طلباتي',  href: '/orders',  icon: ClipboardList },
+    { label: 'حسابي',   href: '/profile', icon: User },
   ];
 
   return (
     <nav
       dir="rtl"
-      className={cn(
-        'fixed bottom-0 left-0 right-0 z-[100]',
-        'bg-white/95 backdrop-blur-xl',
-        'border-t border-gray-100/80',
-        'shadow-[0_-4px_24px_rgba(0,0,0,0.08)]',
-        'dark:bg-gray-950/95 dark:border-gray-800/80'
-      )}
-      style={{
-        maxWidth: '480px',
-        margin: '0 auto',
-        /* Respect iOS safe area */
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-      }}
+      className="fixed bottom-0 left-0 right-0 w-full z-[100]"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
-      <div className="flex items-center justify-around h-16">
+      {/* ── Top accent line ── */}
+      <div className="h-[2px] w-full bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500" />
+
+      {/* ── Main bar ── */}
+      <div
+        className="w-full flex items-center justify-around h-[60px]"
+        style={{
+          background: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 50%, #ffffff 100%)',
+          boxShadow: '0 -4px 32px rgba(0,0,0,0.10), 0 -1px 0 rgba(16,185,129,0.08)',
+        }}
+      >
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -62,32 +44,34 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                'relative flex flex-col items-center justify-center w-16 h-full gap-1',
-                'transition-colors duration-150',
-                isActive
-                  ? 'text-emerald-600 dark:text-emerald-400'
-                  : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+                'relative flex flex-col items-center justify-center gap-1',
+                'flex-1 h-full',
+                'transition-all duration-150 active:scale-90',
+                isActive ? 'text-emerald-600' : 'text-gray-400'
               )}
             >
-              {/* Active indicator pill at top */}
+              {/* Active glow pill behind icon */}
               {isActive && (
-                <span className="absolute top-0 w-7 h-[3px] bg-emerald-500 rounded-b-full" />
+                <span className="absolute top-1.5 w-10 h-10 rounded-full bg-emerald-50 -z-0" />
               )}
 
-              <div className="relative">
-                <Icon className={cn('w-6 h-6', isActive && 'drop-shadow-[0_0_6px_rgba(16,185,129,0.4)]')} />
+              <div className="relative z-10">
+                <Icon
+                  className={cn(
+                    'w-6 h-6 transition-all duration-150',
+                    isActive && 'text-emerald-600 drop-shadow-[0_0_8px_rgba(16,185,129,0.5)] scale-110'
+                  )}
+                />
 
-                {/* Cart badge — RTL-aware: badge appears on the logical end side */}
+                {/* Cart badge */}
                 {item.badge && (
                   <span
                     className={cn(
-                      'absolute -top-2 -right-2',
+                      'absolute -top-2 -right-2.5',
                       'flex items-center justify-center',
-                      'min-w-[18px] h-[18px] px-0.5',
-                      'text-[10px] font-black text-white',
-                      'bg-red-500 rounded-full',
-                      'shadow-sm shadow-red-500/30',
-                      'animate-scale-in'
+                      'min-w-[18px] h-[18px] px-1',
+                      'text-[10px] font-black text-white tabular-nums',
+                      'bg-red-500 rounded-full shadow-md shadow-red-500/30',
                     )}
                   >
                     {item.badge > 9 ? '9+' : item.badge}
@@ -97,12 +81,17 @@ export function BottomNav() {
 
               <span
                 className={cn(
-                  'text-[10px] font-semibold leading-none',
-                  isActive && 'text-emerald-600 dark:text-emerald-400'
+                  'text-[10px] font-bold leading-none z-10',
+                  isActive ? 'text-emerald-600' : 'text-gray-400'
                 )}
               >
                 {item.label}
               </span>
+
+              {/* Active indicator dot at bottom */}
+              {isActive && (
+                <span className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-400/60" />
+              )}
             </Link>
           );
         })}

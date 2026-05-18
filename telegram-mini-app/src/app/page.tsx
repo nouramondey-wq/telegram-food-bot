@@ -293,7 +293,7 @@ function FloatingCheckoutButton() {
     <div
       className="fixed left-0 right-0 z-[90] pointer-events-none"
       style={{
-        bottom: 'calc(64px + env(safe-area-inset-bottom, 0px) + 8px)',
+        bottom: 'calc(62px + env(safe-area-inset-bottom, 0px) + 8px)',
         maxWidth: '480px',
         margin: '0 auto',
       }}
