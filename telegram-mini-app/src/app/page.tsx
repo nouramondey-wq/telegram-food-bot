@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { BottomNav } from '@/components/layout/bottom-nav';
+import { BottomNav } from '@/components/layout/bottom-nav'; // kept for FloatingCheckoutButton z-index reference only — actual render is in layout.tsx
 import { CategoryFilter } from '@/components/menu/category-filter';
 import { MenuItemCard } from '@/components/menu/menu-item-card';
 import { useCategories, useMenuItems } from '@/hooks/use-menu';
@@ -61,7 +61,7 @@ function MenuPageSkeleton() {
           ))}
         </div>
       </div>
-      <BottomNav />
+      {/* Skeleton — BottomNav is rendered globally in layout.tsx */}
     </div>
   );
 }
@@ -271,7 +271,7 @@ function MenuPageContent() {
       <FloatingCheckoutButton />
 
       {/* الـ Bottom Navigation */}
-      <BottomNav />
+      {/* BottomNav is rendered globally in layout.tsx */}
     </div>
   );
 }

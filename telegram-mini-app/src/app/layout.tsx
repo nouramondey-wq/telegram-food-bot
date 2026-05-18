@@ -4,6 +4,7 @@ import './globals.css';
 import { TelegramThemeScript } from '@/components/telegram-theme';
 import { ToastProvider } from '@/hooks/use-toast';
 import { Toaster } from '@/components/ui/toaster';
+import { BottomNav } from '@/components/layout/bottom-nav';
 
 // استيراد خط Cairo العربي
 const cairo = Cairo({
@@ -51,6 +52,9 @@ export default function RootLayout({
           >
             {children}
           </main>
+
+          {/* ─── القائمة السفلية — ثابتة دائماً على مستوى التطبيق كاملاً ─── */}
+          <BottomNav />
 
           {/* Toast notifications */}
           <Toaster />

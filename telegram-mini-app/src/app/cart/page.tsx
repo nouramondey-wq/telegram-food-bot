@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BottomNav } from '@/components/layout/bottom-nav';
+
 import { Card, CardContent } from '@/components/ui/card';
 import { useCartStore } from '@/stores/cart-store';
 import { formatPrice, cn } from '@/lib/utils';
@@ -367,7 +367,7 @@ export default function CartPage() {
       </div>
 
       {/* ─── Bottom Navigation ─── */}
-      <BottomNav />
+      {/* BottomNav is rendered globally in layout.tsx */}
     </div>
   );
 }

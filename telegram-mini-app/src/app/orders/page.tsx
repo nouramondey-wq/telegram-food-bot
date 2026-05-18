@@ -3,7 +3,7 @@
 import React, { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BottomNav } from '@/components/layout/bottom-nav';
+
 import { useMyOrders, useOrderDetail, cancelOrder } from '@/hooks/use-orders';
 import { formatPrice, getStatusEmoji, getStatusText, formatDate, formatTime, timeAgo } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
@@ -36,7 +36,7 @@ function OrdersPageSkeleton() {
           </Card>
         ))}
       </div>
-      <BottomNav />
+      {/* BottomNav rendered globally in layout.tsx */}
     </div>
   );
 }
@@ -139,7 +139,7 @@ function OrdersListView() {
         )}
       </div>
 
-      <BottomNav />
+      {/* BottomNav rendered globally in layout.tsx */}
     </div>
   );
 }
@@ -178,7 +178,7 @@ function OrderDetailView({ orderId, onBack }: { orderId: string; onBack: () => v
           <div className="skeleton h-40" />
           <div className="skeleton h-60" />
         </div>
-        <BottomNav />
+        {/* BottomNav rendered globally in layout.tsx */}
       </div>
     );
   }
@@ -190,7 +190,7 @@ function OrderDetailView({ orderId, onBack }: { orderId: string; onBack: () => v
         <button onClick={onBack} className="px-6 py-2 bg-emerald-500 text-white rounded-xl font-medium">
           العودة للطلبات
         </button>
-        <BottomNav />
+        {/* BottomNav rendered globally in layout.tsx */}
       </div>
     );
   }
@@ -333,7 +333,7 @@ function OrderDetailView({ orderId, onBack }: { orderId: string; onBack: () => v
         )}
       </div>
 
-      <BottomNav />
+      {/* BottomNav rendered globally in layout.tsx */}
     </div>
   );
 }
