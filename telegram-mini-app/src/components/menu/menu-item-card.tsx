@@ -1,12 +1,19 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import {
+  Plus,
+  Minus,
+  ShoppingBag,
+  Sparkles,
+  UtensilsCrossed,
+} from 'lucide-react';
+
 import { useCartStore } from '@/stores/cart-store';
 import { formatPrice, cn } from '@/lib/utils';
 import { hapticFeedback } from '@/lib/telegram';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Minus, ShoppingCart, Sparkles, UtensilsCrossed } from 'lucide-react';
 
 interface MenuItemProps {
   id: string;
@@ -27,28 +34,29 @@ export function MenuItemCard({
   is_available,
   addons,
 }: MenuItemProps) {
-  // Sync local quantity with persisted cart store
-  const cartItem = useCartStore((s) => s.items.find((i) => i.menu_item_id === id));
-  const [quantity, setQuantity] = useState(cartItem?.quantity || 0);
+  const cartItem = useCartStore((s) =>
+    s.items.find((i) => i.menu_item_id === id)
+  );
+
   const addItem = useCartStore((s) => s.addItem);
   const removeItem = useCartStore((s) => s.removeItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
-  const { toast } = useToast();
+
+  const [quantity, setQuantity] = useState(cartItem?.quantity || 0);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [bounceKey, setBounceKey] = useState(0);
 
-  // Re-sync local quantity when cart changes (e.g., user edits on cart page)
+  const { toast } = useToast();
+
   useEffect(() => {
     setQuantity(cartItem?.quantity || 0);
   }, [cartItem?.quantity]);
 
   const handleAdd = () => {
     if (!is_available) return;
-    hapticFeedback('light');
 
+    hapticFeedback('light');
     setQuantity(1);
-    setBounceKey((k) => k + 1);
 
     addItem({
       menu_item_id: id,
@@ -61,36 +69,29 @@ export function MenuItemCard({
     });
 
     toast({
-      title: 'تمت الإضافة 🎉',
-      description: `${name_ar} — أضيف إلى السلة`,
+      title: 'تمت إضافة المنتج',
+      description: `${name_ar} تمت إضافته إلى السلة`,
       variant: 'success',
     });
   };
 
   const handleIncrease = () => {
-    if (!is_available) return;
-    hapticFeedback('light');
     const newQty = quantity + 1;
     setQuantity(newQty);
-    setBounceKey((k) => k + 1);
     updateQuantity(id, newQty);
+    hapticFeedback('light');
   };
 
   const handleDecrease = () => {
-    if (!is_available) return;
     hapticFeedback('light');
     if (quantity === 1) {
       setQuantity(0);
       removeItem(id);
-      toast({
-        title: 'تمت الإزالة',
-        description: `${name_ar} — أزيل من السلة`,
-        variant: 'default',
-      });
-    } else {
-      setQuantity(quantity - 1);
-      updateQuantity(id, quantity - 1);
+      return;
     }
+    const newQty = quantity - 1;
+    setQuantity(newQty);
+    updateQuantity(id, newQty);
   };
 
   const hasAddons = addons && addons.length > 0;
@@ -98,164 +99,126 @@ export function MenuItemCard({
   return (
     <div
       className={cn(
-        'relative group rounded-2xl overflow-hidden',
-        'bg-white dark:bg-gray-800',
-        'shadow-card transition-all duration-300',
-        'hover:shadow-card-hover hover:-translate-y-0.5',
-        'active:shadow-card-active',
-        'press-effect',
-        !is_available && 'opacity-50 grayscale-[30%]'
+        'group overflow-hidden rounded-[28px] border border-gray-100 bg-white shadow-card transition-all duration-300',
+        'hover:-translate-y-1 hover:shadow-card-hover hover:shadow-emerald-500/10',
+        'dark:border-gray-800 dark:bg-gray-900',
+        !is_available && 'opacity-60 grayscale'
       )}
     >
-      {/* صورة الصنف */}
-      <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-50 dark:bg-gray-700">
-        {image_url && !imageError ? (
-          <>
-            <Image
-              src={image_url}
-              alt={name_ar}
-              fill
-              className={cn(
-                'object-cover transition-all duration-500 ease-out',
-                imageLoaded ? 'scale-100 blur-0' : 'scale-110 blur-sm',
-                'group-hover:scale-105'
-              )}
-              sizes="(max-width: 480px) 50vw, 240px"
-              onLoad={() => setImageLoaded(true)}
-              onError={() => setImageError(true)}
-            />
-            {/* Shimmer overlay until loaded */}
-            {!imageLoaded && <div className="image-shimmer absolute inset-0" />}
-          </>
-        ) : (
-          <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30">
-            <UtensilsCrossed className="w-10 h-10 text-emerald-200 dark:text-emerald-700" />
-          </div>
-        )}
+      {/* ─── Image Section ─── */}
+      <div className="relative overflow-hidden">
+        <div className="relative aspect-[4/3] bg-gray-100 dark:bg-gray-800">
+          {image_url && !imageError ? (
+            <>
+              <Image
+                src={image_url}
+                alt={name_ar}
+                fill
+                sizes="(max-width: 640px) 50vw, 33vw"
+                onLoad={() => setImageLoaded(true)}
+                onError={() => setImageError(true)}
+                className={cn(
+                  'object-cover transition-all duration-700',
+                  imageLoaded ? 'scale-100 blur-0' : 'scale-110 blur-lg',
+                  'group-hover:scale-105'
+                )}
+              />
+              {/* Gradient overlay at bottom for readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+            </>
+          ) : (
+            /* ─── Fallback centered icon ─── */
+            <div className="flex w-full h-full items-center justify-center bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-950 dark:to-teal-950">
+              <UtensilsCrossed className="w-12 h-12 text-emerald-400/50 dark:text-emerald-600/40" />
+            </div>
+          )}
 
-        {/* Gradient overlay at bottom for text readability */}
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
-
-        {/* شارة الإضافات */}
-        {hasAddons && (
-          <div className="absolute top-2.5 right-2.5 animate-badge-pop">
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium bg-amber-50/90 text-amber-700 border border-amber-200/60 backdrop-blur-sm shadow-sm">
-              <Sparkles className="w-3 h-3" />
-              إضافات
-            </span>
-          </div>
-        )}
-
-        {/* علامة غير متوفر */}
-        {!is_available && (
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center">
-            <span className="text-white font-semibold text-xs bg-red-500/90 px-3 py-1.5 rounded-full shadow-lg shadow-red-500/20 backdrop-blur-sm">
-              غير متوفر حالياً
-            </span>
-          </div>
-        )}
-
-        {/* Price badge on image - RTL-aware (end = visual right in LTR, visual left in RTL) */}
-        <div className="absolute bottom-2.5 end-2.5">
-          <span className="inline-flex items-center gap-0.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-white/90 text-emerald-700 backdrop-blur-sm shadow-sm border border-white/50">
-            {formatPrice(price)}
-          </span>
-        </div>
-
-        {/* Floating Add to Cart button - RTL-aware (start = visual left in LTR, visual right in RTL) */}
-        {quantity === 0 ? (
-          <button
-            onClick={handleAdd}
-            disabled={!is_available}
-            className={cn(
-              'absolute bottom-2.5 start-2.5',
-              'w-9 h-9 rounded-full flex items-center justify-center',
-              'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25',
-              'hover:bg-emerald-600 hover:shadow-emerald-500/35',
-              'active:scale-90 transition-all duration-200',
-              'disabled:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed',
-              'animate-scale-in',
-              'max-[768px]:opacity-100 md:opacity-0 md:group-hover:opacity-100 md:translate-y-1 md:group-hover:translate-y-0',
-              'transition-all duration-300 ease-out'
+          {/* ─── Top-right badges ─── */}
+          <div className="absolute top-3 start-3 flex flex-col gap-1.5">
+            {hasAddons && (
+              <div className="flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold text-amber-600 shadow-sm backdrop-blur-md dark:bg-gray-900/80 dark:text-amber-400">
+                <Sparkles className="w-3 h-3" />
+                إضافات
+              </div>
             )}
-          >
-            <Plus key={`plus-${id}`} className="w-5 h-5" />
-          </button>
-        ) : null}
+          </div>
+
+          {/* ─── Price badge (bottom-left) ─── */}
+          <div className="absolute bottom-3 end-3 rounded-xl bg-white/95 px-3.5 py-1.5 shadow-md backdrop-blur-md dark:bg-gray-900/90">
+            <span className="text-base font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
+              {formatPrice(price)}
+            </span>
+          </div>
+
+          {/* ─── Unavailable overlay ─── */}
+          {!is_available && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+              <div className="rounded-full bg-red-500 px-4 py-2 text-sm font-bold text-white shadow-lg">
+                غير متوفر حالياً
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* محتوى البطاقة - RTL aligned */}
-      <div className="p-3 px-3 space-y-2 text-right">
-        {/* الاسم */}
-        <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100 leading-snug min-h-[2.5rem]">
-          {name_ar}
-        </h3>
-
-        {/* الوصف */}
-        {description_ar && (
-          <p className="text-[11px] leading-relaxed text-gray-400 dark:text-gray-500 font-medium min-h-[2rem]">
-            {description_ar}
-          </p>
-        )}
-
-        {/* السعر */}
-        <div className="pt-0.5 text-right">
-          <span className="font-bold text-sm text-gray-800 dark:text-gray-200 tabular-nums">
-            {formatPrice(price)}
-          </span>
+      {/* ─── Content Section ─── */}
+      <div className="flex flex-col gap-3 px-4 py-3 text-right">
+        {/* Title + Description */}
+        <div className="flex flex-col gap-1">
+          <h3 className="text-base font-extrabold leading-7 text-gray-900 dark:text-white break-words">
+            {name_ar}
+          </h3>
+          {description_ar && (
+            <p className="text-sm leading-6 text-gray-500 dark:text-gray-400 line-clamp-2">
+              {description_ar}
+            </p>
+          )}
         </div>
 
-        {/* Quantity counter - full width row */}
-        <div className="w-full">
-          {quantity > 0 ? (
-            <div
-              key={bounceKey}
-              className="flex items-center justify-center gap-0.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full border border-emerald-100/80 dark:border-emerald-800/50 p-0.5 shadow-sm animate-scale-in w-full"
-            >
-              <button
-                onClick={handleIncrease}
-                className={cn(
-                  'flex-1 h-8 rounded-full flex items-center justify-center gap-1',
-                  'text-white bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700',
-                  'transition-colors duration-150 shadow-sm shadow-emerald-500/20',
-                  'text-xs font-semibold'
-                )}
-              >
-                <Plus className="w-3.5 h-3.5" />
-                زيادة
-              </button>
-              <span className="w-8 text-center font-bold text-sm text-emerald-700 dark:text-emerald-400 tabular-nums">
-                {quantity}
-              </span>
-              <button
-                onClick={handleDecrease}
-                className={cn(
-                  'flex-1 h-8 rounded-full flex items-center justify-center gap-1',
-                  'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-800/50 active:bg-emerald-200',
-                  'transition-colors duration-150',
-                  'text-xs font-semibold'
-                )}
-              >
-                <Minus className="w-3.5 h-3.5" />
-                تقليل
-              </button>
-            </div>
-          ) : (
+        {/* ─── Action area ─── */}
+        <div>
+          {quantity === 0 ? (
             <button
               onClick={handleAdd}
               disabled={!is_available}
               className={cn(
-                'w-full flex items-center justify-center gap-1.5 py-2 rounded-full',
-                'text-xs font-semibold',
-                'bg-emerald-500 text-white',
-                'hover:bg-emerald-600 active:bg-emerald-700',
-                'transition-all duration-200 shadow-sm shadow-emerald-500/20',
-                'disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none disabled:cursor-not-allowed'
+                'flex w-full items-center justify-center gap-2 rounded-2xl py-3',
+                'bg-gradient-to-l from-emerald-500 to-teal-500 text-sm font-bold text-white',
+                'transition-all duration-300 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-500/20',
+                'active:scale-[0.98]',
+                'disabled:cursor-not-allowed disabled:opacity-50'
               )}
             >
-              <ShoppingCart className="w-3.5 h-3.5" />
+              <ShoppingBag className="w-4 h-4" />
               أضف إلى السلة
             </button>
+          ) : (
+            <div className="flex items-center justify-between gap-2 rounded-2xl bg-gray-50 p-1.5 dark:bg-gray-800/60">
+              <button
+                onClick={handleIncrease}
+                className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-500 px-3 text-sm font-bold text-white transition-all hover:bg-emerald-600 active:scale-95"
+              >
+                <Plus className="w-4 h-4" />
+                زيادة
+              </button>
+
+              <div className="flex flex-col items-center justify-center px-3">
+                <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500">
+                  الكمية
+                </span>
+                <span className="text-lg font-black text-gray-900 dark:text-white tabular-nums leading-5">
+                  {quantity}
+                </span>
+              </div>
+
+              <button
+                onClick={handleDecrease}
+                className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-xl bg-gray-200 px-3 text-sm font-bold text-gray-700 transition-all hover:bg-gray-300 active:scale-95 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+              >
+                <Minus className="w-4 h-4" />
+                تقليل
+              </button>
+            </div>
           )}
         </div>
       </div>

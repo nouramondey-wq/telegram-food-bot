@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef } from 'react';
 import { cn } from '@/lib/utils';
+import { Flame, Beef, Pizza, Sandwich, Coffee, Salad, IceCreamBowl } from 'lucide-react';
 
 interface Category {
   id: string;
@@ -14,82 +15,137 @@ interface CategoryFilterProps {
   onSelect: (id: string | null) => void;
 }
 
-// Category icons by common keywords — keeps things visual in Arabic
-function getCategoryEmoji(name: string): string {
+function getCategoryIcon(name: string) {
   const lower = name.toLowerCase();
-  if (lower.includes('مشرو') || lower.includes('عصير') || lower.includes('شاي') || lower.includes('قهوة') || lower.includes('نسكافيه')) return '🥤';
-  if (lower.includes('مقبل') || lower.includes('مزة') || lower.includes('سلطة')  || lower.includes('شوربة') || lower.includes('حساء')) return '🥗';
-  if (lower.includes('رئيس') || lower.includes('أكل') || lower.includes('وجبة') || lower.includes('طبق')) return '🍽️';
-  if (lower.includes('حلو') || lower.includes('تتحلية') || lower.includes('تحلية') || lower.includes('آيس') || lower.includes('جاتوه') || lower.includes('كيك') || lower.includes('بسكوت')) return '🍰';
-  if (lower.includes('مأكول') || lower.includes('مشوي') || lower.includes('لحم') || lower.includes('دجاج') || lower.includes('برياني')|| lower.includes('مندي')|| lower.includes('كبسة')) return '🍖';
-  if (lower.includes('مشاوي') || lower.includes('شاورما') || lower.includes('فلافل') || lower.includes('فول')) return '🥙';
-  if (lower.includes('ساندوتش') || lower.includes('برجر') || lower.includes('ساندويش')) return '🍔';
-  if (lower.includes('بيتزا') || lower.includes('فطاير') || lower.includes('فطائر') || lower.includes('مقانق')) return '🍕';
-  if (lower.includes('فواكه') || lower.includes('سموث') || lower.includes('ميلك')) return '🍓';
-  if (lower.includes('جديد') || lower.includes('عرض') || lower.includes('خصم') || lower.includes('تخفيض')) return '🔥';
-  return '🍜';
+
+  if (lower.includes('مشروب') || lower.includes('قهوة') || lower.includes('شاي')) {
+    return <Coffee className="w-4 h-4" />;
+  }
+
+  if (lower.includes('بيتزا')) {
+    return <Pizza className="w-4 h-4" />;
+  }
+
+  if (lower.includes('ساندوتش') || lower.includes('برجر')) {
+    return <Sandwich className="w-4 h-4" />;
+  }
+
+  if (lower.includes('مشاوي') || lower.includes('لحوم')) {
+    return <Beef className="w-4 h-4" />;
+  }
+
+  if (lower.includes('سلطة') || lower.includes('مقبلات')) {
+    return <Salad className="w-4 h-4" />;
+  }
+
+  if (lower.includes('حلويات') || lower.includes('كيك')) {
+    return <IceCreamBowl className="w-4 h-4" />;
+  }
+
+  return <Flame className="w-4 h-4" />;
 }
 
-export function CategoryFilter({ categories, selectedId, onSelect }: CategoryFilterProps) {
+export function CategoryFilter({
+  categories,
+  selectedId,
+  onSelect,
+}: CategoryFilterProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [is_scrolling, setIsScrolling] = useState(false);
 
   const handleSelect = (id: string | null) => {
     onSelect(id);
-    // Scroll the button into view
+
     if (scrollRef.current) {
       const container = scrollRef.current;
-      const btn = container.querySelector(`[data-cat-id="${id === null ? '__all' : id}"]`) as HTMLElement | null;
+      const catId = id === null ? '__all' : id;
+      const btn = container.querySelector(
+        '[data-cat-id="' + catId + '"]'
+      ) as HTMLElement | null;
+
       if (btn) {
-        const scrollLeft = btn.offsetLeft - container.offsetWidth / 2 + btn.offsetWidth / 2;
-        container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+        const scrollLeft =
+          btn.offsetLeft - container.offsetWidth / 2 + btn.offsetWidth / 2;
+
+        container.scrollTo({
+          left: scrollLeft,
+          behavior: 'smooth',
+        });
       }
     }
   };
 
   return (
-    <div className="sticky top-0 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-100/80 shadow-sm">
+    <div className="sticky top-0 z-30 border-b border-gray-100/70 bg-white/90 backdrop-blur-2xl dark:border-gray-800 dark:bg-gray-900/90">
       <div
         ref={scrollRef}
-        className="flex gap-1.5 overflow-x-auto px-4 py-3 scrollbar-none"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        className="flex gap-2 overflow-x-auto px-4 py-4 scrollbar-none"
+        style={{
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        }}
       >
-        {/* زر "الكل" */}
         <button
           data-cat-id="__all"
           onClick={() => handleSelect(null)}
           className={cn(
-            'flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium',
+            'group relative flex-shrink-0 overflow-hidden rounded-2xl px-4 py-3',
             'transition-all duration-300 ease-out',
+            'border',
             selectedId === null
-              ? 'text-emerald-700 bg-emerald-50 shadow-sm shadow-emerald-100/50 ring-1 ring-emerald-200/60'
-              : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+              ? 'border-emerald-300 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/20 scale-[1.02]'
+              : 'border-gray-200 bg-white text-gray-700 hover:border-emerald-200 hover:bg-emerald-50/60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200'
           )}
         >
-          <span className="text-base">🍽️</span>
-          <span>الكل</span>
+          <div className="flex items-center gap-2">
+            <div
+              className={cn(
+                'flex h-8 w-8 items-center justify-center rounded-xl',
+                selectedId === null
+                  ? 'bg-white/20'
+                  : 'bg-gray-100 dark:bg-gray-700'
+              )}
+            >
+              <Flame className="w-4 h-4" />
+            </div>
+
+            <span className="text-sm font-bold whitespace-nowrap">
+              كل الأصناف
+            </span>
+          </div>
         </button>
 
-        {/* أزرار الفئات */}
-        {categories.map((cat, idx) => {
+        {categories.map((cat) => {
           const isSelected = selectedId === cat.id;
+
           return (
             <button
               key={cat.id}
               data-cat-id={cat.id}
               onClick={() => handleSelect(cat.id)}
-              style={{ animationDelay: `${idx * 0.04}s` }}
               className={cn(
-                'flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium',
-                'transition-all duration-300 ease-out',
-                'opacity-0 animate-fade-in',
+                'group relative flex-shrink-0 overflow-hidden rounded-2xl px-4 py-3',
+                'transition-all duration-300 ease-out border',
                 isSelected
-                  ? 'text-emerald-700 bg-emerald-50 shadow-sm shadow-emerald-100/50 ring-1 ring-emerald-200/60'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 hover:ring-1 hover:ring-gray-200/50'
+                  ? 'border-emerald-300 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/20 scale-[1.02]'
+                  : 'border-gray-200 bg-white text-gray-700 hover:border-emerald-200 hover:bg-emerald-50/60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200'
               )}
             >
-              <span className="text-base">{getCategoryEmoji(cat.name_ar)}</span>
-              <span>{cat.name_ar}</span>
+              <div className="flex items-center gap-2">
+                <div
+                  className={cn(
+                    'flex h-8 w-8 items-center justify-center rounded-xl transition-all',
+                    isSelected
+                      ? 'bg-white/20'
+                      : 'bg-gray-100 dark:bg-gray-700'
+                  )}
+                >
+                  {getCategoryIcon(cat.name_ar)}
+                </div>
+
+                <span className="text-sm font-bold whitespace-nowrap">
+                  {cat.name_ar}
+                </span>
+              </div>
             </button>
           );
         })}
