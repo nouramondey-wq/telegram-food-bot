@@ -215,7 +215,8 @@ function MenuPageContent() {
       />
 
       {/* محتوى القائمة */}
-      <div className="px-4 py-4 pb-36">
+      {/* pb-52 = 208px: enough to scroll last item above both floating btn (~56px) + nav (64px) + gap */}
+      <div className="px-4 py-4 pb-52">
         {isLoading ? (
           /* Skeleton loading — horizontal card shape */
           <div className="flex flex-col gap-3">
@@ -285,35 +286,48 @@ function FloatingCheckoutButton() {
   if (totalItems === 0) return null;
 
   return (
-    <div className="fixed left-0 right-0 bottom-24 z-[60] pointer-events-none" style={{ maxWidth: '480px', margin: '0 auto' }}>
+    /*
+     * bottom-[72px] = sits 8px above the 64px BottomNav
+     * z-[90]        = below BottomNav (z-100) so nav tabs remain tappable
+     */
+    <div
+      className="fixed left-0 right-0 z-[90] pointer-events-none"
+      style={{
+        bottom: 'calc(64px + env(safe-area-inset-bottom, 0px) + 8px)',
+        maxWidth: '480px',
+        margin: '0 auto',
+      }}
+    >
       <div className="mx-4 pointer-events-auto">
         <button
+          dir="rtl"
           onClick={() => {
             hapticFeedback('medium');
             router.push('/cart');
           }}
           className="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-gradient-to-l from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/40 active:scale-[0.97] transition-all duration-200 animate-slide-up"
         >
+          {/* Right side: cart icon + label */}
           <div className="flex items-center gap-3">
             <div className="relative">
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4.5 h-4.5 text-[10px] font-bold text-emerald-700 bg-white rounded-full shadow-sm">
+              <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-0.5 text-[10px] font-black text-emerald-700 bg-white rounded-full shadow-sm tabular-nums">
                 {totalItems > 9 ? '9+' : totalItems}
               </span>
             </div>
             <div className="text-right">
               <p className="text-sm font-bold">متابعة الشراء</p>
-              <p className="text-[11px] text-white/80 font-medium">{totalItems} صنف</p>
+              <p className="text-[11px] text-white/80 font-medium tabular-nums">{totalItems} صنف</p>
             </div>
           </div>
+
+          {/* Left side: total price + arrow */}
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold tabular-nums">{formatPrice(subtotal)}</span>
             <ArrowLeft className="w-4 h-4 text-white/70" />
           </div>
         </button>
       </div>
-      {/* Safe area spacer for notched devices */}
-      <div className="h-[env(safe-area-inset-bottom,12px)]" />
     </div>
   );
 }
