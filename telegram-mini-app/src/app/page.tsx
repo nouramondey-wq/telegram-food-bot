@@ -7,7 +7,8 @@ import { MenuItemCard } from '@/components/menu/menu-item-card';
 import { useCategories, useMenuItems } from '@/hooks/use-menu';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { initTelegramApp, hapticFeedback } from '@/lib/telegram';
-import { Store, Search, ChevronLeft, RefreshCw } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Store, Search, ChevronLeft, RefreshCw, Sparkles } from 'lucide-react';
 
 // تهيئة Telegram WebApp عند تحميل الصفحة
 if (typeof window !== 'undefined') {
@@ -24,20 +25,38 @@ export default function MenuPage() {
 
 function MenuPageSkeleton() {
   return (
-    <div dir="rtl" className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-100 px-4 py-4">
-        <div className="skeleton h-6 w-40 mb-2" />
-        <div className="skeleton h-3 w-24" />
-      </header>
-      <div className="px-4 py-4">
+    <div dir="rtl" className="min-h-screen" style={{ backgroundColor: 'var(--tg-bg, #f9fafb)' }}>
+      {/* Skeleton header */}
+      <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-100/80 dark:border-gray-800/80 px-4 py-4">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="skeleton h-6 w-36" />
+            <div className="skeleton h-3 w-20" />
+          </div>
+          <div className="skeleton w-10 h-10 rounded-full" />
+        </div>
+      </div>
+      {/* Skeleton categories */}
+      <div className="sticky top-0 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-100/80 dark:border-gray-800/80 px-4 py-3">
+        <div className="flex gap-2">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="skeleton h-9 w-20 rounded-full" />
+          ))}
+        </div>
+      </div>
+      {/* Skeleton grid */}
+      <div className="px-4 py-4 pb-32">
         <div className="grid grid-cols-2 gap-3">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="rounded-2xl overflow-hidden bg-white shadow-sm">
-              <div className="skeleton aspect-[3/2]" />
+              <div className="skeleton aspect-[4/3]" />
               <div className="p-3 space-y-2">
                 <div className="skeleton h-4 w-3/4" />
                 <div className="skeleton h-3 w-full" />
-                <div className="skeleton h-5 w-1/3" />
+                <div className="flex items-center justify-between pt-1">
+                  <div className="skeleton h-5 w-16" />
+                  <div className="skeleton h-8 w-14 rounded-full" />
+                </div>
               </div>
             </div>
           ))}
@@ -84,67 +103,109 @@ function MenuPageContent() {
   const isLoading = catsLoading || itemsLoading;
 
   return (
-    <div dir="rtl" className="min-h-screen bg-gray-50">
+    <div dir="rtl" className="min-h-screen" style={{ backgroundColor: 'var(--tg-bg, #f9fafb)' }}>
       {/* Reorder Banner */}
       {reorderId && (
-        <div className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-3 mx-4 mt-3 rounded-2xl shadow-lg">
-          <div className="flex items-center gap-3">
-            <RefreshCw className="w-6 h-6 shrink-0 animate-spin-slow" />
-            <div className="flex-1">
-              <p className="font-semibold text-sm">🔄 إعادة الطلب السابق</p>
-              <p className="text-xs text-white/80 mt-0.5">
-                أضف الأصناف التي تريدها إلى السلة ثم أكمل الطلب
-              </p>
+        <div className="mx-4 mt-3 rounded-2xl overflow-hidden shadow-lg shadow-emerald-500/10 animate-slide-down">
+          <div className="bg-gradient-to-l from-emerald-600 via-emerald-500 to-teal-500 text-white px-4 py-3">
+            <div className="flex items-center gap-3">
+              <RefreshCw className="w-5 h-5 shrink-0 animate-spin-slow" />
+              <div className="flex-1">
+                <p className="font-semibold text-sm">🔄 إعادة الطلب السابق</p>
+                <p className="text-xs text-white/80 mt-0.5">
+                  أضف الأصناف التي تريدها إلى السلة ثم أكمل الطلب
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setReorderId(null);
+                  hapticFeedback('light');
+                }}
+                className="bg-white/20 hover:bg-white/30 rounded-full p-1.5 transition-colors active:scale-90"
+              >
+                <span className="text-sm font-bold px-1">✕</span>
+              </button>
             </div>
-            <button
-              onClick={() => {
-                setReorderId(null);
-                hapticFeedback('light');
-              }}
-              className="bg-white/20 hover:bg-white/30 rounded-full p-1.5 transition-colors"
-            >
-              <span className="text-sm font-bold px-1">✕</span>
-            </button>
-          </div>
-          <div className="mt-2 flex gap-2">
-            <button
-              onClick={() => router.push('/orders')}
-              className="bg-white/20 hover:bg-white/30 text-xs px-3 py-1.5 rounded-lg transition-colors"
-            >
-              عرض الطلب السابق
-            </button>
+            <div className="mt-2 flex gap-2">
+              <button
+                onClick={() => router.push('/orders')}
+                className="bg-white/20 hover:bg-white/30 active:bg-white/40 text-xs px-3 py-1.5 rounded-lg transition-all active:scale-95"
+              >
+                عرض الطلب السابق
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* الهيدر */}
-      <header className="bg-white border-b border-gray-100 px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">مطعم الذواقة</h1>
-            <p className="text-xs text-gray-500 mt-0.5">أطلب ألذ المأكولات!</p>
+      {/* الهيدر - Glassmorphism */}
+      <header className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-100/80 dark:border-gray-800/80 shadow-sm">
+        <div className="px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-md shadow-emerald-500/20">
+                <Store className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 leading-tight">مطعم الذواقة</h1>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500 font-medium">أطلب ألذ المأكولات!</p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                setShowSearch(!showSearch);
+                if (!showSearch) setTimeout(() => document.getElementById('search-input')?.focus(), 100);
+              }}
+              className={cn(
+                'p-2.5 rounded-xl transition-all duration-200 active:scale-90',
+                showSearch
+                  ? 'bg-emerald-50 text-emerald-600'
+                  : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
+              )}
+            >
+              <Search className="w-5 h-5" />
+            </button>
           </div>
-          <button
-            onClick={() => setShowSearch(!showSearch)}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-          >
-            <Search className="w-5 h-5 text-gray-500" />
-          </button>
-        </div>
 
-        {/* شريط البحث */}
-        {showSearch && (
-          <div className="mt-3 animate-fade-in">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="🔍 ابحث عن صنف..."
-              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-              autoFocus
-            />
+          {/* شريط البحث */}
+          <div
+            className={cn(
+              'grid transition-all duration-300 ease-out',
+              showSearch ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+            )}
+          >
+            <div className="overflow-hidden">
+              <div className="mt-3">
+                <div className="relative">
+                  <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    id="search-input"
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="ابحث عن صنف..."
+                    className={cn(
+                      'w-full pr-10 pl-4 py-2.5 text-sm rounded-xl',
+                      'bg-gray-50 dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80',
+                      'text-gray-900 dark:text-gray-100',
+                      'focus:outline-none focus:ring-2 focus:ring-emerald-500/15 focus:border-emerald-400',
+                      'placeholder:text-gray-400 dark:placeholder:text-gray-500',
+                      'transition-all duration-200'
+                    )}
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full hover:bg-gray-200 transition-colors"
+                    >
+                      <span className="text-xs text-gray-400 font-bold">✕</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-        )}
+        </div>
       </header>
 
       {/* الفئات */}
@@ -161,38 +222,48 @@ function MenuPageContent() {
           <div className="grid grid-cols-2 gap-3">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="rounded-2xl overflow-hidden bg-white shadow-sm">
-                <div className="skeleton aspect-[3/2]" />
+                <div className="skeleton aspect-[4/3]" />
                 <div className="p-3 space-y-2">
                   <div className="skeleton h-4 w-3/4" />
                   <div className="skeleton h-3 w-full" />
-                  <div className="skeleton h-5 w-1/3" />
+                  <div className="flex items-center justify-between pt-1">
+                    <div className="skeleton h-5 w-16" />
+                    <div className="skeleton h-8 w-14 rounded-full" />
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         ) : filteredItems.length === 0 ? (
           /* حالة عدم وجود نتائج */
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-            <Search className="w-16 h-16 mb-4 opacity-50" />
-            <p className="text-lg font-medium">لا توجد أصناف</p>
-            <p className="text-sm mt-1">
+          <div className="flex flex-col items-center justify-center py-20 text-gray-400 dark:text-gray-500 animate-fade-in">
+            <div className="w-20 h-20 rounded-full bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center mb-5">
+              <Search className="w-8 h-8 text-gray-300 dark:text-gray-600" />
+            </div>
+            <p className="text-lg font-bold text-gray-500 dark:text-gray-400">لا توجد أصناف</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500 mt-1 max-w-[200px] text-center">
               {searchQuery ? 'حاول بكلمات بحث مختلفة' : 'هذه الفئة فارغة حالياً'}
             </p>
           </div>
         ) : (
           /* شبكة المواد */
           <div className="grid grid-cols-2 gap-3">
-            {filteredItems.map((item) => (
-              <MenuItemCard
+            {filteredItems.map((item, idx) => (
+              <div
                 key={item.id}
-                id={item.id}
-                name_ar={item.name_ar}
-                description_ar={item.description_ar}
-                price={item.price}
-                image_url={item.image_url}
-                is_available={item.is_available}
-                addons={item.addons}
-              />
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${(idx % 6) * 0.04}s` }}
+              >
+                <MenuItemCard
+                  id={item.id}
+                  name_ar={item.name_ar}
+                  description_ar={item.description_ar}
+                  price={item.price}
+                  image_url={item.image_url}
+                  is_available={item.is_available}
+                  addons={item.addons}
+                />
+              </div>
             ))}
           </div>
         )}
@@ -203,3 +274,4 @@ function MenuPageContent() {
     </div>
   );
 }
+
