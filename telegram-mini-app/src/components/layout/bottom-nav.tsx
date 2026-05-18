@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCartStore } from '@/stores/cart-store';
@@ -9,11 +9,26 @@ import { UtensilsCrossed, ShoppingCart, ClipboardList, User } from 'lucide-react
 
 export function BottomNav() {
   const pathname = usePathname();
+
+  /**
+   * Zustand `persist` middleware rehydrates from localStorage AFTER the first
+   * render, so `totalItems` is 0 on the server and the first client paint.
+   * We defer reading cart state until after mount to avoid hydration mismatches
+   * and the badge flickering / nav disappearing.
+   */
+  const [mounted, setMounted] = useState(false);
   const totalItems = useCartStore((s) => s.totalItems());
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Badge count — only show after hydration to prevent mismatch
+  const badgeCount = mounted ? totalItems : 0;
 
   const navItems = [
     { label: 'القائمة', href: '/',        icon: UtensilsCrossed },
-    { label: 'السلة',   href: '/cart',    icon: ShoppingCart, badge: totalItems > 0 ? totalItems : undefined },
+    { label: 'السلة',   href: '/cart',    icon: ShoppingCart, badge: badgeCount > 0 ? badgeCount : undefined },
     { label: 'طلباتي',  href: '/orders',  icon: ClipboardList },
     { label: 'حسابي',   href: '/profile', icon: User },
   ];
@@ -63,7 +78,7 @@ export function BottomNav() {
                   )}
                 />
 
-                {/* Cart badge */}
+                {/* Cart badge — only rendered after mount */}
                 {item.badge && (
                   <span
                     className={cn(

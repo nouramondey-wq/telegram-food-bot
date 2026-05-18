@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { initFirebase } from '@/lib/firebase';
 
@@ -78,12 +78,16 @@ export function useCategories() {
 }
 
 // ============================================================
-// جلب المواد حسب الفئة (مع real-time updates)
+// جلب المواد حسب الفئة — بدون loading flash عند تغيير الفئة
 // ============================================================
 export function useMenuItems(categoryId?: string) {
   const [items, setItems] = useState<MenuItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  // `initialLoad` = true only on the very first fetch, not on category switches
+  const [initialLoad, setInitialLoad] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Track whether we've ever received data
+  const hasData = useRef(false);
 
   useEffect(() => {
     const { db } = initFirebase();
@@ -111,20 +115,34 @@ export function useMenuItems(categoryId?: string) {
           id: doc.id,
           ...doc.data(),
         })) as MenuItem[];
+
         setItems(menuItems);
-        setLoading(false);
+
+        // Only clear the initial loading spinner the first time data arrives
+        if (!hasData.current) {
+          hasData.current = true;
+          setInitialLoad(false);
+        } else {
+          setInitialLoad(false);
+        }
       },
       (err) => {
         console.error('Error fetching menu items:', err);
         setError('فشل تحميل القائمة');
-        setLoading(false);
+        setInitialLoad(false);
       }
     );
 
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+      // When categoryId changes, reset initialLoad ONLY if we have no items yet
+      if (!hasData.current) {
+        setInitialLoad(true);
+      }
+    };
   }, [categoryId]);
 
-  return { items, loading, error };
+  return { items, loading: initialLoad, error };
 }
 
 // ============================================================

@@ -32,18 +32,25 @@ export default function RootLayout({
         className={`${cairo.className} bg-gray-50 text-gray-900 antialiased`}
         style={{
           fontFamily: 'var(--font-cairo), sans-serif',
-          maxWidth: '480px', // عرض مناسب للجوال
-          margin: '0 auto',
           minHeight: '100dvh',
-          position: 'relative',
         }}
       >
         {/* دمج Telegram Theme */}
         <TelegramThemeScript />
 
         <ToastProvider>
-          {/* حاوية التطبيق الرئيسية */}
-          <main className="pb-24">{children}</main>
+          {/* حاوية التطبيق الرئيسية - محدودة العرض للمحتوى فقط، الـ nav يأخذ الشاشة كاملاً */}
+          <main
+            className="pb-[62px]"
+            style={{
+              maxWidth: '480px',
+              margin: '0 auto',
+              minHeight: '100dvh',
+              position: 'relative',
+            }}
+          >
+            {children}
+          </main>
 
           {/* Toast notifications */}
           <Toaster />
