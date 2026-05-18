@@ -155,20 +155,20 @@ export function MenuItemCard({
           </div>
         )}
 
-        {/* Price badge on image */}
-        <div className="absolute bottom-2.5 right-2.5">
+        {/* Price badge on image - RTL-aware (end = visual right in LTR, visual left in RTL) */}
+        <div className="absolute bottom-2.5 end-2.5">
           <span className="inline-flex items-center gap-0.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-white/90 text-emerald-700 backdrop-blur-sm shadow-sm border border-white/50">
             {formatPrice(price)}
           </span>
         </div>
 
-        {/* Floating Add to Cart button */}
+        {/* Floating Add to Cart button - RTL-aware (start = visual left in LTR, visual right in RTL) */}
         {quantity === 0 ? (
           <button
             onClick={handleAdd}
             disabled={!is_available}
             className={cn(
-              'absolute bottom-2.5 left-2.5',
+              'absolute bottom-2.5 start-2.5',
               'w-9 h-9 rounded-full flex items-center justify-center',
               'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25',
               'hover:bg-emerald-600 hover:shadow-emerald-500/35',
@@ -184,22 +184,22 @@ export function MenuItemCard({
         ) : null}
       </div>
 
-      {/* محتوى البطاقة */}
-      <div className="p-3 px-3 space-y-2">
+      {/* محتوى البطاقة - RTL aligned */}
+      <div className="p-3 px-3 space-y-2 text-right">
         {/* الاسم */}
-        <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100 line-clamp-2 leading-snug min-h-[2.5rem]">
+        <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100 leading-snug min-h-[2.5rem]">
           {name_ar}
         </h3>
 
         {/* الوصف */}
         {description_ar && (
-          <p className="text-[11px] leading-relaxed text-gray-400 dark:text-gray-500 line-clamp-2 font-medium min-h-[2rem]">
+          <p className="text-[11px] leading-relaxed text-gray-400 dark:text-gray-500 font-medium min-h-[2rem]">
             {description_ar}
           </p>
         )}
 
         {/* السعر */}
-        <div className="pt-0.5">
+        <div className="pt-0.5 text-right">
           <span className="font-bold text-sm text-gray-800 dark:text-gray-200 tabular-nums">
             {formatPrice(price)}
           </span>

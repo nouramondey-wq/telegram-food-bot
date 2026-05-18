@@ -151,7 +151,7 @@ export default function CartPage() {
       ) : (
         <>
           {/* المواد في السلة */}
-          <div className="px-4 py-4 space-y-3">
+          <div className="px-4 py-4 space-y-3 pb-48">
             {items.map((item) => (
               <Card key={item.menu_item_id} className="animate-fade-in">
                 <CardContent className="p-4">
@@ -224,7 +224,7 @@ export default function CartPage() {
           </div>
 
           {/* ملخص السلة */}
-          <div className="fixed bottom-16 left-0 right-0 bg-white border-t border-gray-100 p-4 shadow-lg shadow-black/10"
+          <div className="fixed bottom-16 left-0 right-0 z-[60] bg-white border-t border-gray-100 p-4 shadow-lg shadow-black/10"
                style={{ maxWidth: '480px', margin: '0 auto' }}>
             <div className="space-y-1 mb-3">
               <div className="flex justify-between text-sm text-gray-600">
