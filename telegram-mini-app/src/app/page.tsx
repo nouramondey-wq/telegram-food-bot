@@ -7,8 +7,9 @@ import { MenuItemCard } from '@/components/menu/menu-item-card';
 import { useCategories, useMenuItems } from '@/hooks/use-menu';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { initTelegramApp, hapticFeedback } from '@/lib/telegram';
-import { cn } from '@/lib/utils';
-import { Store, Search, ChevronLeft, RefreshCw, Sparkles } from 'lucide-react';
+import { useCartStore } from '@/stores/cart-store';
+import { formatPrice, cn } from '@/lib/utils';
+import { Store, Search, ChevronLeft, RefreshCw, Sparkles, ShoppingCart, ArrowLeft } from 'lucide-react';
 
 // تهيئة Telegram WebApp عند تحميل الصفحة
 if (typeof window !== 'undefined') {
@@ -269,8 +270,54 @@ function MenuPageContent() {
         )}
       </div>
 
+      {/* Floating Checkout Button */}
+      <FloatingCheckoutButton />
+
       {/* الـ Bottom Navigation */}
       <BottomNav />
+    </div>
+  );
+}
+
+/** Floating Checkout Button — يظهر عند وجود أصناف في السلة */
+function FloatingCheckoutButton() {
+  const items = useCartStore((s) => s.items);
+  const totalItems = useCartStore((s) => s.totalItems());
+  const subtotal = useCartStore((s) => s.subtotal());
+  const router = useRouter();
+
+  if (totalItems === 0) return null;
+
+  return (
+    <div className="fixed left-0 right-0 bottom-24 z-[60] pointer-events-none" style={{ maxWidth: '480px', margin: '0 auto' }}>
+      <div className="mx-4 pointer-events-auto">
+        <button
+          onClick={() => {
+            hapticFeedback('medium');
+            router.push('/cart');
+          }}
+          className="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-gradient-to-l from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/40 active:scale-[0.97] transition-all duration-200 animate-slide-up"
+        >
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <ShoppingCart className="w-5 h-5" />
+              <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4.5 h-4.5 text-[10px] font-bold text-emerald-700 bg-white rounded-full shadow-sm">
+                {totalItems > 9 ? '9+' : totalItems}
+              </span>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-bold">متابعة الشراء</p>
+              <p className="text-[11px] text-white/80 font-medium">{totalItems} صنف</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold tabular-nums">{formatPrice(subtotal)}</span>
+            <ArrowLeft className="w-4 h-4 text-white/70" />
+          </div>
+        </button>
+      </div>
+      {/* Safe area spacer for notched devices */}
+      <div className="h-[env(safe-area-inset-bottom,12px)]" />
     </div>
   );
 }

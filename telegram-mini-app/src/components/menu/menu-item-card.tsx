@@ -108,7 +108,7 @@ export function MenuItemCard({
       )}
     >
       {/* صورة الصنف */}
-      <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-50">
+      <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-50 dark:bg-gray-700">
         {image_url && !imageError ? (
           <>
             <Image
@@ -128,8 +128,8 @@ export function MenuItemCard({
             {!imageLoaded && <div className="image-shimmer absolute inset-0" />}
           </>
         ) : (
-          <div className="flex items-center justify-center h-full bg-gradient-to-br from-emerald-50 to-teal-50">
-            <UtensilsCrossed className="w-10 h-10 text-emerald-200" />
+          <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30">
+            <UtensilsCrossed className="w-10 h-10 text-emerald-200 dark:text-emerald-700" />
           </div>
         )}
 
@@ -185,75 +185,78 @@ export function MenuItemCard({
       </div>
 
       {/* محتوى البطاقة */}
-      <div className="p-3 space-y-1.5">
+      <div className="p-3 px-3 space-y-2">
         {/* الاسم */}
-        <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100 line-clamp-1 leading-snug">
+        <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100 line-clamp-2 leading-snug min-h-[2.5rem]">
           {name_ar}
         </h3>
 
         {/* الوصف */}
         {description_ar && (
-          <p className="text-[11px] leading-relaxed text-gray-400 dark:text-gray-500 line-clamp-2 font-medium">
+          <p className="text-[11px] leading-relaxed text-gray-400 dark:text-gray-500 line-clamp-2 font-medium min-h-[2rem]">
             {description_ar}
           </p>
         )}
 
-        {/* السعر وزر التحكم بالكمية */}
-        <div className="flex items-center justify-between pt-0.5">
-          {/* Quantity counter - always visible */}
-          <div className="flex items-center gap-1">
-            {quantity > 0 ? (
-              <div
-                key={bounceKey}
-                className="flex items-center gap-0.5 bg-emerald-50 rounded-full border border-emerald-100/80 p-0.5 shadow-sm animate-scale-in"
-              >
-                <button
-                  onClick={handleDecrease}
-                  className={cn(
-                    'w-7 h-7 rounded-full flex items-center justify-center',
-                    'text-emerald-600 hover:bg-emerald-100 active:bg-emerald-200',
-                    'transition-colors duration-150'
-                  )}
-                >
-                  <Minus className="w-3.5 h-3.5" />
-                </button>
-                <span className="w-6 text-center font-bold text-sm text-emerald-700 tabular-nums">
-                  {quantity}
-                </span>
-                <button
-                  onClick={handleIncrease}
-                  className={cn(
-                    'w-7 h-7 rounded-full flex items-center justify-center',
-                    'text-white bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700',
-                    'transition-colors duration-150 shadow-sm shadow-emerald-500/20'
-                  )}
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={handleAdd}
-                disabled={!is_available}
-                className={cn(
-                  'flex items-center gap-1.5 px-3.5 py-1.5 rounded-full',
-                  'text-xs font-semibold',
-                  'bg-emerald-500 text-white',
-                  'hover:bg-emerald-600 active:bg-emerald-700',
-                  'transition-all duration-200 shadow-sm shadow-emerald-500/20',
-                  'disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none disabled:cursor-not-allowed'
-                )}
-              >
-                <ShoppingCart className="w-3.5 h-3.5" />
-                أضف
-              </button>
-            )}
-          </div>
-
-          {/* Price text */}
+        {/* السعر */}
+        <div className="pt-0.5">
           <span className="font-bold text-sm text-gray-800 dark:text-gray-200 tabular-nums">
             {formatPrice(price)}
           </span>
+        </div>
+
+        {/* Quantity counter - full width row */}
+        <div className="w-full">
+          {quantity > 0 ? (
+            <div
+              key={bounceKey}
+              className="flex items-center justify-center gap-0.5 bg-emerald-50 dark:bg-emerald-900/30 rounded-full border border-emerald-100/80 dark:border-emerald-800/50 p-0.5 shadow-sm animate-scale-in w-full"
+            >
+              <button
+                onClick={handleIncrease}
+                className={cn(
+                  'flex-1 h-8 rounded-full flex items-center justify-center gap-1',
+                  'text-white bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700',
+                  'transition-colors duration-150 shadow-sm shadow-emerald-500/20',
+                  'text-xs font-semibold'
+                )}
+              >
+                <Plus className="w-3.5 h-3.5" />
+                زيادة
+              </button>
+              <span className="w-8 text-center font-bold text-sm text-emerald-700 dark:text-emerald-400 tabular-nums">
+                {quantity}
+              </span>
+              <button
+                onClick={handleDecrease}
+                className={cn(
+                  'flex-1 h-8 rounded-full flex items-center justify-center gap-1',
+                  'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-800/50 active:bg-emerald-200',
+                  'transition-colors duration-150',
+                  'text-xs font-semibold'
+                )}
+              >
+                <Minus className="w-3.5 h-3.5" />
+                تقليل
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={handleAdd}
+              disabled={!is_available}
+              className={cn(
+                'w-full flex items-center justify-center gap-1.5 py-2 rounded-full',
+                'text-xs font-semibold',
+                'bg-emerald-500 text-white',
+                'hover:bg-emerald-600 active:bg-emerald-700',
+                'transition-all duration-200 shadow-sm shadow-emerald-500/20',
+                'disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none disabled:cursor-not-allowed'
+              )}
+            >
+              <ShoppingCart className="w-3.5 h-3.5" />
+              أضف إلى السلة
+            </button>
+          )}
         </div>
       </div>
     </div>
