@@ -19,11 +19,12 @@ class FirebaseConfig {
 
     WidgetsFlutterBinding.ensureInitialized();
 
-    app = await Firebase.initializeApp(
+    final firebaseApp = await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
     final instance = FirebaseConfig._();
+    instance.app = firebaseApp;
     instance.firestore = FirebaseFirestore.instance;
     instance.auth = FirebaseAuth.instance;
     instance.messaging = FirebaseMessaging.instance;

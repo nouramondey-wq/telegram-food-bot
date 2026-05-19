@@ -303,6 +303,7 @@ class _MenuManagementScreenState extends State<MenuManagementScreen> {
   void _showAddCategoryDialog(BuildContext context) {
     final nameController = TextEditingController();
     final formKey = GlobalKey<FormState>();
+    final menuProvider = context.read<MenuProvider>();
 
     showDialog(
       context: context,
@@ -331,7 +332,7 @@ class _MenuManagementScreenState extends State<MenuManagementScreen> {
                 id: '',
                 nameAr: nameController.text,
               );
-              await provider.addCategory(cat);
+              await menuProvider.addCategory(cat);
               if (ctx.mounted) Navigator.pop(ctx);
             },
             child: const Text('إضافة'),

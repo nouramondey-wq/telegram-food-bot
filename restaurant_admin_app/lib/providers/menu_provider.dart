@@ -62,8 +62,6 @@ class MenuProvider extends ChangeNotifier {
     );
   }
 
-  int _receivedSnapshots = 0;
-
   void _checkLoading() {
     _receivedSnapshots++;
     // انتظار استلام أول snapshot من كلا المصدرين (menu و categories)
