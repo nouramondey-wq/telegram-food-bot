@@ -125,14 +125,14 @@ export default function MenuPage() {
         )}
       </div>
 
-      {/* زر العوام العائم أسفل السلة لايف إذا كانت ممتلئة */}
-      {totalItems > 0 && (
+      {/* 🚀 زر العوام العائم أسفل السلة لايف إذا كانت ممتلئة بعد تصحيح استدعاء الدوال */}
+      {totalItems() > 0 && (
         <div className="fixed bottom-6 left-0 right-0 px-4 z-50 animate-fade-in">
           <Link href="/cart">
             <button className="w-full bg-red-500 hover:bg-red-600 text-white font-extrabold rounded-xl py-3.5 px-4 shadow-xl flex items-center justify-between transition-transform active:scale-95 dir-rtl">
               <div className="flex items-center gap-2">
                 <div className="bg-white/20 px-2.5 py-0.5 rounded-full text-xs tabular-nums font-black">
-                  {totalItems}
+                  {totalItems()}
                 </div>
                 <span className="text-sm">عرض سلة المأكولات</span>
               </div>
