@@ -62,16 +62,15 @@ export function MenuItemCard({
     <div
       dir="rtl"
       className={cn(
-        'flex flex-col overflow-hidden',
-        'rounded-2xl bg-white dark:bg-gray-900',
-        'border border-gray-100 dark:border-gray-800',
-        'shadow-sm',
+        'flex flex-col h-full bg-white dark:bg-gray-900',
+        'rounded-2xl border border-gray-100 dark:border-gray-800',
+        'shadow-[0_2px_12px_rgba(0,0,0,0.04)]',
         'transition-all duration-200',
         !is_available && 'opacity-60 grayscale'
       )}
     >
       {/* ── Image ── */}
-      <div className="relative w-full aspect-[4/3] bg-gray-100 dark:bg-gray-800">
+      <div className="relative w-full aspect-[4/3] bg-gray-50 dark:bg-gray-800 rounded-t-2xl overflow-hidden shrink-0">
         {image_url && !imageError ? (
           <Image
             src={image_url}
@@ -81,21 +80,22 @@ export function MenuItemCard({
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageError(true)}
             className={cn(
-              'object-cover transition-all duration-700',
-              imageLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-md'
+              'object-cover transition-opacity duration-500',
+              imageLoaded ? 'opacity-100' : 'opacity-0'
             )}
           />
         ) : (
-          <div className="flex w-full h-full items-center justify-center bg-gray-50 dark:bg-gray-800">
+          <div className="flex w-full h-full items-center justify-center">
             <UtensilsCrossed className="w-8 h-8 text-gray-300 dark:text-gray-600" />
           </div>
         )}
       </div>
 
       {/* ── Content ── */}
-      <div className="flex flex-col p-2.5 text-right">
-        <div className="flex items-start justify-between gap-1 mb-1">
-          <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-tight flex-1">
+      <div className="flex flex-col flex-1 p-3 text-right">
+        {/* Title & Action Button Row */}
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <h3 className="text-[15px] font-bold text-gray-900 dark:text-white leading-tight flex-1">
             {name_ar}
           </h3>
           
@@ -104,36 +104,36 @@ export function MenuItemCard({
             <button
               onClick={handleAdd}
               disabled={!is_available}
-              className="w-6 h-6 shrink-0 flex items-center justify-center bg-[#d33a3a] text-white rounded-md shadow-sm active:scale-95 transition-all"
+              className="w-7 h-7 shrink-0 flex items-center justify-center bg-[#ef4444] text-white rounded-[10px] shadow-sm hover:bg-[#dc2626] active:scale-95 transition-all outline-none"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 stroke-[3]" />
             </button>
           ) : (
-            <div className="flex items-center gap-1.5 shrink-0 bg-gray-100 dark:bg-gray-800 rounded-md p-0.5">
-              <button onClick={handleDecrease} className="w-5 h-5 flex items-center justify-center bg-white dark:bg-gray-700 rounded text-gray-700 dark:text-gray-200 shadow-sm"><Minus className="w-3 h-3" /></button>
-              <span className="text-xs font-bold w-3 text-center">{quantity}</span>
-              <button onClick={handleIncrease} className="w-5 h-5 flex items-center justify-center bg-[#d33a3a] text-white rounded shadow-sm"><Plus className="w-3 h-3" /></button>
+            <div className="flex items-center gap-1.5 shrink-0 bg-gray-50 dark:bg-gray-800 rounded-[10px] p-1 border border-gray-100 dark:border-gray-700">
+              <button onClick={handleDecrease} className="w-6 h-6 flex items-center justify-center bg-white dark:bg-gray-700 rounded-md text-gray-700 dark:text-gray-200 shadow-sm outline-none"><Minus className="w-3.5 h-3.5" /></button>
+              <span className="text-sm font-bold w-4 text-center">{quantity}</span>
+              <button onClick={handleIncrease} className="w-6 h-6 flex items-center justify-center bg-[#ef4444] text-white rounded-md shadow-sm outline-none"><Plus className="w-3.5 h-3.5 stroke-[3]" /></button>
             </div>
           )}
         </div>
 
         {/* Stars */}
-        <div className="flex items-center justify-start gap-0.5 mb-1.5" dir="ltr">
+        <div className="flex items-center justify-start gap-0.5 mb-1.5">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+            <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />
           ))}
         </div>
 
         {/* Description */}
         {description_ar && (
-          <p className="text-[10px] leading-relaxed text-gray-500 dark:text-gray-400 line-clamp-2 mb-2 min-h-[30px]">
+          <p className="text-[11px] leading-[1.6] text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">
             {description_ar}
           </p>
         )}
 
         {/* Price */}
         <div className="mt-auto text-left">
-          <span className="text-sm font-black text-[#d33a3a] tabular-nums" dir="rtl">
+          <span className="text-[15px] font-black text-[#ef4444] tabular-nums tracking-tight">
             {formatPrice(price)}
           </span>
         </div>
