@@ -92,7 +92,7 @@ export function MenuItemCard({
       </div>
 
       {/* ── Content ── */}
-      <div className="flex flex-col flex-1 p-3 text-right">
+      <div className="flex flex-col flex-1 p-4 text-right">
         {/* Title & Action Button Row */}
         <div className="flex items-start justify-between gap-2 mb-1">
           <h3 className="text-[15px] font-bold text-gray-900 dark:text-white leading-tight flex-1">

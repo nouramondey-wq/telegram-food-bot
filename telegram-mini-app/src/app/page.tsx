@@ -223,7 +223,7 @@ function MenuPageContent() {
 
         {isLoading ? (
           /* Skeleton loading — grid */
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="flex flex-col rounded-2xl overflow-hidden bg-white shadow-sm h-[200px]">
                 <div className="skeleton w-full h-[110px]" />
@@ -248,7 +248,7 @@ function MenuPageContent() {
           </div>
         ) : (
           /* قائمة المواد — شبكة بعمودين */
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             {filteredItems.map((item, idx) => (
               <div
                 key={item.id}
