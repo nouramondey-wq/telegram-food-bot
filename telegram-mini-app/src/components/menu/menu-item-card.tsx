@@ -70,7 +70,7 @@ export function MenuItemCard({
       )}
     >
       {/* ── Image ── */}
-      <div className="relative w-full aspect-[4/3] bg-gray-50 dark:bg-gray-800 rounded-t-2xl overflow-hidden shrink-0">
+      <div className="relative w-full aspect-[4/3] bg-gray-50 dark:bg-gray-800 rounded-t-3xl overflow-hidden shrink-0">
         {image_url && !imageError ? (
           <Image
             src={image_url}
@@ -104,15 +104,15 @@ export function MenuItemCard({
             <button
               onClick={handleAdd}
               disabled={!is_available}
-              className="w-7 h-7 shrink-0 flex items-center justify-center bg-[#ef4444] text-white rounded-[10px] shadow-sm hover:bg-[#dc2626] active:scale-95 transition-all outline-none"
+              className="w-7 h-7 shrink-0 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-md hover:bg-[#dc2626] active:scale-95 transition-all outline-none"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
             </button>
           ) : (
-            <div className="flex items-center gap-1.5 shrink-0 bg-gray-50 dark:bg-gray-800 rounded-[10px] p-1 border border-gray-100 dark:border-gray-700">
-              <button onClick={handleDecrease} className="w-6 h-6 flex items-center justify-center bg-white dark:bg-gray-700 rounded-md text-gray-700 dark:text-gray-200 shadow-sm outline-none"><Minus className="w-3.5 h-3.5" /></button>
+            <div className="flex items-center gap-1.5 shrink-0 bg-gray-50 dark:bg-gray-800 rounded-full p-1 border border-gray-100 dark:border-gray-700 shadow-sm">
+              <button onClick={handleDecrease} className="w-6 h-6 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none"><Minus className="w-3.5 h-3.5" /></button>
               <span className="text-sm font-bold w-4 text-center">{quantity}</span>
-              <button onClick={handleIncrease} className="w-6 h-6 flex items-center justify-center bg-[#ef4444] text-white rounded-md shadow-sm outline-none"><Plus className="w-3.5 h-3.5 stroke-[3]" /></button>
+              <button onClick={handleIncrease} className="w-6 h-6 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm outline-none"><Plus className="w-3.5 h-3.5 stroke-[3]" /></button>
             </div>
           )}
         </div>
@@ -132,7 +132,7 @@ export function MenuItemCard({
         )}
 
         {/* Price */}
-        <div className="mt-auto text-left">
+        <div className="mt-auto text-right">
           <span className="text-[15px] font-black text-[#ef4444] tabular-nums tracking-tight">
             {formatPrice(price)}
           </span>

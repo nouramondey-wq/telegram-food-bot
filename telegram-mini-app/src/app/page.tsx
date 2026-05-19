@@ -308,13 +308,13 @@ function FloatingCheckoutButton() {
             hapticFeedback('medium');
             router.push('/cart');
           }}
-          className="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-[#1e2337] text-white shadow-xl shadow-gray-900/30 hover:shadow-gray-900/40 active:scale-[0.97] transition-all duration-200 animate-slide-up"
+          className="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-gradient-to-r from-gray-900 to-slate-800 text-white shadow-xl shadow-gray-900/40 hover:shadow-gray-900/50 active:scale-[0.97] transition-all duration-200 animate-slide-up border border-gray-700/50"
         >
           {/* Right side: cart icon + label */}
           <div className="flex items-center gap-3">
             <div className="relative">
-              <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-0.5 text-[10px] font-black text-emerald-700 bg-white rounded-full shadow-sm tabular-nums">
+              <ShoppingCart className="w-5 h-5 text-gray-100" />
+              <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-0.5 text-[10px] font-black text-white bg-[#ef4444] rounded-full shadow-sm tabular-nums">
                 {totalItems > 9 ? '9+' : totalItems}
               </span>
             </div>
