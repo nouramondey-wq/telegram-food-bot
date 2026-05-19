@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { Plus, Minus, Star, UtensilsCrossed } from 'lucide-react';
+
 import { useCartStore } from '@/stores/cart-store';
 import { formatPrice, cn } from '@/lib/utils';
 import { hapticFeedback } from '@/lib/telegram';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Minus, Star, UtensilsCrossed } from 'lucide-react';
 
 interface MenuItemProps {
   id: string;
@@ -15,6 +16,7 @@ interface MenuItemProps {
   price: number;
   image_url: string;
   is_available: boolean;
+  addons?: { id: string; name_ar: string; price: number }[];
 }
 
 export function MenuItemCard({
@@ -24,129 +26,114 @@ export function MenuItemCard({
   price,
   image_url,
   is_available,
+  addons,
 }: MenuItemProps) {
   const cartItem = useCartStore((s) => s.items.find((i) => i.menu_item_id === id));
-  const [quantity, setQuantity] = useState(cartItem?.quantity || 0);
-  const addItem = useCartStore((s) => s.addItem);
+  const addItem     = useCartStore((s) => s.addItem);
+  const removeItem  = useCartStore((s) => s.removeItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
-  const removeItem = useCartStore((s) => s.removeItem);
-  const { toast } = useToast();
-  const [imageError, setImageError] = useState(false);
 
-  useEffect(() => {
-    setQuantity(cartItem?.quantity || 0);
-  }, [cartItem?.quantity]);
+  const [quantity, setQuantity]       = useState(cartItem?.quantity || 0);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError]   = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => { setQuantity(cartItem?.quantity || 0); }, [cartItem?.quantity]);
 
   const handleAdd = () => {
     if (!is_available) return;
     hapticFeedback('light');
     setQuantity(1);
-    addItem({
-      menu_item_id: id,
-      name_ar,
-      image_url,
-      quantity: 1,
-      unit_price: price,
-      addons: [],
-      notes: '',
-    });
+    addItem({ menu_item_id: id, name_ar, image_url, quantity: 1, unit_price: price, addons: [], notes: '' });
+    toast({ title: 'تمت إضافة المنتج', description: `${name_ar} تمت إضافته إلى السلة`, variant: 'success' });
   };
 
   const handleIncrease = () => {
-    hapticFeedback('light');
-    const newQty = quantity + 1;
-    setQuantity(newQty);
-    updateQuantity(id, newQty);
+    const q = quantity + 1; setQuantity(q); updateQuantity(id, q); hapticFeedback('light');
   };
 
   const handleDecrease = () => {
     hapticFeedback('light');
-    if (quantity === 1) {
-      setQuantity(0);
-      removeItem(id);
-    } else {
-      setQuantity(quantity - 1);
-      updateQuantity(id, quantity - 1);
-    }
+    if (quantity === 1) { setQuantity(0); removeItem(id); return; }
+    const q = quantity - 1; setQuantity(q); updateQuantity(id, q);
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100/60 dark:border-gray-700/40 overflow-hidden flex flex-col justify-between h-full transition-all duration-200 hover:shadow-md">
-      {/* جزء الصورة العلوي */}
-      <div className="relative w-full aspect-[4/3] bg-gray-50 dark:bg-gray-700 overflow-hidden">
+    <div
+      dir="rtl"
+      className={cn(
+        'flex flex-col h-full bg-white dark:bg-gray-900',
+        'rounded-2xl border border-gray-100 dark:border-gray-800',
+        'shadow-[0_2px_12px_rgba(0,0,0,0.04)]',
+        'transition-all duration-200',
+        !is_available && 'opacity-60 grayscale'
+      )}
+    >
+      {/* ── Image ── */}
+      <div className="relative w-full aspect-[4/3] bg-gray-50 dark:bg-gray-800 rounded-t-3xl overflow-hidden shrink-0">
         {image_url && !imageError ? (
           <Image
             src={image_url}
             alt={name_ar}
             fill
-            className="object-cover"
-            sizes="(max-width: 480px) 50vw, 240px"
+            sizes="(max-width: 768px) 50vw, 33vw"
+            onLoad={() => setImageLoaded(true)}
             onError={() => setImageError(true)}
+            className={cn(
+              'object-cover transition-opacity duration-500',
+              imageLoaded ? 'opacity-100' : 'opacity-0'
+            )}
           />
         ) : (
-          <div className="flex items-center justify-center w-full h-full">
-            <UtensilsCrossed className="w-6 h-6 text-gray-300" />
+          <div className="flex w-full h-full items-center justify-center">
+            <UtensilsCrossed className="w-8 h-8 text-gray-300 dark:text-gray-600" />
           </div>
         )}
+      </div>
 
-        {/* كبسولة العداد العائمة - صغيرة جداً وذكية لتفادي تغطية النص */}
-        <div className="absolute bottom-2 left-2 z-10">
-          {quantity > 0 ? (
-            <div className="flex items-center gap-1.5 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-md rounded-full p-0.5 border border-gray-200/50 dark:border-gray-700">
-              <button
-                onClick={handleIncrease}
-                className="w-6 h-6 rounded-full flex items-center justify-center text-white bg-red-500 hover:bg-red-600 active:scale-90 transition-transform"
-              >
-                <Plus className="w-3.5 h-3.5" />
-              </button>
-              <span className="text-xs font-bold px-0.5 text-gray-800 dark:text-gray-100 tabular-nums">
-                {quantity}
-              </span>
-              <button
-                onClick={handleDecrease}
-                className="w-6 h-6 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 active:scale-90 transition-transform"
-              >
-                <Minus className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          ) : (
+      {/* ── Content ── */}
+      <div className="flex flex-col flex-1 p-3 text-right">
+        {/* Title & Action Button Row */}
+        <div className="flex items-start justify-between gap-2 mb-1">
+          <h3 className="text-[15px] font-bold text-gray-900 dark:text-white leading-tight flex-1">
+            {name_ar}
+          </h3>
+          
+          {/* Action Button */}
+          {quantity === 0 ? (
             <button
               onClick={handleAdd}
               disabled={!is_available}
-              className="w-7 h-7 rounded-full flex items-center justify-center text-white bg-red-500 shadow-md hover:bg-red-600 active:scale-90 transition-transform disabled:bg-gray-200"
+              className="w-7 h-7 shrink-0 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-md hover:bg-[#dc2626] active:scale-95 transition-all outline-none"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 stroke-[3]" />
             </button>
-          )}
-        </div>
-      </div>
-
-      {/* تفاصيل الوجبة السفلية */}
-      <div className="p-3 flex flex-col flex-grow justify-between text-right dir-rtl space-y-1">
-        <div>
-          {/* اسم الصنف Bold جداً وممتاز */}
-          <h3 className="font-extrabold text-sm text-gray-900 dark:text-gray-100 leading-snug line-clamp-1">
-            {name_ar}
-          </h3>
-
-          {/* النجوم الذهبية الخمسة أسفل الاسم مباشرة */}
-          <div className="flex items-center justify-start gap-0.5 my-1">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
-            ))}
-          </div>
-
-          {/* وصف الوجبة السلس */}
-          {description_ar && (
-            <p className="text-[10px] leading-relaxed text-gray-400 dark:text-gray-500 line-clamp-1 font-medium">
-              {description_ar}
-            </p>
+          ) : (
+            <div className="flex items-center gap-1.5 shrink-0 bg-gray-50 dark:bg-gray-800 rounded-full p-1 border border-gray-100 dark:border-gray-700 shadow-sm">
+              <button onClick={handleDecrease} className="w-6 h-6 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none"><Minus className="w-3.5 h-3.5" /></button>
+              <span className="text-sm font-bold w-4 text-center">{quantity}</span>
+              <button onClick={handleIncrease} className="w-6 h-6 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm outline-none"><Plus className="w-3.5 h-3.5 stroke-[3]" /></button>
+            </div>
           )}
         </div>
 
-        {/* السعر في سطر منفصل ملون ومحمي */}
-        <div className="pt-1.5 flex items-center justify-start">
-          <span className="font-black text-xs text-red-500 dark:text-red-400 tabular-nums">
+        {/* Stars */}
+        <div className="flex items-center justify-start gap-0.5 mb-1.5">
+          {[...Array(5)].map((_, i) => (
+            <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />
+          ))}
+        </div>
+
+        {/* Description */}
+        {description_ar && (
+          <p className="text-[11px] leading-[1.6] text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">
+            {description_ar}
+          </p>
+        )}
+
+        {/* Price */}
+        <div className="mt-auto text-right">
+          <span className="text-[15px] font-black text-[#ef4444] tabular-nums tracking-tight">
             {formatPrice(price)}
           </span>
         </div>
