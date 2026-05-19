@@ -16,8 +16,8 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-  title: 'مطعم الذواقة - اطلب أونلاين',
-  description: 'اطلب ألذ المأكولات من مطعم الذواقة بنقرات بسيطة',
+  title: 'مطعم نور  - اطلب أونلاين',
+  description: 'اطلب ألذ المأكولات من مطعم نور  بنقرات بسيطة',
   other: {
     'telegram-web-app': 'true', // إعلام Telegram بأنها WebApp
   },

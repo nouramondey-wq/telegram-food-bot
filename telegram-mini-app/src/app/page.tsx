@@ -94,9 +94,9 @@ function MenuPageContent() {
   // تصفية حسب البحث
   const filteredItems = searchQuery
     ? allItems.filter((item) =>
-        item.name_ar.includes(searchQuery) ||
-        item.description_ar?.includes(searchQuery)
-      )
+      item.name_ar.includes(searchQuery) ||
+      item.description_ar?.includes(searchQuery)
+    )
     : allItems;
 
   const isLoading = catsLoading || itemsLoading;
@@ -141,29 +141,29 @@ function MenuPageContent() {
       <header className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-100/80 dark:border-gray-800/80 shadow-sm">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-md shadow-emerald-500/20">
-                <Store className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 leading-tight">مطعم الذواقة</h1>
-                <p className="text-[11px] text-gray-400 dark:text-gray-500 font-medium">أطلب ألذ المأكولات!</p>
-              </div>
-            </div>
+            {/* Left side: Search */}
             <button
               onClick={() => {
                 setShowSearch(!showSearch);
                 if (!showSearch) setTimeout(() => document.getElementById('search-input')?.focus(), 100);
               }}
               className={cn(
-                'p-2.5 rounded-xl transition-all duration-200 active:scale-90',
+                'p-2.5 rounded-md border transition-all duration-200 active:scale-90',
                 showSearch
-                  ? 'bg-emerald-50 text-emerald-600'
-                  : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
+                  ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                  : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-50'
               )}
             >
               <Search className="w-5 h-5" />
             </button>
+
+            {/* Right side: Title & Icon */}
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-black text-[#1a202c] dark:text-gray-100 tracking-tight">مطعم نور </h1>
+              <div className="flex items-center justify-center">
+                <Store className="w-6 h-6 text-[#1a202c] dark:text-gray-100" />
+              </div>
+            </div>
           </div>
 
           {/* شريط البحث */}
@@ -217,17 +217,20 @@ function MenuPageContent() {
       {/* محتوى القائمة */}
       {/* pb-52 = 208px: enough to scroll last item above both floating btn (~56px) + nav (64px) + gap */}
       <div className="px-4 py-4 pb-52">
+        <h2 className="text-lg font-black text-gray-900 dark:text-white mb-4 text-right">
+          الوجبات الشعبية
+        </h2>
+
         {isLoading ? (
-          /* Skeleton loading — horizontal card shape */
-          <div className="flex flex-col gap-3">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex rounded-2xl overflow-hidden bg-white shadow-sm h-[100px]">
-                <div className="skeleton w-[110px] shrink-0" />
-                <div className="flex-1 p-3 space-y-2">
+          /* Skeleton loading — grid */
+          <div className="grid grid-cols-2 gap-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="flex flex-col rounded-2xl overflow-hidden bg-white shadow-sm h-[200px]">
+                <div className="skeleton w-full h-[110px]" />
+                <div className="flex-1 p-2 space-y-2">
                   <div className="skeleton h-4 w-3/4" />
-                  <div className="skeleton h-3 w-full" />
                   <div className="skeleton h-3 w-1/2" />
-                  <div className="skeleton h-8 w-full rounded-xl mt-1" />
+                  <div className="skeleton h-4 w-1/3 mt-2" />
                 </div>
               </div>
             ))}
@@ -244,12 +247,12 @@ function MenuPageContent() {
             </p>
           </div>
         ) : (
-          /* قائمة المواد — عمود واحد بكروت أفقية */
-          <div className="flex flex-col gap-3">
+          /* قائمة المواد — شبكة بعمودين */
+          <div className="grid grid-cols-2 gap-3">
             {filteredItems.map((item, idx) => (
               <div
                 key={item.id}
-                className="animate-fade-in-up"
+                className="animate-fade-in-up h-full"
                 style={{ animationDelay: `${(idx % 8) * 0.035}s` }}
               >
                 <MenuItemCard
@@ -305,7 +308,7 @@ function FloatingCheckoutButton() {
             hapticFeedback('medium');
             router.push('/cart');
           }}
-          className="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-gradient-to-l from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/40 active:scale-[0.97] transition-all duration-200 animate-slide-up"
+          className="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-[#1e2337] text-white shadow-xl shadow-gray-900/30 hover:shadow-gray-900/40 active:scale-[0.97] transition-all duration-200 animate-slide-up"
         >
           {/* Right side: cart icon + label */}
           <div className="flex items-center gap-3">
@@ -316,7 +319,7 @@ function FloatingCheckoutButton() {
               </span>
             </div>
             <div className="text-right">
-              <p className="text-sm font-bold">متابعة الشراء</p>
+              <p className="text-sm font-bold">أضف إلى السلة</p>
               <p className="text-[11px] text-white/80 font-medium tabular-nums">{totalItems} صنف</p>
             </div>
           </div>

@@ -19,30 +19,30 @@ function getCategoryIcon(name: string) {
   const lower = name.toLowerCase();
 
   if (lower.includes('مشروب') || lower.includes('قهوة') || lower.includes('شاي')) {
-    return <Coffee className="w-4 h-4" />;
+    return <span className="text-2xl">🥤</span>;
   }
 
   if (lower.includes('بيتزا')) {
-    return <Pizza className="w-4 h-4" />;
+    return <span className="text-2xl">🍕</span>;
   }
 
   if (lower.includes('ساندوتش') || lower.includes('برجر')) {
-    return <Sandwich className="w-4 h-4" />;
+    return <span className="text-2xl">🍔</span>;
   }
 
   if (lower.includes('مشاوي') || lower.includes('لحوم')) {
-    return <Beef className="w-4 h-4" />;
+    return <span className="text-2xl">🥘</span>;
   }
 
   if (lower.includes('سلطة') || lower.includes('مقبلات')) {
-    return <Salad className="w-4 h-4" />;
+    return <span className="text-2xl">🥗</span>;
   }
 
   if (lower.includes('حلويات') || lower.includes('كيك')) {
-    return <IceCreamBowl className="w-4 h-4" />;
+    return <span className="text-2xl">🍰</span>;
   }
 
-  return <Flame className="w-4 h-4" />;
+  return <span className="text-2xl">🍽️</span>;
 }
 
 export function CategoryFilter({
@@ -87,31 +87,22 @@ export function CategoryFilter({
         <button
           data-cat-id="__all"
           onClick={() => handleSelect(null)}
-          className={cn(
-            'group relative flex-shrink-0 overflow-hidden rounded-2xl px-4 py-3',
-            'transition-all duration-300 ease-out',
-            'border',
-            selectedId === null
-              ? 'border-emerald-300 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/20 scale-[1.02]'
-              : 'border-gray-200 bg-white text-gray-700 hover:border-emerald-200 hover:bg-emerald-50/60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200'
-          )}
+          className="group relative flex-shrink-0 flex flex-col items-center gap-1 min-w-[70px] transition-all duration-300 ease-out"
         >
-          <div className="flex items-center gap-2">
-            <div
-              className={cn(
-                'flex h-8 w-8 items-center justify-center rounded-xl',
-                selectedId === null
-                  ? 'bg-white/20'
-                  : 'bg-gray-100 dark:bg-gray-700'
-              )}
-            >
-              <Flame className="w-4 h-4" />
-            </div>
-
-            <span className="text-sm font-bold whitespace-nowrap">
-              كل الأصناف
-            </span>
+          <div className={cn(
+            'flex h-[68px] w-[68px] items-center justify-center rounded-full border-2 transition-all duration-200',
+            selectedId === null
+              ? 'border-gray-800 bg-gray-100 shadow-sm'
+              : 'border-transparent bg-gray-50 hover:bg-gray-100'
+          )}>
+            <span className="text-2xl">✨</span>
           </div>
+          <span className={cn(
+            'text-[13px] whitespace-nowrap transition-colors mt-1',
+            selectedId === null ? 'font-black text-gray-900' : 'font-bold text-gray-600'
+          )}>
+            كل الأصناف
+          </span>
         </button>
 
         {categories.map((cat) => {
@@ -122,30 +113,22 @@ export function CategoryFilter({
               key={cat.id}
               data-cat-id={cat.id}
               onClick={() => handleSelect(cat.id)}
-              className={cn(
-                'group relative flex-shrink-0 overflow-hidden rounded-2xl px-4 py-3',
-                'transition-all duration-300 ease-out border',
-                isSelected
-                  ? 'border-emerald-300 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/20 scale-[1.02]'
-                  : 'border-gray-200 bg-white text-gray-700 hover:border-emerald-200 hover:bg-emerald-50/60 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200'
-              )}
+              className="group relative flex-shrink-0 flex flex-col items-center gap-1 min-w-[70px] transition-all duration-300 ease-out"
             >
-              <div className="flex items-center gap-2">
-                <div
-                  className={cn(
-                    'flex h-8 w-8 items-center justify-center rounded-xl transition-all',
-                    isSelected
-                      ? 'bg-white/20'
-                      : 'bg-gray-100 dark:bg-gray-700'
-                  )}
-                >
-                  {getCategoryIcon(cat.name_ar)}
-                </div>
-
-                <span className="text-sm font-bold whitespace-nowrap">
-                  {cat.name_ar}
-                </span>
+              <div className={cn(
+                'flex h-[68px] w-[68px] items-center justify-center rounded-full border-2 transition-all duration-200',
+                isSelected
+                  ? 'border-gray-800 bg-gray-100 shadow-sm'
+                  : 'border-transparent bg-gray-50 hover:bg-gray-100'
+              )}>
+                {getCategoryIcon(cat.name_ar)}
               </div>
+              <span className={cn(
+                'text-[13px] whitespace-nowrap transition-colors mt-1',
+                isSelected ? 'font-black text-gray-900' : 'font-bold text-gray-600'
+              )}>
+                {cat.name_ar}
+              </span>
             </button>
           );
         })}

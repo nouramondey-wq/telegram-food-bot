@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Plus, Minus, ShoppingBag, Sparkles, UtensilsCrossed } from 'lucide-react';
+import { Plus, Minus, Star, UtensilsCrossed } from 'lucide-react';
 
 import { useCartStore } from '@/stores/cart-store';
 import { formatPrice, cn } from '@/lib/utils';
@@ -58,138 +58,84 @@ export function MenuItemCard({
     const q = quantity - 1; setQuantity(q); updateQuantity(id, q);
   };
 
-  const hasAddons = addons && addons.length > 0;
-
   return (
-    /* ── Horizontal card: image right (RTL) | content fills left ── */
     <div
       dir="rtl"
       className={cn(
-        'flex flex-row items-stretch overflow-hidden',
+        'flex flex-col overflow-hidden',
         'rounded-2xl bg-white dark:bg-gray-900',
         'border border-gray-100 dark:border-gray-800',
-        'shadow-[0_2px_16px_rgba(0,0,0,0.06)]',
-        'transition-all duration-200 active:scale-[0.99]',
+        'shadow-sm',
+        'transition-all duration-200',
         !is_available && 'opacity-60 grayscale'
       )}
     >
-      {/* ── Image (fixed square, 110 × full height) ── */}
-      <div className="relative w-[110px] shrink-0 self-stretch bg-gray-100 dark:bg-gray-800">
+      {/* ── Image ── */}
+      <div className="relative w-full aspect-[4/3] bg-gray-100 dark:bg-gray-800">
         {image_url && !imageError ? (
-          <>
-            <Image
-              src={image_url}
-              alt={name_ar}
-              fill
-              sizes="110px"
-              onLoad={() => setImageLoaded(true)}
-              onError={() => setImageError(true)}
-              className={cn(
-                'object-cover transition-all duration-700',
-                imageLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-md'
-              )}
-            />
-            {/* subtle darkening at edges */}
-            <div className="absolute inset-0 bg-gradient-to-l from-black/20 to-transparent" />
-          </>
+          <Image
+            src={image_url}
+            alt={name_ar}
+            fill
+            sizes="(max-width: 768px) 50vw, 33vw"
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setImageError(true)}
+            className={cn(
+              'object-cover transition-all duration-700',
+              imageLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-md'
+            )}
+          />
         ) : (
-          <div className="flex w-full h-full items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950">
-            <UtensilsCrossed className="w-8 h-8 text-emerald-300 dark:text-emerald-700" />
-          </div>
-        )}
-
-        {/* Addons badge — inside image top-right */}
-        {hasAddons && (
-          <div className="absolute top-2 right-2">
-            <div className="flex items-center gap-0.5 rounded-full bg-white/90 dark:bg-gray-900/80 px-1.5 py-0.5 text-[9px] font-bold text-amber-600 dark:text-amber-400 shadow-sm backdrop-blur-sm">
-              <Sparkles className="w-2 h-2 shrink-0" />
-              إضافات
-            </div>
-          </div>
-        )}
-
-        {/* Unavailable overlay */}
-        {!is_available && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <span className="rounded-full bg-red-500 px-2 py-1 text-[10px] font-bold text-white">
-              غير متوفر
-            </span>
+          <div className="flex w-full h-full items-center justify-center bg-gray-50 dark:bg-gray-800">
+            <UtensilsCrossed className="w-8 h-8 text-gray-300 dark:text-gray-600" />
           </div>
         )}
       </div>
 
-      {/* ── Content (fills remaining width) ── */}
-      <div className="flex flex-1 flex-col justify-between gap-2 min-w-0 px-3 py-3 text-right">
-
-        {/* Title + Description */}
-        <div className="flex flex-col gap-1 min-w-0">
-          <h3 className="text-sm font-extrabold leading-snug text-gray-900 dark:text-white break-words">
+      {/* ── Content ── */}
+      <div className="flex flex-col p-2.5 text-right">
+        <div className="flex items-start justify-between gap-1 mb-1">
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-tight flex-1">
             {name_ar}
           </h3>
-          {description_ar && (
-            <p className="text-[11px] leading-relaxed text-gray-500 dark:text-gray-400 line-clamp-2 break-words">
-              {description_ar}
-            </p>
-          )}
-        </div>
-
-        {/* Price + Action */}
-        <div className="flex flex-col gap-2 min-w-0">
-          {/* Price row */}
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
-              {formatPrice(price)}
-            </span>
-            {quantity > 0 && (
-              <span className="text-[11px] font-semibold text-gray-400 dark:text-gray-500 tabular-nums bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
-                × {quantity} في السلة
-              </span>
-            )}
-          </div>
-
-          {/* Add / Counter */}
+          
+          {/* Action Button */}
           {quantity === 0 ? (
             <button
               onClick={handleAdd}
               disabled={!is_available}
-              className={cn(
-                'flex w-full items-center justify-center gap-1.5 rounded-xl py-2',
-                'bg-gradient-to-l from-emerald-500 to-teal-500 text-xs font-bold text-white',
-                'transition-all duration-200 hover:brightness-110 active:scale-95',
-                'disabled:cursor-not-allowed disabled:opacity-50',
-                'shadow-sm shadow-emerald-500/20'
-              )}
+              className="w-6 h-6 shrink-0 flex items-center justify-center bg-[#d33a3a] text-white rounded-md shadow-sm active:scale-95 transition-all"
             >
-              <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
-              أضف للسلة
+              <Plus className="w-4 h-4" />
             </button>
           ) : (
-            /* ── Compact counter ── */
-            <div className="flex items-center justify-between rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-0.5">
-              {/* + */}
-              <button
-                onClick={handleIncrease}
-                aria-label="زيادة الكمية"
-                className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 text-white shadow-sm transition-all hover:bg-emerald-600 active:scale-90"
-              >
-                <Plus className="w-3.5 h-3.5" />
-              </button>
-
-              {/* qty */}
-              <span className="flex-1 text-center text-sm font-black text-gray-900 dark:text-white tabular-nums">
-                {quantity}
-              </span>
-
-              {/* − */}
-              <button
-                onClick={handleDecrease}
-                aria-label="تقليل الكمية"
-                className="flex h-8 w-8 items-center justify-center rounded-lg bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 shadow-sm transition-all hover:bg-gray-100 dark:hover:bg-gray-600 active:scale-90"
-              >
-                <Minus className="w-3.5 h-3.5" />
-              </button>
+            <div className="flex items-center gap-1.5 shrink-0 bg-gray-100 dark:bg-gray-800 rounded-md p-0.5">
+              <button onClick={handleDecrease} className="w-5 h-5 flex items-center justify-center bg-white dark:bg-gray-700 rounded text-gray-700 dark:text-gray-200 shadow-sm"><Minus className="w-3 h-3" /></button>
+              <span className="text-xs font-bold w-3 text-center">{quantity}</span>
+              <button onClick={handleIncrease} className="w-5 h-5 flex items-center justify-center bg-[#d33a3a] text-white rounded shadow-sm"><Plus className="w-3 h-3" /></button>
             </div>
           )}
+        </div>
+
+        {/* Stars */}
+        <div className="flex items-center justify-start gap-0.5 mb-1.5" dir="ltr">
+          {[...Array(5)].map((_, i) => (
+            <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+          ))}
+        </div>
+
+        {/* Description */}
+        {description_ar && (
+          <p className="text-[10px] leading-relaxed text-gray-500 dark:text-gray-400 line-clamp-2 mb-2 min-h-[30px]">
+            {description_ar}
+          </p>
+        )}
+
+        {/* Price */}
+        <div className="mt-auto text-left">
+          <span className="text-sm font-black text-[#d33a3a] tabular-nums" dir="rtl">
+            {formatPrice(price)}
+          </span>
         </div>
       </div>
     </div>
