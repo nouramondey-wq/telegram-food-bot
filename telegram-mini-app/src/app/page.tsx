@@ -218,7 +218,7 @@ function MenuPageContent() {
       {/* pb-52 = 208px: enough to scroll last item above both floating btn (~56px) + nav (64px) + gap */}
       <div className="px-4 py-4 pb-52">
         <h2 className="text-lg font-black text-gray-900 dark:text-white mb-4 text-right">
-          الوجبات الشعبية
+          وجبات رايقه ولذيذه
         </h2>
 
         {isLoading ? (

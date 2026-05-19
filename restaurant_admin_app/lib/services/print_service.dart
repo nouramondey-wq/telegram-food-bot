@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:restaurant_admin_app/models/order_model.dart';
 
 /// ESC/POS thermal printer service
@@ -19,6 +20,8 @@ class PrintService {
     _savePrinterConfig(address, port);
   }
 
+  String? get printerAddress => _printerAddress;
+  int get printerPort => _printerPort;
   bool get isConfigured => _printerAddress != null;
 
   /// طباعة فاتورة الطلب
@@ -150,8 +153,34 @@ class PrintService {
         '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
   }
 
-  // حفظ إعدادات الطابعة (في التطبيق الحقيقي تستخدم SharedPreferences)
+  /// حفظ إعدادات الطابعة
   void _savePrinterConfig(String address, int port) {
-    // TODO: Implement SharedPreferences saving
+    _saveToLocal(address, port);
+  }
+
+  /// تحميل الإعدادات المحفوظة
+  Future<void> loadSavedConfig() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedAddress = prefs.getString('printer_address');
+      final savedPort = prefs.getInt('printer_port');
+      if (savedAddress != null) {
+        _printerAddress = savedAddress;
+        _printerPort = savedPort ?? 9100;
+      }
+    } catch (e) {
+      debugPrint('⚠️ فشل تحميل إعدادات الطابعة: $e');
+    }
+  }
+
+  /// حفظ الإعدادات محلياً
+  void _saveToLocal(String address, int port) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('printer_address', address);
+      await prefs.setInt('printer_port', port);
+    } catch (e) {
+      debugPrint('⚠️ فشل حفظ إعدادات الطابعة: $e');
+    }
   }
 }

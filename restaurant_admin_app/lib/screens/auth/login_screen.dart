@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:restaurant_admin_app/config/theme.dart';
 import 'package:restaurant_admin_app/services/auth_service.dart';
-import 'package:restaurant_admin_app/screens/dashboard/dashboard_screen.dart';
+import 'package:restaurant_admin_app/services/notification_service.dart';
+import 'package:restaurant_admin_app/screens/main_shell.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool _obscurePassword = true;
+  StreamSubscription? _authSubscription;
 
   @override
   void initState() {
@@ -25,11 +28,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _checkAuthState() {
-    _authService.authStateChanges.listen((user) {
+    _authSubscription = _authService.authStateChanges.listen((user) {
       if (user != null && mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const DashboardScreen()),
+          MaterialPageRoute(builder: (_) => const MainShell()),
         );
       }
     });
@@ -37,6 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
+    _authSubscription?.cancel();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -53,12 +57,14 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (!mounted) return;
-    setState(() => _isLoading = false);
+    setState(() => _isLoading = false);    if (result.isSuccess) {
+      // تسجيل جهاز الإدارة للإشعارات
+      await NotificationService().registerDevice();
 
-    if (result.isSuccess) {
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const DashboardScreen()),
+        MaterialPageRoute(builder: (_) => const MainShell()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

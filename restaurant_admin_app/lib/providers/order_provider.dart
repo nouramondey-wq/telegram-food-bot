@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:restaurant_admin_app/models/order_model.dart';
 import 'package:restaurant_admin_app/services/firestore_service.dart';
 import 'package:restaurant_admin_app/services/print_service.dart';
@@ -22,6 +21,10 @@ class OrderProvider extends ChangeNotifier {
   String? get error => _error;
 
   StreamSubscription? _ordersSubscription;
+
+  OrderProvider() {
+    startListening();
+  }
 
   /// عدد الطلبات النشطة
   int get activeOrdersCount => _orders.where((o) => o.isActive).length;

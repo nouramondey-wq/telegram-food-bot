@@ -21,6 +21,9 @@ import { setupCallbackHandler } from './bot/handlers/callback_query';
 // API + Webhook Server
 import { startApiServer } from './server';
 
+// Firestore Listener (replaces Firebase Cloud Functions)
+import { FirestoreOrderListener } from './services/firestore_listener';
+
 // ============================================================
 // Production Bot + API Launcher
 // ============================================================
@@ -35,7 +38,11 @@ async function main() {
   initFirebase();
   console.log('✅ Firebase Admin SDK initialized');
 
-  // 3. Initialize bot with all middleware and commands
+  // 3. Start Firestore order listener (replaces Cloud Functions)
+  const orderListener = new FirestoreOrderListener();
+  orderListener.start();
+
+  // 4. Initialize bot with all middleware and commands
   const bot = initBot();
 
   // ============================================================
@@ -179,8 +186,18 @@ async function main() {
     }, 2000);
   };
 
-  process.once('SIGINT', () => shutdown('SIGINT'));
-  process.once('SIGTERM', () => shutdown('SIGTERM'));
+  const shutdownWithCleanup = async (signal: string) => {
+    console.log(`\n🛑 Received ${signal}. Shutting down gracefully...`);
+    orderListener.stop();
+    bot.stop(signal);
+    setTimeout(() => {
+      console.log('👋 Goodbye!');
+      process.exit(0);
+    }, 2000);
+  };
+
+  process.once('SIGINT', () => shutdownWithCleanup('SIGINT'));
+  process.once('SIGTERM', () => shutdownWithCleanup('SIGTERM'));
 }
 
 main().catch((error) => {

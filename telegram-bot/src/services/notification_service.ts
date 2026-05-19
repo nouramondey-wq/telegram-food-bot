@@ -8,6 +8,80 @@ export class NotificationService {
   private db = getFirestore();
 
   /**
+   * Send FCM push notification to all admin devices (Flutter app)
+   * Reads FCM tokens from the admins collection
+   */
+  async sendFCMToAdmins(order: any): Promise<number> {
+    try {
+      const adminsSnap = await this.db.collection('admins').get();
+      const tokens: string[] = [];
+
+      adminsSnap.forEach((doc) => {
+        const data = doc.data();
+        if (data.fcm_tokens && Array.isArray(data.fcm_tokens)) {
+          tokens.push(...data.fcm_tokens.filter((t: string) => typeof t === 'string' && t.length > 0));
+        }
+      });
+
+      const uniqueTokens = [...new Set(tokens)];
+      if (uniqueTokens.length === 0) {
+        console.log('[FCM] No admin FCM tokens found');
+        return 0;
+      }
+
+      console.log(`[FCM] Sending push to ${uniqueTokens.length} admin device(s)`);
+
+      const message = {
+        tokens: uniqueTokens,
+        notification: {
+          title: `📦 طلب جديد #${order.order_number}`,
+          body: `طلب بقيمة ${order.total} ر.س - ${order.items?.length || 0} أصناف`,
+        },
+        data: {
+          type: 'new_order',
+          orderId: order.id || '',
+          orderNumber: `${order.order_number}`,
+          clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        },
+        android: {
+          notification: {
+            sound: 'default',
+            channelId: 'new_orders',
+            priority: 'high' as 'high',
+            tag: `order_${order.order_number}`,
+          },
+        },
+        apns: {
+          payload: {
+            aps: {
+              sound: 'default',
+              badge: 1,
+              'content-available': 1,
+            },
+          },
+        },
+      };
+
+      const response = await admin.messaging().sendEachForMulticast(message);
+      console.log(`[FCM] Sent: ${response.successCount}, Failed: ${response.failureCount}`);
+
+      // Log individual failures for debugging
+      if (response.failureCount > 0) {
+        response.responses.forEach((resp, idx) => {
+          if (!resp.success) {
+            console.warn(`[FCM] Token ${idx} failed: ${resp.error?.message}`);
+          }
+        });
+      }
+
+      return response.successCount;
+    } catch (error) {
+      console.error('[FCM] FCM send error:', error);
+      return 0;
+    }
+  }
+
+  /**
    * Send order confirmation with full receipt
    */
   async sendOrderConfirmed(chatId: string, order: any): Promise<void> {

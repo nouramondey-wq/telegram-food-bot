@@ -19,6 +19,8 @@ const location_1 = require("./bot/commands/location");
 const callback_query_1 = require("./bot/handlers/callback_query");
 // API + Webhook Server
 const server_1 = require("./server");
+// Firestore Listener (replaces Firebase Cloud Functions)
+const firestore_listener_1 = require("./services/firestore_listener");
 // ============================================================
 // Production Bot + API Launcher
 // ============================================================
@@ -30,7 +32,10 @@ async function main() {
     // 2. Initialize Firebase
     (0, firebase_1.initFirebase)();
     console.log('✅ Firebase Admin SDK initialized');
-    // 3. Initialize bot with all middleware and commands
+    // 3. Start Firestore order listener (replaces Cloud Functions)
+    const orderListener = new firestore_listener_1.FirestoreOrderListener();
+    orderListener.start();
+    // 4. Initialize bot with all middleware and commands
     const bot = (0, bot_1.initBot)();
     // ============================================================
     // MIDDLEWARE PIPELINE (ORDER MATTERS)
@@ -146,8 +151,17 @@ async function main() {
             process.exit(0);
         }, 2000);
     };
-    process.once('SIGINT', () => shutdown('SIGINT'));
-    process.once('SIGTERM', () => shutdown('SIGTERM'));
+    const shutdownWithCleanup = async (signal) => {
+        console.log(`\n🛑 Received ${signal}. Shutting down gracefully...`);
+        orderListener.stop();
+        bot.stop(signal);
+        setTimeout(() => {
+            console.log('👋 Goodbye!');
+            process.exit(0);
+        }, 2000);
+    };
+    process.once('SIGINT', () => shutdownWithCleanup('SIGINT'));
+    process.once('SIGTERM', () => shutdownWithCleanup('SIGTERM'));
 }
 main().catch((error) => {
     console.error('❌ Fatal error:', error);

@@ -1,7 +1,11 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_admin_app/config/theme.dart';
+import 'package:restaurant_admin_app/config/firebase_config.dart';
 import 'package:restaurant_admin_app/providers/order_provider.dart';
+import 'package:restaurant_admin_app/services/notification_service.dart';
 import 'package:restaurant_admin_app/widgets/status_badge.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -15,6 +19,39 @@ class DashboardScreen extends StatelessWidget {
           appBar: AppBar(
             title: const Text('لوحة التحكم'),
             actions: [
+              PopupMenuButton(
+                icon: const Icon(Icons.science_outlined),
+                tooltip: 'خيارات الاختبار',
+                onSelected: (value) async {
+                  if (value == 'test_order') {
+                    await _createTestOrder(context);
+                  } else if (value == 'simulate_notification') {
+                    _simulateNotification(context);
+                  }
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'test_order',
+                    child: ListTile(
+                      leading: Icon(Icons.add_shopping_cart, color: AppTheme.primary),
+                      title: Text('إرسال طلب اختبار', style: TextStyle(fontSize: 13)),
+                      subtitle: Text('سينشئ طلباً حقيقياً في Firestore', style: TextStyle(fontSize: 11)),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'simulate_notification',
+                    child: ListTile(
+                      leading: Icon(Icons.notifications_active, color: Colors.orange),
+                      title: Text('محاكاة الإشعار الوارد', style: TextStyle(fontSize: 13)),
+                      subtitle: Text('اختبار الـ SnackBar محلياً', style: TextStyle(fontSize: 11)),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ),
+                ],
+              ),
               IconButton(
                 icon: const Icon(Icons.refresh),
                 onPressed: provider.refresh,
@@ -285,6 +322,117 @@ class DashboardScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // ============================================================
+  // 🧪 إنشاء طلب اختبار حقيقي في Firestore
+  // ============================================================
+  Future<void> _createTestOrder(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      const SnackBar(
+        content: Text('🧪 جاري إنشاء طلب اختبار...'),
+        backgroundColor: AppTheme.info,
+      ),
+    );
+
+    try {
+      final orderNumber = Random().nextInt(9000) + 1000;
+      final db = FirebaseConfig.instance.firestore;
+
+      final testOrder = {
+        'order_number': orderNumber,
+        'status': 'pending',
+        'customer': {
+          'name': 'عميل اختبار 👤',
+          'telegram_id': 'test_user_123',
+          'phone': '0500000000',
+        },
+        'items': [
+          {
+            'menu_item_id': 'test_item_1',
+            'name_ar': 'برجر كلاسيك 🍔',
+            'quantity': 2,
+            'unit_price': 35.0,
+            'item_total': 70.0,
+            'addons': [{'name_ar': 'جبنة إضافية', 'price': 3.0}],
+          },
+          {
+            'menu_item_id': 'test_item_2',
+            'name_ar': 'بطاطس مقلية 🍟',
+            'quantity': 1,
+            'unit_price': 10.0,
+            'item_total': 10.0,
+          },
+        ],
+        'total': 83.0,
+        'payment': {
+          'method': 'cash',
+          'status': 'pending',
+        },
+        'notes': '🧪 طلب اختبار - تم إنشاؤه من لوحة التحكم',
+        'source': 'admin_test',
+        'status_timeline': {
+          'pending': FieldValue.serverTimestamp(),
+        },
+        'created_at': FieldValue.serverTimestamp(),
+        'updated_at': FieldValue.serverTimestamp(),
+      };
+
+      await db.collection('orders').add(testOrder);
+
+      if (!context.mounted) return;
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('✅ تم إنشاء طلب اختبار #$orderNumber بنجاح! سيتم إرسال إشعار FCM (إذا كانت Cloud Functions منشورة)'),
+          backgroundColor: AppTheme.success,
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('❌ فشل إنشاء الطلب: $e'),
+          backgroundColor: AppTheme.error,
+        ),
+      );
+    }
+  }
+
+  // ============================================================
+  // 🧪 محاكاة الإشعار الوارد (اختبار الـ UI محلياً)
+  // ============================================================
+  void _simulateNotification(BuildContext context) {
+    final orderId = 'test_${DateTime.now().millisecondsSinceEpoch}';
+    final orderNumber = '${Random().nextInt(9000) + 1000}';
+
+    // محاولة محاكاة الإشعار عبر الـ callback العام
+    final simulated = NotificationService.simulateForegroundNotification(
+      title: '🧪 إشعار اختبار',
+      body: 'طلب تجريبي #$orderNumber بقيمة 83.00 ر.س',
+      orderId: orderId,
+      orderNumber: orderNumber,
+    );
+
+    if (simulated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('✅ تم محاكاة الإشعار بنجاح'),
+          backgroundColor: AppTheme.success,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('⚠️ لم يتم تهيئة الـ NotificationService بعد. سجل الدخول أولاً.'),
+          backgroundColor: AppTheme.warning,
+        ),
+      );
+    }
   }
 
   Widget _buildStatusPie(BuildContext context, OrderProvider provider) {

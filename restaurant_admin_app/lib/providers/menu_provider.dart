@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:restaurant_admin_app/models/menu_item_model.dart';
 import 'package:restaurant_admin_app/services/firestore_service.dart';
 
@@ -22,6 +21,10 @@ class MenuProvider extends ChangeNotifier {
   StreamSubscription? _itemsSubscription;
   StreamSubscription? _categoriesSubscription;
   int _receivedSnapshots = 0;
+
+  MenuProvider() {
+    startListening();
+  }
 
   /// بدء الاستماع للتغييرات
   void startListening() {

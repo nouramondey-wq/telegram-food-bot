@@ -1,6 +1,11 @@
 export declare class NotificationService {
     private db;
     /**
+     * Send FCM push notification to all admin devices (Flutter app)
+     * Reads FCM tokens from the admins collection
+     */
+    sendFCMToAdmins(order: any): Promise<number>;
+    /**
      * Send order confirmation with full receipt
      */
     sendOrderConfirmed(chatId: string, order: any): Promise<void>;

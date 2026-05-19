@@ -16,14 +16,6 @@ class _OrdersQueueScreenState extends State<OrdersQueueScreen> {
   String _selectedFilter = 'all';
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<OrderProvider>().startListening();
-    });
-  }
-
-  @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();

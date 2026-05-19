@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:restaurant_admin_app/config/theme.dart';
 import 'package:restaurant_admin_app/models/order_model.dart';
 import 'package:restaurant_admin_app/providers/order_provider.dart';
+import 'package:restaurant_admin_app/services/print_service.dart';
 import 'package:restaurant_admin_app/widgets/status_badge.dart';
 
 class OrderDetailScreen extends StatefulWidget {
@@ -88,7 +89,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     _buildInfoRow('الإجمالي', '${order.total.toStringAsFixed(2)} ر.س',
                         isBold: true, color: AppTheme.primary),
                     const Divider(),
-                    _buildInfoRow('طريقة الدفع', 'نقداً'),
+                    _buildInfoRow('طريقة الدفع', order.payment['method'] == 'cash' ? 'نقداً' : order.payment['method'] ?? 'نقداً'),
                   ],
                 ),
               ),
@@ -460,14 +461,16 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   Future<void> _printOrder(OrderModel order, OrderProvider provider) async {
     setState(() => _isPrinting = true);
     
-    // طباعة عبر الـ Print Service
-    await Future.delayed(const Duration(seconds: 1));
+    final success = await PrintService().printOrder(order);
     
     if (!mounted) return;
     setState(() => _isPrinting = false);
     
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('🖨️ تم إرسال الفاتورة للطباعة')),
+      SnackBar(
+        content: Text(success ? '🖨️ تم إرسال الفاتورة للطباعة' : '❌ فشلت الطباعة - تحقق من إعدادات الطابعة'),
+        backgroundColor: success ? AppTheme.success : AppTheme.error,
+      ),
     );
   }
 }
