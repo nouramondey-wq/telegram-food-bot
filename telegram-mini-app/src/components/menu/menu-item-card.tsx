@@ -62,15 +62,12 @@ export function MenuItemCard({
     <div
       dir="rtl"
       className={cn(
-        'flex flex-col h-full bg-white dark:bg-gray-900',
-        'rounded-3xl border border-gray-100/70 dark:border-gray-800/70',
-        'shadow-[0_4px_16px_rgba(0,0,0,0.03)] m-0.5', // أضفنا مسافة امان ميكروسكوبية لظهور الكارت منفرداً
-        'transition-all duration-200 hover:shadow-[0_6px_20px_rgba(0,0,0,0.05)]',
+        'bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100/50 dark:border-gray-700/30 overflow-hidden flex flex-col justify-between h-full transition-all duration-200',
         !is_available && 'opacity-60 grayscale'
       )}
     >
       {/* ── Image ── */}
-      <div className="relative w-full aspect-[4/3] bg-gray-50 dark:bg-gray-800 rounded-t-3xl overflow-hidden shrink-0">
+      <div className="relative w-full aspect-[4/3] bg-gray-50 dark:bg-gray-800 overflow-hidden shrink-0">
         {image_url && !imageError ? (
           <Image
             src={image_url}
@@ -89,34 +86,32 @@ export function MenuItemCard({
             <UtensilsCrossed className="w-8 h-8 text-gray-300 dark:text-gray-600" />
           </div>
         )}
-      </div>
 
-      {/* ── Content ── */}
-      <div className="flex flex-col flex-1 p-3 pt-2 text-right">
-        {/* Title & Action Button Row */}
-        <div className="flex items-center justify-between gap-1 mb-1">
-          {/* الاسم هنا تم تغليظه إلى font-black وتصغير حجمه متناسق للعمودين */}
-          <h3 className="text-[14px] font-black text-gray-900 dark:text-white leading-tight flex-1 line-clamp-1">
-            {name_ar}
-          </h3>
-
-          {/* Action Button - تم تصغيره وتنسيقه بالملي ليناسب واجهة الموبايل المزدوجة */}
+        {/* Floating Action Button */}
+        <div className="absolute bottom-2 left-2 z-10 flex items-center gap-1 bg-white/95 dark:bg-gray-800/95 shadow-md rounded-full p-1 border border-gray-100 dark:border-gray-700">
           {quantity === 0 ? (
             <button
               onClick={handleAdd}
               disabled={!is_available}
-              className="w-6 h-6 shrink-0 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm hover:bg-[#dc2626] active:scale-90 transition-all outline-none"
+              className="w-7 h-7 rounded-full flex items-center justify-center bg-[#ef4444] text-white shadow-sm hover:bg-[#dc2626] active:scale-90 transition-all outline-none"
             >
-              <Plus className="w-3.5 h-3.5 stroke-[3.5]" />
+              <Plus className="w-4 h-4 stroke-[3]" />
             </button>
           ) : (
-            <div className="flex items-center gap-1 shrink-0 bg-gray-50 dark:bg-gray-800 rounded-full p-0.5 border border-gray-100/80 dark:border-gray-700 shadow-sm animate-scale-in">
-              <button onClick={handleDecrease} className="w-5 h-5 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-xs outline-none"><Minus className="w-2.5 h-2.5 stroke-[2.5]" /></button>
-              <span className="text-xs font-black w-3.5 text-center text-gray-900 dark:text-white tabular-nums">{quantity}</span>
-              <button onClick={handleIncrease} className="w-5 h-5 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-xs outline-none"><Plus className="w-2.5 h-2.5 stroke-[3.5]" /></button>
-            </div>
+            <>
+              <button onClick={handleDecrease} className="w-6 h-6 rounded-full flex items-center justify-center bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 shadow-sm border border-gray-100 dark:border-gray-600 outline-none"><Minus className="w-3 h-3 stroke-[2.5]" /></button>
+              <span className="text-xs font-extrabold w-4 text-center text-gray-900 dark:text-white tabular-nums">{quantity}</span>
+              <button onClick={handleIncrease} className="w-6 h-6 rounded-full flex items-center justify-center bg-[#ef4444] text-white shadow-sm outline-none"><Plus className="w-3 h-3 stroke-[3]" /></button>
+            </>
           )}
         </div>
+      </div>
+
+      {/* ── Content ── */}
+      <div className="flex flex-col flex-1 p-4 text-right">
+        <h3 className="font-extrabold text-sm text-gray-900 dark:text-gray-100 leading-snug tracking-tight block mb-1">
+          {name_ar}
+        </h3>
 
         {/* Stars */}
         <div className="flex items-center justify-start gap-0.5 mb-1">

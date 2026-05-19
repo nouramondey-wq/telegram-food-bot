@@ -182,7 +182,7 @@ function MenuPageContent() {
           </div>
         ) : (
           /* شبكة المنيو المزدوجة بتباعد احترافي وفخم جداً */
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-5">
             {filteredItems.map((item, idx) => (
               <div
                 key={item.id}
