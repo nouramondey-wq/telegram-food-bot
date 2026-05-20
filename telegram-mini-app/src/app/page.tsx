@@ -222,15 +222,17 @@ function MenuPageContent() {
         </h2>
 
         {isLoading ? (
-          /* Skeleton loading — grid */
-          <div className="grid grid-cols-2 gap-4">
+          /* Skeleton loading — flex */
+          <div className="flex flex-wrap -mx-2">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="flex flex-col rounded-2xl overflow-hidden bg-white shadow-sm h-[200px]">
-                <div className="skeleton w-full h-[110px]" />
-                <div className="flex-1 p-2 space-y-2">
-                  <div className="skeleton h-4 w-3/4" />
-                  <div className="skeleton h-3 w-1/2" />
-                  <div className="skeleton h-4 w-1/3 mt-2" />
+              <div key={i} className="w-1/2 px-2 mb-4">
+                <div className="flex flex-col rounded-2xl overflow-hidden bg-white shadow-sm h-[200px] w-full">
+                  <div className="skeleton w-full h-[110px]" />
+                  <div className="flex-1 p-2 space-y-2">
+                    <div className="skeleton h-4 w-3/4" />
+                    <div className="skeleton h-3 w-1/2" />
+                    <div className="skeleton h-4 w-1/3 mt-2" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -247,23 +249,25 @@ function MenuPageContent() {
             </p>
           </div>
         ) : (
-          /* قائمة المواد — شبكة بعمودين */
-          <div className="grid grid-cols-2 gap-4">
+          /* قائمة المواد — باستخدام Flexbox لضمان توافق المسافات على كل المتصفحات */
+          <div className="flex flex-wrap -mx-2">
             {filteredItems.map((item, idx) => (
               <div
                 key={item.id}
-                className="animate-fade-in-up h-full"
+                className="w-1/2 px-2 mb-4 flex animate-fade-in-up"
                 style={{ animationDelay: `${(idx % 8) * 0.035}s` }}
               >
-                <MenuItemCard
-                  id={item.id}
-                  name_ar={item.name_ar}
-                  description_ar={item.description_ar}
-                  price={item.price}
-                  image_url={item.image_url}
-                  is_available={item.is_available}
-                  addons={item.addons}
-                />
+                <div className="w-full flex flex-col h-full">
+                  <MenuItemCard
+                    id={item.id}
+                    name_ar={item.name_ar}
+                    description_ar={item.description_ar}
+                    price={item.price}
+                    image_url={item.image_url}
+                    is_available={item.is_available}
+                    addons={item.addons}
+                  />
+                </div>
               </div>
             ))}
           </div>
