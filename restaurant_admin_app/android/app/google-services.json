@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "255266167372",
+    "project_id": "my-restaurant-app-de879",
+    "storage_bucket": "my-restaurant-app-de879.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255266167372:android:5da4082a4c8ee4daef32e9",
+        "android_client_info": {
+          "package_name": "com.example.restaurant_admin_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "255266167372-tgflsjiafe4mrfsbfbkkceoc579lb8e8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSkcwXz4u059zbV9NuGOQloppydaV83CA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "255266167372-tgflsjiafe4mrfsbfbkkceoc579lb8e8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
