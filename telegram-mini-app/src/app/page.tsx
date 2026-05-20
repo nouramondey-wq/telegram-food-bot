@@ -319,7 +319,7 @@ function FloatingCheckoutButton() {
               </span>
             </div>
             <div className="text-right">
-              <p className="text-sm font-bold">أضف إلى السلة</p>
+              <p className="text-sm font-bold">أضف إلى سله البيع</p>
               <p className="text-[11px] text-white/80 font-medium tabular-nums">{totalItems} صنف</p>
             </div>
           </div>
