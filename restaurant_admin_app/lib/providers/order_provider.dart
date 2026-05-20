@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:restaurant_admin_app/models/order_model.dart';
 import 'package:restaurant_admin_app/services/firestore_service.dart';
 import 'package:restaurant_admin_app/services/print_service.dart';
+import 'package:restaurant_admin_app/services/sound_service.dart';
 
 class OrderProvider extends ChangeNotifier {
   final FirestoreService _firestore = FirestoreService();
@@ -21,6 +23,10 @@ class OrderProvider extends ChangeNotifier {
   String? get error => _error;
 
   StreamSubscription? _ordersSubscription;
+
+  /// هل استلمنا أول snapshot (لتحميل الطلبات الموجودة)؟
+  /// نستخدمها لمنع تشغيل الصوت على الطلبات الموجودة عند أول تحميل
+  bool _initialSnapshotReceived = false;
 
   OrderProvider() {
     startListening();
@@ -51,10 +57,25 @@ class OrderProvider extends ChangeNotifier {
   void startListening() {
     _ordersSubscription?.cancel();
     _isLoading = true;
+    _initialSnapshotReceived = false;
     notifyListeners();
 
     _ordersSubscription = _firestore.listenOrders().listen(
       (snapshot) {
+        // ───── كشف الطلبات الجديدة (added) وتشغيل الصوت ─────
+        if (_initialSnapshotReceived) {
+          for (final change in snapshot.docChanges) {
+            if (change.type == DocumentChangeType.added) {
+              final newOrder = OrderModel.fromFirestore(change.doc);
+              if (newOrder.status == 'pending') {
+                debugPrint('🔔 New pending order detected: #${newOrder.orderNumber}');
+                SoundService().playNotificationSound();
+              }
+            }
+          }
+        }
+        _initialSnapshotReceived = true;
+
         _orders = snapshot.docs
             .map((doc) => OrderModel.fromFirestore(doc))
             .toList();
