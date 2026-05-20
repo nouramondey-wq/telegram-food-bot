@@ -62,7 +62,7 @@ export function MenuItemCard({
     <div
       dir="rtl"
       className={cn(
-        'flex flex-row h-[120px] w-full bg-white dark:bg-gray-900',
+        'flex flex-row h-[124px] w-full bg-white dark:bg-gray-900',
         'rounded-2xl border border-gray-100/80 dark:border-gray-800/80',
         'shadow-[0_1px_6px_rgba(0,0,0,0.04)]',
         'transition-all duration-200 hover:shadow-[0_4px_16px_rgba(0,0,0,0.07)]',
@@ -96,7 +96,7 @@ export function MenuItemCard({
       </div>
 
       {/* ── Content (left side for RTL) ── */}
-      <div className="flex flex-col flex-1 min-w-0 px-3.5 py-3 justify-between">
+      <div className="flex flex-col flex-1 min-w-0 px-4 py-3 justify-between">
         {/* Top: Name + Price Row */}
         <div className="flex items-start justify-between gap-2">
           {/* Name */}
@@ -104,8 +104,8 @@ export function MenuItemCard({
             {name_ar}
           </h3>
 
-          {/* Price badge */}
-          <span className="text-sm font-black text-[#ef4444] tabular-nums tracking-tight whitespace-nowrap shrink-0">
+          {/* Price badge — with extra left margin so it doesn't stick to edge */}
+          <span className="text-sm font-black text-[#ef4444] tabular-nums tracking-tight whitespace-nowrap shrink-0 ml-0.5">
             {formatPrice(price)}
           </span>
         </div>
@@ -139,16 +139,15 @@ export function MenuItemCard({
             <button
               onClick={handleAdd}
               disabled={!is_available}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#ef4444] text-white rounded-full text-xs font-bold shadow-sm hover:bg-[#dc2626] active:scale-90 transition-all outline-none"
+              className="w-[30px] h-[30px] flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm hover:bg-[#dc2626] hover:shadow-md active:scale-90 transition-all outline-none"
             >
-              <Plus className="w-3.5 h-3.5 stroke-[3]" />
-              <span>أضف</span>
+              <Plus className="w-[18px] h-[18px] stroke-[3]" />
             </button>
           ) : (
-            <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-full px-2 py-1 border border-gray-100 dark:border-gray-700 shadow-sm">
+            <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-full px-1.5 py-1 border border-gray-100 dark:border-gray-700 shadow-sm">
               <button
                 onClick={handleDecrease}
-                className="w-7 h-7 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none active:scale-90 transition-all"
+                className="w-[28px] h-[28px] flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none active:scale-90 transition-all"
               >
                 <Minus className="w-3.5 h-3.5" />
               </button>
@@ -157,7 +156,7 @@ export function MenuItemCard({
               </span>
               <button
                 onClick={handleIncrease}
-                className="w-7 h-7 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm outline-none active:scale-90 transition-all"
+                className="w-[28px] h-[28px] flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm outline-none active:scale-90 transition-all"
               >
                 <Plus className="w-3.5 h-3.5 stroke-[3]" />
               </button>

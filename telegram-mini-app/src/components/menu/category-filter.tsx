@@ -56,7 +56,7 @@ function getCategoryTheme(name: string): CategoryTheme {
   }
 
   // Default
-  return { emoji: '🍽️', bg: 'bg-gray-50 dark:bg-gray-800/50', selectedBg: 'bg-gray-100 dark:bg-gray-700/50', border: 'border-gray-300/60 dark:border-gray-600/60' };
+  return { emoji: '🍽️', bg: 'bg-gray-50 dark:bg-gray-800/50', selectedBg: 'bg-gray-200 dark:bg-gray-700', border: 'border-gray-300/60 dark:border-gray-600/60' };
 }
 
 export function CategoryFilter({
@@ -91,7 +91,7 @@ export function CategoryFilter({
   const allTheme: CategoryTheme = {
     emoji: '✨',
     bg: 'bg-gray-50 dark:bg-gray-800/50',
-    selectedBg: 'bg-emerald-50 dark:bg-emerald-950/30',
+    selectedBg: 'bg-emerald-100 dark:bg-emerald-900/60',
     border: 'border-emerald-300/60 dark:border-emerald-600/60',
   };
 
@@ -109,17 +109,17 @@ export function CategoryFilter({
         >
           <div
             className={cn(
-              'flex h-[62px] w-[62px] items-center justify-center rounded-full transition-all duration-300 ease-out',
+              'flex h-[60px] w-[60px] items-center justify-center rounded-full transition-all duration-300 ease-out',
               selectedId === null
-                ? `${allTheme.selectedBg} border-2 scale-105 shadow-sm ${allTheme.border}`
-                : `${allTheme.bg} border-2 border-transparent`
+                ? `${allTheme.selectedBg} scale-110 shadow-sm`
+                : `${allTheme.bg} hover:scale-105`
             )}
           >
-            <span className="text-2xl drop-shadow-sm">{allTheme.emoji}</span>
+            <span className="text-2xl">{allTheme.emoji}</span>
           </div>
           <span className={cn(
-            'text-[11px] whitespace-nowrap transition-colors font-medium',
-            selectedId === null ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'
+            'text-[11px] whitespace-nowrap transition-colors',
+            selectedId === null ? 'font-bold text-gray-900 dark:text-white' : 'font-medium text-gray-500 dark:text-gray-400'
           )}>
             الكل
           </span>
@@ -139,17 +139,17 @@ export function CategoryFilter({
             >
               <div
                 className={cn(
-                  'flex h-[62px] w-[62px] items-center justify-center rounded-full transition-all duration-300 ease-out',
+                  'flex h-[60px] w-[60px] items-center justify-center rounded-full transition-all duration-300 ease-out',
                   isSelected
-                    ? `${theme.selectedBg} border-2 scale-105 shadow-sm ${theme.border}`
-                    : `${theme.bg} border-2 border-transparent hover:scale-105`
+                    ? `${theme.selectedBg} scale-110 shadow-sm`
+                    : `${theme.bg} hover:scale-105`
                 )}
               >
-                <span className="text-2xl drop-shadow-sm">{theme.emoji}</span>
+                <span className="text-2xl">{theme.emoji}</span>
               </div>
               <span className={cn(
-                'text-[11px] whitespace-nowrap transition-colors font-medium',
-                isSelected ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'
+                'text-[11px] whitespace-nowrap transition-colors',
+                isSelected ? 'font-bold text-gray-900 dark:text-white' : 'font-medium text-gray-500 dark:text-gray-400'
               )}>
                 {cat.name_ar}
               </span>
