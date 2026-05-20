@@ -87,16 +87,18 @@ export function CategoryFilter({
         <button
           data-cat-id="__all"
           onClick={() => handleSelect(null)}
-          className="group relative flex-shrink-0 flex flex-col items-center justify-center transition-all duration-300 ease-out outline-none px-3 py-2"
+          className={cn(
+            'group relative flex-shrink-0 flex flex-col items-center justify-center transition-all duration-300 ease-out outline-none px-3 py-2',
+            selectedId === null
+              ? 'bg-white dark:bg-gray-800 shadow-md scale-[1.03]'
+              : 'bg-gray-50/70 dark:bg-gray-800/60'
+          )}
           style={{
-            minWidth: '88px',
             borderRadius: '22px',
+            minWidth: '88px',
           }}
         >
-          <div className="relative flex h-16 w-16 items-center justify-center">
-            {selectedId === null && (
-              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-blue-500 dark:bg-blue-400" />
-            )}
+          <div className="flex h-16 w-16 items-center justify-center">
             <span className="text-3xl drop-shadow-sm">✨</span>
           </div>
 
@@ -121,15 +123,18 @@ export function CategoryFilter({
               key={cat.id}
               data-cat-id={cat.id}
               onClick={() => handleSelect(cat.id)}
-              className="group relative flex-shrink-0 flex flex-col items-center justify-center transition-all duration-300 ease-out outline-none px-3 py-2"
+              className={cn(
+                'group relative flex-shrink-0 flex flex-col items-center justify-center transition-all duration-300 ease-out outline-none px-3 py-2',
+                isSelected
+                  ? 'bg-white dark:bg-gray-800 shadow-md scale-[1.03]'
+                  : 'bg-gray-50/70 dark:bg-gray-800/60'
+              )}
               style={{
+                borderRadius: '22px',
                 minWidth: '88px',
               }}
             >
-              <div className="relative flex h-16 w-16 items-center justify-center">
-                {isSelected && (
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-8 h-1 rounded-full bg-blue-500 dark:bg-blue-400" />
-                )}
+              <div className="flex h-16 w-16 items-center justify-center">
                 {getCategoryIcon(cat.name_ar)}
               </div>
 
