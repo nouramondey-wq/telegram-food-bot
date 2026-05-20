@@ -70,7 +70,7 @@ export function MenuItemCard({
       )}
     >
       {/* ── Image ── */}
-      <div className="relative w-full aspect-[4/3] bg-gray-50 dark:bg-gray-800 rounded-t-3xl overflow-hidden shrink-0">
+      <div className="relative w-full aspect-[4/3] bg-gray-50 dark:bg-gray-800 rounded-t-2xl overflow-hidden shrink-0">
         {image_url && !imageError ? (
           <Image
             src={image_url}
@@ -92,10 +92,12 @@ export function MenuItemCard({
       </div>
 
       {/* ── Content ── */}
-      <div className="flex flex-col flex-1 p-4 text-right">
+      {/* تم تغيير البادنج الجانبي إلى px-3 لإبعاد العناصر تمامًا عن حافة خطوط الـ Grid */}
+      <div className="flex flex-col flex-1 pt-3 pb-4 px-3 text-right">
         {/* Title & Action Button Row */}
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <h3 className="text-[15px] font-bold text-gray-900 dark:text-white leading-tight flex-1">
+        <div className="flex items-start justify-between gap-2 mb-1.5">
+          {/* تم ضبط حجم الخط إلى text-[14px] مع حماية ضد فيضان النصوص min-w-0 */}
+          <h3 className="text-[14px] font-bold text-gray-900 dark:text-white leading-tight flex-1 min-w-0 break-words">
             {name_ar}
           </h3>
           
@@ -109,10 +111,11 @@ export function MenuItemCard({
               <Plus className="w-4 h-4 stroke-[3]" />
             </button>
           ) : (
-            <div className="flex items-center gap-1.5 shrink-0 bg-gray-50 dark:bg-gray-800 rounded-full p-1 border border-gray-100 dark:border-gray-700 shadow-sm">
-              <button onClick={handleDecrease} className="w-6 h-6 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none"><Minus className="w-3.5 h-3.5" /></button>
-              <span className="text-sm font-bold w-4 text-center">{quantity}</span>
-              <button onClick={handleIncrease} className="w-6 h-6 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm outline-none"><Plus className="w-3.5 h-3.5 stroke-[3]" /></button>
+            /* تم تحسين أبعاد العداد الداخلي ليكون أصغر حجمًا (w-5 h-5) لكي لا يتداخل أو يغطي على الحروف */
+            <div className="flex items-center gap-1 shrink-0 bg-gray-50 dark:bg-gray-800 rounded-full p-0.5 border border-gray-100 dark:border-gray-700 shadow-sm">
+              <button onClick={handleDecrease} className="w-5 h-5 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none"><Minus className="w-3 h-3" /></button>
+              <span className="text-xs font-bold w-4 text-center tabular-nums">{quantity}</span>
+              <button onClick={handleIncrease} className="w-5 h-5 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm outline-none"><Plus className="w-3 h-3 stroke-[3]" /></button>
             </div>
           )}
         </div>
@@ -133,7 +136,7 @@ export function MenuItemCard({
 
         {/* Price */}
         <div className="mt-auto text-right">
-          <span className="text-[15px] font-black text-[#ef4444] tabular-nums tracking-tight">
+          <span className="text-[14px] font-black text-[#ef4444] tabular-nums tracking-tight">
             {formatPrice(price)}
           </span>
         </div>
