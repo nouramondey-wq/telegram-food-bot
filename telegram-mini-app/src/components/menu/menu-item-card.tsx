@@ -65,7 +65,7 @@ export function MenuItemCard({
         'flex flex-col h-full bg-white dark:bg-gray-900',
         'rounded-2xl border border-gray-100 dark:border-gray-800',
         'shadow-[0_2px_12px_rgba(0,0,0,0.04)]',
-        'transition-all duration-200',
+        'transition-all duration-200 overflow-hidden',
         !is_available && 'opacity-60 grayscale'
       )}
     >
@@ -92,11 +92,11 @@ export function MenuItemCard({
       </div>
 
       {/* ── Content ── */}
-      {/* تم تغيير البادنج الجانبي إلى px-3 لإبعاد العناصر تمامًا عن حافة خطوط الـ Grid */}
-      <div className="flex flex-col flex-1 pt-3 pb-4 px-3 text-right">
+      {/* Added px-4 for safe inner padding to prevent text/buttons from touching the border */}
+      <div className="flex flex-col flex-1 pt-3 pb-4 px-4 text-right">
         {/* Title & Action Button Row */}
-        <div className="flex items-start justify-between gap-2 mb-1.5">
-          {/* تم ضبط حجم الخط إلى text-[14px] مع حماية ضد فيضان النصوص min-w-0 */}
+        <div className="flex items-start justify-between gap-3 mb-1.5 w-full">
+          {/* min-w-0 and pr-1 to ensure text does not overflow or touch the counter */}
           <h3 className="text-[14px] font-bold text-gray-900 dark:text-white leading-tight flex-1 min-w-0 break-words">
             {name_ar}
           </h3>
@@ -111,10 +111,10 @@ export function MenuItemCard({
               <Plus className="w-4 h-4 stroke-[3]" />
             </button>
           ) : (
-            /* تم تحسين أبعاد العداد الداخلي ليكون أصغر حجمًا (w-5 h-5) لكي لا يتداخل أو يغطي على الحروف */
-            <div className="flex items-center gap-1 shrink-0 bg-gray-50 dark:bg-gray-800 rounded-full p-0.5 border border-gray-100 dark:border-gray-700 shadow-sm">
+            /* Compressed counter width to avoid overlapping long product names */
+            <div className="flex items-center gap-0.5 shrink-0 bg-gray-50 dark:bg-gray-800 rounded-full p-0.5 border border-gray-100 dark:border-gray-700 shadow-sm max-w-fit">
               <button onClick={handleDecrease} className="w-5 h-5 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none"><Minus className="w-3 h-3" /></button>
-              <span className="text-xs font-bold w-4 text-center tabular-nums">{quantity}</span>
+              <span className="text-[11px] font-bold min-w-[14px] text-center tabular-nums">{quantity}</span>
               <button onClick={handleIncrease} className="w-5 h-5 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm outline-none"><Plus className="w-3 h-3 stroke-[3]" /></button>
             </div>
           )}
