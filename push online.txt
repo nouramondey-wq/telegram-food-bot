@@ -5,7 +5,7 @@ npm run build && npx firebase deploy --only hosting
 
 cd ..
 git add .
-git commit -m "Fix RTL layout bugs, text clipping, and bottom nav overlap via Antigravity"
+git commit -m "after send telegram request fix menu after"
 git push origin main
 
 

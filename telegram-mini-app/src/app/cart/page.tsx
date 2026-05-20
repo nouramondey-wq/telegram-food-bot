@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 import { Card, CardContent } from '@/components/ui/card';
-import { useCartStore } from '@/stores/cart-store';
+import { useCartStore, CartItem } from '@/stores/cart-store';
 import { formatPrice, cn } from '@/lib/utils';
 import { hapticFeedback, hapticNotification } from '@/lib/telegram';
 import { createOrder } from '@/hooks/use-orders';
@@ -41,12 +41,20 @@ export default function CartPage() {
   const [orderNumber, setOrderNumber] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // نسخة احتياطية من الأصناف والإجمالي لعرضها في شاشة النجاح بعد تفريغ السلة
+  const [orderSnapshot, setOrderSnapshot] = useState<CartItem[] | null>(null);
+  const [orderTotal, setOrderTotal] = useState<number>(0);
+
   const handleCheckout = async () => {
     if (items.length === 0) return;
 
     hapticFeedback('medium');
     setIsCheckingOut(true);
     setError(null);
+
+    // ─── حفظ نسخة من الأصناف والإجمالي قبل clearCart (اللي بتتنفذ داخل createOrder) ───
+    setOrderSnapshot(items);
+    setOrderTotal(total());
 
     const result = await createOrder();
 
@@ -85,24 +93,25 @@ export default function CartPage() {
             #{orderNumber}
           </div>
 
-          <Card className="mb-6 text-right border border-gray-100 dark:border-gray-800 shadow-sm">
-            <CardContent className="p-4 space-y-2">
-              {items.map((item) => (
-                <div key={item.menu_item_id} className="flex justify-between items-start text-sm gap-3">
-                  <span className="text-gray-600 dark:text-gray-400 tabular-nums font-medium shrink-0">
+          <Card className="mb-6 text-right border border-gray-200/70 dark:border-gray-700/60 shadow-sm w-full overflow-hidden">
+            <CardContent className="px-5 py-4 space-y-3">
+              {(orderSnapshot || items).map((item) => (
+                <div key={item.menu_item_id} className="flex justify-between items-start text-sm gap-4">
+                  <span className="text-gray-600 dark:text-gray-400 tabular-nums font-semibold shrink-0 whitespace-nowrap">
                     {formatPrice(item.item_total)}
                   </span>
-                  <span className="text-right text-gray-900 dark:text-white">
-                    {item.name_ar} × {item.quantity}
+                  <span className="text-right text-gray-900 dark:text-white font-medium leading-snug">
+                    {item.name_ar}
+                    <span className="text-gray-500 dark:text-gray-500 font-normal"> × {item.quantity}</span>
                   </span>
                 </div>
               ))}
-              <div className="border-t border-dashed pt-2 mt-2 dark:border-gray-700">
-                <div className="flex justify-between items-center font-bold">
-                  <span className="text-emerald-700 dark:text-emerald-400 tabular-nums">
-                    {formatPrice(total())}
+              <div className="border-t border-dashed border-gray-300/60 dark:border-gray-600/50 pt-3 mt-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-lg font-black text-emerald-700 dark:text-emerald-400 tabular-nums">
+                    {formatPrice(orderTotal)}
                   </span>
-                  <span className="text-gray-900 dark:text-white">الإجمالي</span>
+                  <span className="text-base font-black text-gray-900 dark:text-white">الإجمالي</span>
                 </div>
               </div>
             </CardContent>

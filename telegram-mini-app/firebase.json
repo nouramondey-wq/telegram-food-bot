@@ -6,28 +6,24 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
+    "cleanUrls": true,
+    "trailingSlash": true,
     "headers": [
       {
-        "source": "**/*.@(js|css)",
+        "source": "/**",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "public, max-age=31536000, immutable"
+            "value": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
           }
         ]
       },
       {
-        "source": "**/*.@(html|json)",
+        "source": "**/*.@(js|css|html|json)",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "public, max-age=0, must-revalidate"
+            "value": "no-store, no-cache, must-revalidate, max-age=0"
           }
         ]
       },
@@ -36,7 +32,7 @@
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "public, max-age=31536000, immutable"
+            "value": "public, max-age=86400"
           }
         ]
       }
