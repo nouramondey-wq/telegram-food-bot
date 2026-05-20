@@ -26,59 +26,81 @@ export function MenuItemCard({
   price,
   image_url,
   is_available,
-  addons,
 }: MenuItemProps) {
   const cartItem = useCartStore((s) => s.items.find((i) => i.menu_item_id === id));
-  const addItem     = useCartStore((s) => s.addItem);
-  const removeItem  = useCartStore((s) => s.removeItem);
+  const addItem = useCartStore((s) => s.addItem);
+  const removeItem = useCartStore((s) => s.removeItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
 
-  const [quantity, setQuantity]       = useState(cartItem?.quantity || 0);
+  const [quantity, setQuantity] = useState(cartItem?.quantity || 0);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError]   = useState(false);
+  const [imageError, setImageError] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => { setQuantity(cartItem?.quantity || 0); }, [cartItem?.quantity]);
+  useEffect(() => {
+    setQuantity(cartItem?.quantity || 0);
+  }, [cartItem?.quantity]);
 
   const handleAdd = () => {
     if (!is_available) return;
     hapticFeedback('light');
     setQuantity(1);
-    addItem({ menu_item_id: id, name_ar, image_url, quantity: 1, unit_price: price, addons: [], notes: '' });
-    toast({ title: 'تمت إضافة المنتج', description: `${name_ar} تمت إضافته إلى السلة`, variant: 'success' });
+    addItem({
+      menu_item_id: id,
+      name_ar,
+      image_url,
+      quantity: 1,
+      unit_price: price,
+      addons: [],
+      notes: '',
+    });
+    toast({
+      title: 'تمت إضافة المنتج',
+      description: `${name_ar} تمت إضافته إلى السلة`,
+      variant: 'success',
+    });
   };
 
   const handleIncrease = () => {
-    const q = quantity + 1; setQuantity(q); updateQuantity(id, q); hapticFeedback('light');
+    const q = quantity + 1;
+    setQuantity(q);
+    updateQuantity(id, q);
+    hapticFeedback('light');
   };
 
   const handleDecrease = () => {
     hapticFeedback('light');
-    if (quantity === 1) { setQuantity(0); removeItem(id); return; }
-    const q = quantity - 1; setQuantity(q); updateQuantity(id, q);
+    if (quantity === 1) {
+      setQuantity(0);
+      removeItem(id);
+      return;
+    }
+    const q = quantity - 1;
+    setQuantity(q);
+    updateQuantity(id, q);
   };
 
   return (
     <div
       dir="rtl"
       className={cn(
-        'flex flex-row h-[124px] w-full bg-white dark:bg-gray-900',
+        'flex items-center justify-between p-3 gap-3 w-full',
+        'bg-white dark:bg-gray-900',
         'rounded-2xl border border-gray-100/80 dark:border-gray-800/80',
         'shadow-[0_1px_6px_rgba(0,0,0,0.04)]',
         'transition-all duration-200 hover:shadow-[0_4px_16px_rgba(0,0,0,0.07)]',
         'active:shadow-[0_1px_3px_rgba(0,0,0,0.04)]',
-        'overflow-hidden',
         !is_available && 'opacity-60 grayscale'
       )}
     >
       {/* ── Image (right side for RTL) ── */}
-      <div className="relative w-[110px] min-w-[110px] h-full bg-gray-50 dark:bg-gray-800 shrink-0 overflow-hidden">
+      <div className="relative w-24 h-24 shrink-0 rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-800">
         {image_url && !imageError ? (
           <Image
             src={image_url}
             alt={name_ar}
             fill
-            sizes="110px"
+            sizes="96px"
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageError(true)}
             className={cn(
@@ -91,26 +113,23 @@ export function MenuItemCard({
             <UtensilsCrossed className="w-6 h-6 text-gray-300 dark:text-gray-600" />
           </div>
         )}
-        {/* Gradient overlay on image edge for depth */}
-        <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-l from-transparent to-white/80 dark:to-gray-900/80 pointer-events-none" />
+        {/* Gradient overlay for depth */}
+        <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-l from-transparent to-white/80 dark:to-gray-900/80 pointer-events-none" />
       </div>
 
-      {/* ── Content (left side for RTL) ── */}
-      <div className="flex flex-col flex-1 min-w-0 px-4 py-3 justify-between">
-        {/* Top: Name + Price Row */}
+      {/* ── Content details (left side for RTL) ── */}
+      <div className="flex flex-col justify-between min-w-0 text-right px-2 flex-1 self-stretch gap-1.5">
+        {/* Top: Name + Price */}
         <div className="flex items-start justify-between gap-2">
-          {/* Name */}
           <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-snug line-clamp-1 flex-1">
             {name_ar}
           </h3>
-
-          {/* Price badge — with extra left margin so it doesn't stick to edge */}
-          <span className="text-sm font-black text-[#ef4444] tabular-nums tracking-tight whitespace-nowrap shrink-0 ml-0.5">
+          <span className="text-sm font-black text-[#ef4444] tabular-nums tracking-tight whitespace-nowrap shrink-0">
             {formatPrice(price)}
           </span>
         </div>
 
-        {/* Stars row */}
+        {/* Stars */}
         <div className="flex items-center gap-0.5">
           {[...Array(5)].map((_, i) => (
             <Star
@@ -123,7 +142,9 @@ export function MenuItemCard({
               )}
             />
           ))}
-          <span className="text-[10px] text-gray-400 dark:text-gray-500 mr-1 font-medium">4.0</span>
+          <span className="text-[10px] text-gray-400 dark:text-gray-500 mr-1 font-medium">
+            4.0
+          </span>
         </div>
 
         {/* Description */}
@@ -133,13 +154,13 @@ export function MenuItemCard({
           </p>
         )}
 
-        {/* Bottom: Add/Quantity Button */}
-        <div className="flex justify-end">
+        {/* Bottom: Add button on the left */}
+        <div className="flex justify-start mt-auto pt-1">
           {quantity === 0 ? (
             <button
               onClick={handleAdd}
               disabled={!is_available}
-              className="w-[30px] h-[30px] flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm hover:bg-[#dc2626] hover:shadow-md active:scale-90 transition-all outline-none"
+              className="w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-full shadow-sm hover:bg-red-600 hover:shadow-md active:scale-90 transition-all outline-none"
             >
               <Plus className="w-[18px] h-[18px] stroke-[3]" />
             </button>
@@ -147,7 +168,7 @@ export function MenuItemCard({
             <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-full px-1.5 py-1 border border-gray-100 dark:border-gray-700 shadow-sm">
               <button
                 onClick={handleDecrease}
-                className="w-[28px] h-[28px] flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none active:scale-90 transition-all"
+                className="w-7 h-7 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none active:scale-90 transition-all"
               >
                 <Minus className="w-3.5 h-3.5" />
               </button>
@@ -156,7 +177,7 @@ export function MenuItemCard({
               </span>
               <button
                 onClick={handleIncrease}
-                className="w-[28px] h-[28px] flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm outline-none active:scale-90 transition-all"
+                className="w-7 h-7 flex items-center justify-center bg-red-500 text-white rounded-full shadow-sm outline-none active:scale-90 transition-all"
               >
                 <Plus className="w-3.5 h-3.5 stroke-[3]" />
               </button>
