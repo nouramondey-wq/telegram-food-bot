@@ -89,7 +89,8 @@ export function CategoryFilter({
     <div className="sticky top-0 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-transparent">
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto px-4 py-3 scrollbar-none"
+        className="flex overflow-x-auto px-4 py-3 scrollbar-none"
+        style={{ gap: '12px' }}
       >
         <button
           data-cat-id="__all"
@@ -100,10 +101,9 @@ export function CategoryFilter({
             className={cn(
               'flex h-16 w-16 items-center justify-center rounded-full transition-all duration-300 ease-out',
               selectedId === null
-                ? 'border-2 scale-110 shadow-sm bg-white dark:bg-gray-800'
-                : 'border-transparent bg-gray-50/80 hover:bg-gray-100 dark:bg-gray-800/80 dark:hover:bg-gray-800'
+                ? 'scale-110 shadow-md bg-white dark:bg-gray-800'
+                : 'bg-gray-50/80 hover:bg-gray-100 dark:bg-gray-800/80 dark:hover:bg-gray-800'
             )}
-            style={selectedId === null ? { borderColor: '#10b981' } : {}}
           >
             <span className="text-3xl drop-shadow-sm">✨</span>
           </div>
@@ -130,10 +130,9 @@ export function CategoryFilter({
                 className={cn(
                   'flex h-16 w-16 items-center justify-center rounded-full transition-all duration-300 ease-out',
                   isSelected
-                    ? 'border-2 scale-110 shadow-sm bg-white dark:bg-gray-800'
-                    : 'border-transparent bg-gray-50/80 hover:bg-gray-100 dark:bg-gray-800/80 dark:hover:bg-gray-800'
+                    ? 'scale-110 shadow-md bg-white dark:bg-gray-800'
+                    : 'bg-gray-50/80 hover:bg-gray-100 dark:bg-gray-800/80 dark:hover:bg-gray-800'
                 )}
-                style={isSelected ? { borderColor: themeColor } : {}}
               >
                 {getCategoryIcon(cat.name_ar)}
               </div>
