@@ -1,12 +1,10 @@
-
-cd telegram-mini-app
-npm run build && npx firebase deploy --only hosting
-
-
-cd ..
 git add .
 git commit -m "after send telegram request fix menu after"
 git push origin main
 
 
-https://my-restaurant-app-de879.web.app
+
+cd telegram-mini-app
+npm run build && npx firebase deploy --only hosting
+cd ..
+

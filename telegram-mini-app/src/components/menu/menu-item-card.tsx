@@ -97,30 +97,12 @@ export function MenuItemCard({
       {/* ── Content ── */}
       {/* Reduced padding to px-2.5 to give more room for text and prevent the card from expanding and overlapping */}
       <div className="flex flex-col flex-1 pt-3 pb-3 px-2.5 text-right w-full min-w-0">
-        {/* Title & Action Button Row */}
-        <div className="flex items-start justify-between gap-1.5 mb-1.5 w-full min-w-0">
+        {/* Title Row - Action button moved down */}
+        <div className="mb-1 w-full min-w-0">
           {/* min-w-0 to ensure long words like 'مارغريتا' wrap instead of pushing the container wide */}
-          <h3 className="text-[13px] font-bold text-gray-900 dark:text-white leading-[1.3] flex-1 min-w-0 break-words whitespace-normal">
+          <h3 className="text-[13px] font-bold text-gray-900 dark:text-white leading-[1.3] min-w-0 break-words whitespace-normal">
             {name_ar}
           </h3>
-          
-          {/* Action Button */}
-          {quantity === 0 ? (
-            <button
-              onClick={handleAdd}
-              disabled={!is_available}
-              className="w-7 h-7 shrink-0 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-md hover:bg-[#dc2626] active:scale-95 transition-all outline-none"
-            >
-              <Plus className="w-4 h-4 stroke-[3]" />
-            </button>
-          ) : (
-            /* Compressed counter width to avoid overlapping long product names */
-            <div className="flex items-center gap-0.5 shrink-0 bg-gray-50 dark:bg-gray-800 rounded-full p-0.5 border border-gray-100 dark:border-gray-700 shadow-sm max-w-fit">
-              <button onClick={handleDecrease} className="w-5 h-5 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none"><Minus className="w-3 h-3" /></button>
-              <span className="text-[11px] font-bold min-w-[14px] text-center tabular-nums">{quantity}</span>
-              <button onClick={handleIncrease} className="w-5 h-5 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm outline-none"><Plus className="w-3 h-3 stroke-[3]" /></button>
-            </div>
-          )}
         </div>
 
         {/* Stars */}
@@ -137,11 +119,33 @@ export function MenuItemCard({
           </p>
         )}
 
-        {/* Price */}
-        <div className="mt-auto text-right">
+        {/* Price & Action Button Row */}
+        <div className="mt-auto flex items-center justify-between w-full">
           <span className="text-[14px] font-black text-[#ef4444] tabular-nums tracking-tight">
             {formatPrice(price)}
           </span>
+
+          {/* Action Button - Moved here and made slightly smaller using Inline Styles */}
+          {quantity === 0 ? (
+            <button
+              onClick={handleAdd}
+              disabled={!is_available}
+              className="shrink-0 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-md hover:bg-[#dc2626] active:scale-95 transition-all outline-none"
+              style={{ width: '24px', height: '24px' }}
+            >
+              <Plus className="stroke-[3]" style={{ width: '14px', height: '14px' }} />
+            </button>
+          ) : (
+            <div className="flex items-center shrink-0 bg-gray-50 dark:bg-gray-800 rounded-full shadow-sm max-w-fit" style={{ padding: '2px', gap: '2px', border: '1px solid #f3f4f6' }}>
+              <button onClick={handleDecrease} className="flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none" style={{ width: '20px', height: '20px' }}>
+                <Minus style={{ width: '12px', height: '12px' }} />
+              </button>
+              <span className="text-[11px] font-bold text-center tabular-nums" style={{ minWidth: '14px' }}>{quantity}</span>
+              <button onClick={handleIncrease} className="flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm outline-none" style={{ width: '20px', height: '20px' }}>
+                <Plus className="stroke-[3]" style={{ width: '12px', height: '12px' }} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

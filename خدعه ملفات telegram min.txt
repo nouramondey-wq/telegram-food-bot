@@ -36,3 +36,14 @@ page.tsx
         className="relative aspect-[4/3] bg-gray-50 dark:bg-gray-800 overflow-hidden shrink-0"
         style={{ borderRadius: '14px', margin: '6px' }}
       >
+
+تعديل زر الى تحت جمب السعر 
+
+<div className="flex flex-col flex-1 pt-3 pb-3 px-2.5 text-right w-full min-w-0">
+        {/* Title Row - Action button moved down */}
+        <div className="mb-1 w-full min-w-0">
+          {/* min-w-0 to ensure long words like 'مارغريتا' wrap instead of pushing the container wide */}
+          <h3 className="text-[13px] font-bold text-gray-900 dark:text-white leading-[1.3] min-w-0 break-words whitespace-normal">
+            {name_ar}
+          </h3>
+        </div>
