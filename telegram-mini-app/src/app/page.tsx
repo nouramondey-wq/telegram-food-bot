@@ -222,10 +222,10 @@ function MenuPageContent() {
         </h2>
 
         {isLoading ? (
-          /* Skeleton loading — grid with padding instead of gap for webview support */
-          <div className="grid grid-cols-2 -mx-2">
+          /* Skeleton loading — inline styles to guarantee spacing */
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', margin: '0 -8px' }}>
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="w-full min-w-0 p-2">
+              <div key={i} className="w-full min-w-0" style={{ padding: '8px' }}>
                 <div className="flex flex-col rounded-2xl overflow-hidden bg-white shadow-sm h-[200px] w-full min-w-0">
                   <div className="skeleton w-full h-[110px]" />
                   <div className="flex-1 p-2 space-y-2">
@@ -249,13 +249,16 @@ function MenuPageContent() {
             </p>
           </div>
         ) : (
-          /* قائمة المواد — شبكة بعمودين بدون استخدام gap لدعم المتصفحات القديمة داخل تليجرام */
-          <div className="grid grid-cols-2 -mx-2">
+          /* قائمة المواد — استخدام Inline Styles كحل جذري ونهائي لتجاوز مشاكل تجميع Tailwind في بيئة الإنتاج الخاصة بك */
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', margin: '0 -8px' }}>
             {filteredItems.map((item, idx) => (
               <div
                 key={item.id}
-                className="animate-fade-in-up h-full w-full min-w-0 p-2"
-                style={{ animationDelay: `${(idx % 8) * 0.035}s` }}
+                className="animate-fade-in-up h-full w-full min-w-0"
+                style={{ 
+                  animationDelay: `${(idx % 8) * 0.035}s`,
+                  padding: '8px'
+                }}
               >
                 <MenuItemCard
                   id={item.id}
