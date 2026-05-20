@@ -159,9 +159,9 @@ export async function createOrder(): Promise<{ success: boolean; orderId?: strin
 
       const newOrderRef = doc(collection(db, 'orders'));
       transaction.set(newOrderRef, orderData);
-      transaction.update(settingsRef, {
+      transaction.set(settingsRef, {
         current_number: orderNumber,
-      });
+      }, { merge: true });
 
       return newOrderRef;
     });
