@@ -57,14 +57,10 @@ export function useCategories() {
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const cats = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            ...data,
-            image_url: data.image_url || data.imageUrl || '',
-          };
-        }) as Category[];
+        const cats = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Category[];
         setCategories(cats);
         setLoading(false);
       },
@@ -115,14 +111,10 @@ export function useMenuItems(categoryId?: string) {
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const menuItems = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            ...data,
-            image_url: data.image_url || data.imageUrl || '',
-          };
-        }) as MenuItem[];
+        const menuItems = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as MenuItem[];
 
         setItems(menuItems);
 

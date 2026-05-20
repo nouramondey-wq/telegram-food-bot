@@ -2,6 +2,7 @@
 
 import React, { useRef } from 'react';
 import { cn } from '@/lib/utils';
+import { Flame, Beef, Pizza, Sandwich, Coffee, Salad, IceCreamBowl } from 'lucide-react';
 
 interface Category {
   id: string;
@@ -14,135 +15,45 @@ interface CategoryFilterProps {
   onSelect: (id: string | null) => void;
 }
 
-interface CategoryTheme {
-  emoji: string;
-  bg: string;
-  selectedBg: string;
-}
-
-function getCategoryTheme(name: string): CategoryTheme {
+function getCategoryIcon(name: string) {
   const lower = name.toLowerCase();
 
-  if (
-    lower.includes('مشروب') ||
-    lower.includes('قهوة') ||
-    lower.includes('شاي') ||
-    lower.includes('عصير')
-  ) {
-    return {
-      emoji: '🥤',
-      bg: 'bg-sky-50 dark:bg-sky-950/30',
-      selectedBg: 'bg-sky-500 dark:bg-sky-500 text-white',
-    };
-  }
-  if (lower.includes('بيتزا')) {
-    return {
-      emoji: '🍕',
-      bg: 'bg-orange-50 dark:bg-orange-950/30',
-      selectedBg: 'bg-orange-500 dark:bg-orange-500 text-white',
-    };
-  }
-  if (
-    lower.includes('ساندوتش') ||
-    lower.includes('برجر') ||
-    lower.includes('شاورما') ||
-    lower.includes('فلافل')
-  ) {
-    return {
-      emoji: '🍔',
-      bg: 'bg-amber-50 dark:bg-amber-950/30',
-      selectedBg: 'bg-amber-500 dark:bg-amber-500 text-white',
-    };
-  }
-  if (
-    lower.includes('مشاوي') ||
-    lower.includes('لحوم') ||
-    lower.includes('دجاج') ||
-    lower.includes('كباب')
-  ) {
-    return {
-      emoji: '🥩',
-      bg: 'bg-red-50 dark:bg-red-950/30',
-      selectedBg: 'bg-red-500 dark:bg-red-500 text-white',
-    };
-  }
-  if (
-    lower.includes('سلطة') ||
-    lower.includes('مقبلات') ||
-    lower.includes('شوربة') ||
-    lower.includes('حساء')
-  ) {
-    return {
-      emoji: '🥗',
-      bg: 'bg-green-50 dark:bg-green-950/30',
-      selectedBg: 'bg-green-500 dark:bg-green-500 text-white',
-    };
-  }
-  if (
-    lower.includes('حلويات') ||
-    lower.includes('كيك') ||
-    lower.includes('جاتوه') ||
-    lower.includes('بسبوسة')
-  ) {
-    return {
-      emoji: '🍰',
-      bg: 'bg-pink-50 dark:bg-pink-950/30',
-      selectedBg: 'bg-pink-500 dark:bg-pink-500 text-white',
-    };
-  }
-  if (
-    lower.includes('سمك') ||
-    lower.includes('مأكولات بحرية') ||
-    lower.includes('جمبري') ||
-    lower.includes('ربيان')
-  ) {
-    return {
-      emoji: '🦐',
-      bg: 'bg-cyan-50 dark:bg-cyan-950/30',
-      selectedBg: 'bg-cyan-500 dark:bg-cyan-500 text-white',
-    };
-  }
-  if (
-    lower.includes('معجنات') ||
-    lower.includes('فطائر') ||
-    lower.includes('مناقيش')
-  ) {
-    return {
-      emoji: '🥟',
-      bg: 'bg-yellow-50 dark:bg-yellow-950/30',
-      selectedBg: 'bg-yellow-500 dark:bg-yellow-500 text-white',
-    };
-  }
-  if (
-    lower.includes('فطور') ||
-    lower.includes('إفطار') ||
-    lower.includes('بيض') ||
-    lower.includes('فول')
-  ) {
-    return {
-      emoji: '🌅',
-      bg: 'bg-rose-50 dark:bg-rose-950/30',
-      selectedBg: 'bg-rose-500 dark:bg-rose-500 text-white',
-    };
-  }
-  if (
-    lower.includes('مكرونة') ||
-    lower.includes('باستا') ||
-    lower.includes('نودلز')
-  ) {
-    return {
-      emoji: '🍝',
-      bg: 'bg-lime-50 dark:bg-lime-950/30',
-      selectedBg: 'bg-lime-500 dark:bg-lime-500 text-white',
-    };
+  if (lower.includes('مشروب') || lower.includes('قهوة') || lower.includes('شاي')) {
+    return <span className="text-3xl drop-shadow-sm">🥤</span>;
   }
 
-  // Default
-  return {
-    emoji: '🍽️',
-    bg: 'bg-gray-50 dark:bg-gray-800/50',
-    selectedBg: 'bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900',
-  };
+  if (lower.includes('بيتزا')) {
+    return <span className="text-3xl drop-shadow-sm">🍕</span>;
+  }
+
+  if (lower.includes('ساندوتش') || lower.includes('برجر')) {
+    return <span className="text-3xl drop-shadow-sm">🍔</span>;
+  }
+
+  if (lower.includes('مشاوي') || lower.includes('لحوم')) {
+    return <span className="text-3xl drop-shadow-sm">🥘</span>;
+  }
+
+  if (lower.includes('سلطة') || lower.includes('مقبلات')) {
+    return <span className="text-3xl drop-shadow-sm">🥗</span>;
+  }
+
+  if (lower.includes('حلويات') || lower.includes('كيك')) {
+    return <span className="text-3xl drop-shadow-sm">🍰</span>;
+  }
+
+  return <span className="text-3xl drop-shadow-sm">🍽️</span>;
+}
+
+function getCategoryThemeColor(name: string) {
+  const lower = name.toLowerCase();
+  if (lower.includes('مشاوي') || lower.includes('لحوم')) return '#ef4444'; // Red
+  if (lower.includes('سلطة') || lower.includes('مقبلات')) return '#22c55e'; // Green
+  if (lower.includes('برجر') || lower.includes('ساندوتش')) return '#eab308'; // Yellow
+  if (lower.includes('مشروب') || lower.includes('شاي')) return '#3b82f6'; // Blue
+  if (lower.includes('حلويات') || lower.includes('كيك')) return '#ec4899'; // Pink
+  if (lower.includes('بيتزا')) return '#f97316'; // Orange
+  return '#10b981'; // Default Emerald
 }
 
 export function CategoryFilter({
@@ -174,50 +85,64 @@ export function CategoryFilter({
     }
   };
 
-  const allTheme: CategoryTheme = {
-    emoji: '✨',
-    bg: 'bg-gray-50 dark:bg-gray-800/50',
-    selectedBg: 'bg-emerald-500 dark:bg-emerald-500 text-white',
-  };
-
   return (
-    <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-100/80 dark:border-gray-800/80">
+    <div className="sticky top-0 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-transparent">
       <div
         ref={scrollRef}
-        className="flex gap-2.5 overflow-x-auto px-4 py-3 scrollbar-none"
+        className="flex gap-4 overflow-x-auto px-4 py-3 scrollbar-none"
       >
-        {/* "كل الأصناف" capsule */}
         <button
           data-cat-id="__all"
           onClick={() => handleSelect(null)}
-          className={cn(
-            'flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 outline-none',
-            selectedId === null
-              ? `${allTheme.selectedBg} shadow-sm scale-[1.04]`
-              : `${allTheme.bg} text-gray-600 dark:text-gray-300 hover:scale-[1.03]`
-          )}
+          className="group relative flex-shrink-0 flex flex-col items-center gap-1.5 transition-all duration-300 ease-out outline-none"
         >
-          {allTheme.emoji} الكل
+          <div 
+            className={cn(
+              'flex h-16 w-16 items-center justify-center rounded-full transition-all duration-300 ease-out',
+              selectedId === null
+                ? 'border-2 scale-110 shadow-sm bg-white dark:bg-gray-800'
+                : 'border-transparent bg-gray-50/80 hover:bg-gray-100 dark:bg-gray-800/80 dark:hover:bg-gray-800'
+            )}
+            style={selectedId === null ? { borderColor: '#10b981' } : {}}
+          >
+            <span className="text-3xl drop-shadow-sm">✨</span>
+          </div>
+          <span className={cn(
+            'text-[13px] whitespace-nowrap transition-colors',
+            selectedId === null ? 'font-black text-gray-900 dark:text-white' : 'font-semibold text-gray-500 dark:text-gray-400'
+          )}>
+            كل الأصناف
+          </span>
         </button>
 
-        {/* Category capsules */}
         {categories.map((cat) => {
           const isSelected = selectedId === cat.id;
-          const theme = getCategoryTheme(cat.name_ar);
+          const themeColor = getCategoryThemeColor(cat.name_ar);
 
           return (
             <button
               key={cat.id}
               data-cat-id={cat.id}
               onClick={() => handleSelect(cat.id)}
-              className={cn(
-                'flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 outline-none whitespace-nowrap',
-                isSelected
-                  ? `${theme.selectedBg} shadow-sm scale-[1.04]`
-                  : `${theme.bg} text-gray-600 dark:text-gray-300 hover:scale-[1.03]`
-              )}
+              className="group relative flex-shrink-0 flex flex-col items-center gap-1.5 transition-all duration-300 ease-out outline-none"
             >
-              {theme.emoji} {cat.name_ar}
+              <div 
+                className={cn(
+                  'flex h-16 w-16 items-center justify-center rounded-full transition-all duration-300 ease-out',
+                  isSelected
+                    ? 'border-2 scale-110 shadow-sm bg-white dark:bg-gray-800'
+                    : 'border-transparent bg-gray-50/80 hover:bg-gray-100 dark:bg-gray-800/80 dark:hover:bg-gray-800'
+                )}
+                style={isSelected ? { borderColor: themeColor } : {}}
+              >
+                {getCategoryIcon(cat.name_ar)}
+              </div>
+              <span className={cn(
+                'text-[13px] whitespace-nowrap transition-colors',
+                isSelected ? 'font-black text-gray-900 dark:text-white' : 'font-semibold text-gray-500 dark:text-gray-400'
+              )}>
+                {cat.name_ar}
+              </span>
             </button>
           );
         })}
