@@ -84,51 +84,64 @@ export function MenuItemCard({
     <div
       dir="rtl"
       className={cn(
-        'flex flex-col w-full h-auto',
+        'w-full h-auto flex items-center p-3 gap-3 mb-3',
         'bg-white dark:bg-gray-900',
-        'rounded-2xl border border-gray-100/80 dark:border-gray-800/80',
-        'shadow-[0_1px_6px_rgba(0,0,0,0.04)]',
-        'transition-all duration-200 hover:shadow-[0_4px_16px_rgba(0,0,0,0.07)]',
-        'active:shadow-[0_1px_3px_rgba(0,0,0,0.04)]',
-        !is_available && 'opacity-60 grayscale'
+        'rounded-2xl border border-gray-100 dark:border-gray-800',
+        'shadow-sm',
+        'transition-all duration-200 hover:shadow-md',
+        !is_available && 'opacity-60 grayscale',
+        'overflow-hidden'
       )}
     >
       {/* ════════════════════════════════════════
-          Image — Full width, at the top
+          1. القسم الأيمن: الصورة مع Border
           ════════════════════════════════════════ */}
-      <div className="relative w-full h-40 rounded-t-2xl overflow-hidden bg-gray-50 dark:bg-gray-800">
+      <div className="w-24 h-24 rounded-xl overflow-hidden shrink-0 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
         {image_url && !imageError ? (
           <Image
             src={image_url}
             alt={name_ar}
-            fill
-            sizes="480px"
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageError(true)}
+            width={96}
+            height={96}
             className={cn(
-              'object-cover transition-all duration-500',
+              'w-full h-full object-cover transition-all duration-500',
               imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
             )}
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setImageError(true)}
           />
         ) : (
           <div className="flex w-full h-full items-center justify-center">
-            <UtensilsCrossed className="w-8 h-8 text-gray-300 dark:text-gray-600" />
+            <UtensilsCrossed className="w-6 h-6 text-gray-300 dark:text-gray-600" />
           </div>
         )}
-        {/* Bottom gradient fade for depth */}
-        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white/80 to-transparent dark:from-gray-900/80 pointer-events-none" />
       </div>
 
       {/* ════════════════════════════════════════
-          Content — below the image
+          2. القسم الأوسط: اسم المنتج + الوصف
           ════════════════════════════════════════ */}
-      <div className="p-4 flex flex-col gap-2">
-        {/* ─── Row 1: Name (right) + Stars (left) ─── */}
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-snug line-clamp-2 flex-1">
-            {name_ar}
-          </h3>
-          <div className="flex items-center gap-0.5 shrink-0">
+      <div className="flex-1 flex flex-col gap-1 text-right min-w-0">
+        <h3 className="font-black text-sm text-gray-900 dark:text-white leading-tight break-words line-clamp-2">
+          {name_ar}
+        </h3>
+        {description_ar && (
+          <p className="text-xs text-gray-400 dark:text-gray-500 line-clamp-2 leading-relaxed">
+            {description_ar}
+          </p>
+        )}
+        <span className="text-base font-black text-[#ef4444] tabular-nums tracking-tight mt-1">
+          {formatPrice(price)}
+        </span>
+      </div>
+
+      {/* ════════════════════════════════════════
+          3. القسم الأيسر: النجوم + أزرار التحكم
+          ════════════════════════════════════════ */}
+      <div className="flex flex-col items-end justify-between self-stretch shrink-0 min-w-[90px] py-0.5">
+        {/* ─── التقييم بالنجوم ─── */}
+        <div className="flex items-center gap-1 justify-end">
+          <span className="text-[11px] font-bold text-amber-500 tabular-nums">4.0</span>
+          <div className="flex text-amber-400 text-xs">
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
@@ -140,18 +153,11 @@ export function MenuItemCard({
                 )}
               />
             ))}
-            <span className="text-[10px] text-gray-400 dark:text-gray-500 mr-1 font-medium">
-              4.0
-            </span>
           </div>
         </div>
 
-        {/* ─── Row 2: Price + Add button — vertical stack under the stars ─── */}
-        <div className="flex flex-col items-start gap-2">
-          <span className="text-base font-black text-[#ef4444] tabular-nums tracking-tight">
-            {formatPrice(price)}
-          </span>
-
+        {/* ─── أزرار التحكم بالكمية ─── */}
+        <div className="flex justify-end w-full mt-2">
           {quantity === 0 ? (
             <button
               onClick={handleAdd}
@@ -161,32 +167,25 @@ export function MenuItemCard({
               <Plus className="w-[20px] h-[20px] stroke-[3]" />
             </button>
           ) : (
-            <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-full px-2 py-1 border border-gray-100 dark:border-gray-700 shadow-sm">
+            <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 rounded-full px-2 py-1 border border-gray-100 dark:border-gray-700 shadow-sm">
               <button
                 onClick={handleDecrease}
-                className="w-8 h-8 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none active:scale-90 transition-all"
+                className="w-7 h-7 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none active:scale-90 transition-all"
               >
-                <Minus className="w-4 h-4" />
+                <Minus className="w-3.5 h-3.5" />
               </button>
-              <span className="text-sm font-bold w-6 text-center tabular-nums text-gray-900 dark:text-white">
+              <span className="text-sm font-bold w-5 text-center tabular-nums text-gray-900 dark:text-white">
                 {quantity}
               </span>
               <button
                 onClick={handleIncrease}
-                className="w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-full shadow-sm outline-none active:scale-90 transition-all"
+                className="w-7 h-7 flex items-center justify-center bg-red-500 text-white rounded-full shadow-sm outline-none active:scale-90 transition-all"
               >
-                <Plus className="w-4 h-4 stroke-[3]" />
+                <Plus className="w-3.5 h-3.5 stroke-[3]" />
               </button>
             </div>
           )}
         </div>
-
-        {/* ─── Row 3: Description (at the bottom) ─── */}
-        {description_ar && (
-          <p className="text-[11px] leading-relaxed text-gray-500 dark:text-gray-400 line-clamp-2">
-            {description_ar}
-          </p>
-        )}
       </div>
     </div>
   );
