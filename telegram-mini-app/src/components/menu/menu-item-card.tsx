@@ -62,80 +62,107 @@ export function MenuItemCard({
     <div
       dir="rtl"
       className={cn(
-        'flex flex-col h-full bg-white dark:bg-gray-900',
-        'rounded-2xl border border-gray-100 dark:border-gray-800',
-        'shadow-[0_2px_12px_rgba(0,0,0,0.04)]',
-        'transition-all duration-200',
+        'flex flex-row h-[120px] w-full bg-white dark:bg-gray-900',
+        'rounded-2xl border border-gray-100/80 dark:border-gray-800/80',
+        'shadow-[0_1px_6px_rgba(0,0,0,0.04)]',
+        'transition-all duration-200 hover:shadow-[0_4px_16px_rgba(0,0,0,0.07)]',
+        'active:shadow-[0_1px_3px_rgba(0,0,0,0.04)]',
+        'overflow-hidden',
         !is_available && 'opacity-60 grayscale'
       )}
     >
-      {/* ── Image ── */}
-      <div className="relative w-full aspect-[4/3] bg-gray-50 dark:bg-gray-800 rounded-t-3xl overflow-hidden shrink-0">
+      {/* ── Image (right side for RTL) ── */}
+      <div className="relative w-[110px] min-w-[110px] h-full bg-gray-50 dark:bg-gray-800 shrink-0 overflow-hidden">
         {image_url && !imageError ? (
           <Image
             src={image_url}
             alt={name_ar}
             fill
-            sizes="(max-width: 768px) 50vw, 33vw"
+            sizes="110px"
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageError(true)}
             className={cn(
-              'object-cover transition-opacity duration-500',
-              imageLoaded ? 'opacity-100' : 'opacity-0'
+              'object-cover transition-all duration-500',
+              imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
             )}
           />
         ) : (
           <div className="flex w-full h-full items-center justify-center">
-            <UtensilsCrossed className="w-8 h-8 text-gray-300 dark:text-gray-600" />
+            <UtensilsCrossed className="w-6 h-6 text-gray-300 dark:text-gray-600" />
           </div>
         )}
+        {/* Gradient overlay on image edge for depth */}
+        <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-l from-transparent to-white/80 dark:to-gray-900/80 pointer-events-none" />
       </div>
 
-      {/* ── Content ── */}
-      <div className="flex flex-col flex-1 p-4 text-right">
-        {/* Title & Action Button Row */}
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <h3 className="text-[15px] font-bold text-gray-900 dark:text-white leading-tight flex-1">
+      {/* ── Content (left side for RTL) ── */}
+      <div className="flex flex-col flex-1 min-w-0 px-3.5 py-3 justify-between">
+        {/* Top: Name + Price Row */}
+        <div className="flex items-start justify-between gap-2">
+          {/* Name */}
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-snug line-clamp-1 flex-1">
             {name_ar}
           </h3>
-          
-          {/* Action Button */}
-          {quantity === 0 ? (
-            <button
-              onClick={handleAdd}
-              disabled={!is_available}
-              className="w-7 h-7 shrink-0 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-md hover:bg-[#dc2626] active:scale-95 transition-all outline-none"
-            >
-              <Plus className="w-4 h-4 stroke-[3]" />
-            </button>
-          ) : (
-            <div className="flex items-center gap-1.5 shrink-0 bg-gray-50 dark:bg-gray-800 rounded-full p-1 border border-gray-100 dark:border-gray-700 shadow-sm">
-              <button onClick={handleDecrease} className="w-6 h-6 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none"><Minus className="w-3.5 h-3.5" /></button>
-              <span className="text-sm font-bold w-4 text-center">{quantity}</span>
-              <button onClick={handleIncrease} className="w-6 h-6 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm outline-none"><Plus className="w-3.5 h-3.5 stroke-[3]" /></button>
-            </div>
-          )}
+
+          {/* Price badge */}
+          <span className="text-sm font-black text-[#ef4444] tabular-nums tracking-tight whitespace-nowrap shrink-0">
+            {formatPrice(price)}
+          </span>
         </div>
 
-        {/* Stars */}
-        <div className="flex items-center justify-start gap-0.5 mb-1.5">
+        {/* Stars row */}
+        <div className="flex items-center gap-0.5">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />
+            <Star
+              key={i}
+              className={cn(
+                'w-3 h-3',
+                i < 4
+                  ? 'fill-amber-400 text-amber-400'
+                  : 'fill-gray-200 text-gray-200 dark:fill-gray-700 dark:text-gray-700'
+              )}
+            />
           ))}
+          <span className="text-[10px] text-gray-400 dark:text-gray-500 mr-1 font-medium">4.0</span>
         </div>
 
         {/* Description */}
         {description_ar && (
-          <p className="text-[11px] leading-[1.6] text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">
+          <p className="text-[11px] leading-relaxed text-gray-500 dark:text-gray-400 line-clamp-1">
             {description_ar}
           </p>
         )}
 
-        {/* Price */}
-        <div className="mt-auto text-right">
-          <span className="text-[15px] font-black text-[#ef4444] tabular-nums tracking-tight">
-            {formatPrice(price)}
-          </span>
+        {/* Bottom: Add/Quantity Button */}
+        <div className="flex justify-end">
+          {quantity === 0 ? (
+            <button
+              onClick={handleAdd}
+              disabled={!is_available}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#ef4444] text-white rounded-full text-xs font-bold shadow-sm hover:bg-[#dc2626] active:scale-90 transition-all outline-none"
+            >
+              <Plus className="w-3.5 h-3.5 stroke-[3]" />
+              <span>أضف</span>
+            </button>
+          ) : (
+            <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-full px-2 py-1 border border-gray-100 dark:border-gray-700 shadow-sm">
+              <button
+                onClick={handleDecrease}
+                className="w-7 h-7 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none active:scale-90 transition-all"
+              >
+                <Minus className="w-3.5 h-3.5" />
+              </button>
+              <span className="text-sm font-bold w-5 text-center tabular-nums text-gray-900 dark:text-white">
+                {quantity}
+              </span>
+              <button
+                onClick={handleIncrease}
+                className="w-7 h-7 flex items-center justify-center bg-[#ef4444] text-white rounded-full shadow-sm outline-none active:scale-90 transition-all"
+              >
+                <Plus className="w-3.5 h-3.5 stroke-[3]" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
