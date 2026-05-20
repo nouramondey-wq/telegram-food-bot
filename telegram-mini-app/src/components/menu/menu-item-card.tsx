@@ -63,14 +63,17 @@ export function MenuItemCard({
       dir="rtl"
       className={cn(
         'flex flex-col h-full bg-white dark:bg-gray-900',
-        'rounded-2xl border border-gray-100 dark:border-gray-800',
+        'rounded-2xl',
         'shadow-[0_2px_12px_rgba(0,0,0,0.04)]',
         'transition-all duration-200 overflow-hidden',
         !is_available && 'opacity-60 grayscale'
       )}
     >
       {/* ── Image ── */}
-      <div className="relative w-full aspect-[4/3] bg-gray-50 dark:bg-gray-800 rounded-t-2xl overflow-hidden shrink-0">
+      <div 
+        className="relative aspect-[4/3] bg-gray-50 dark:bg-gray-800 overflow-hidden shrink-0"
+        style={{ borderRadius: '14px', margin: '6px' }}
+      >
         {image_url && !imageError ? (
           <Image
             src={image_url}
