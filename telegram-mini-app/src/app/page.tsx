@@ -61,16 +61,22 @@ function MenuPageSkeleton() {
       <div className="px-4 pt-6 pb-3">
         <div className="skeleton h-5 w-36" />
       </div>
-      {/* Skeleton list items */}
+      {/* Skeleton list items — full-width card layout */}
       <div className="px-4 pb-32 space-y-3">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="flex rounded-2xl overflow-hidden bg-white shadow-sm h-[120px]">
-            <div className="skeleton w-[110px] shrink-0" />
-            <div className="flex-1 p-3.5 space-y-2.5">
-              <div className="skeleton h-4 w-3/4" />
+          <div key={i} className="flex flex-col rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-100/80 dark:border-gray-800/80 shadow-sm">
+            <div className="skeleton h-40 w-full" />
+            <div className="p-4 space-y-2.5">
+              <div className="flex items-start justify-between gap-2">
+                <div className="skeleton h-4 w-3/4" />
+                <div className="skeleton h-4 w-16 shrink-0" />
+              </div>
               <div className="skeleton h-3 w-full" />
-              <div className="skeleton h-3 w-1/3" />
-              <div className="skeleton h-[30px] w-16 rounded-full mr-auto" />
+              <div className="skeleton h-3 w-2/3" />
+              <div className="flex flex-col items-start gap-2 mt-1">
+                <div className="skeleton h-5 w-20" />
+                <div className="skeleton h-9 w-9 rounded-full" />
+              </div>
             </div>
           </div>
         ))}
@@ -284,16 +290,19 @@ function MenuPageContent() {
           /* Skeleton loading — list view */
           <div className="space-y-3">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="flex rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-100/80 dark:border-gray-800/80 shadow-sm h-[120px]">
-                <div className="skeleton w-[110px] shrink-0 rounded-none" />
-                <div className="flex-1 p-3.5 space-y-2.5">
+              <div key={i} className="flex flex-col rounded-2xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-100/80 dark:border-gray-800/80 shadow-sm">
+                <div className="skeleton h-40 w-full rounded-none" />
+                <div className="p-4 space-y-2.5">
                   <div className="flex items-start justify-between gap-2">
                     <div className="skeleton h-4 w-3/4" />
-                    <div className="skeleton h-4 w-14 shrink-0" />
+                    <div className="skeleton h-4 w-16 shrink-0" />
                   </div>
-                  <div className="skeleton h-3 w-1/2" />
                   <div className="skeleton h-3 w-full" />
-                  <div className="skeleton h-[30px] w-[66px] rounded-full mr-auto" />
+                  <div className="skeleton h-3 w-2/3" />
+                  <div className="flex flex-col items-start gap-2 mt-1">
+                    <div className="skeleton h-5 w-20" />
+                    <div className="skeleton h-9 w-9 rounded-full" />
+                  </div>
                 </div>
               </div>
             ))}

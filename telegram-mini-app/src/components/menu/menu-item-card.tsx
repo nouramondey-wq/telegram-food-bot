@@ -84,7 +84,7 @@ export function MenuItemCard({
     <div
       dir="rtl"
       className={cn(
-        'flex items-center justify-between p-3 gap-3 w-full',
+        'flex flex-col w-full h-auto',
         'bg-white dark:bg-gray-900',
         'rounded-2xl border border-gray-100/80 dark:border-gray-800/80',
         'shadow-[0_1px_6px_rgba(0,0,0,0.04)]',
@@ -93,14 +93,16 @@ export function MenuItemCard({
         !is_available && 'opacity-60 grayscale'
       )}
     >
-      {/* ── Image (right side for RTL) ── */}
-      <div className="relative w-24 h-24 shrink-0 rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-800">
+      {/* ════════════════════════════════════════
+          Image — Full width, at the top
+          ════════════════════════════════════════ */}
+      <div className="relative w-full h-40 rounded-t-2xl overflow-hidden bg-gray-50 dark:bg-gray-800">
         {image_url && !imageError ? (
           <Image
             src={image_url}
             alt={name_ar}
             fill
-            sizes="96px"
+            sizes="480px"
             onLoad={() => setImageLoaded(true)}
             onError={() => setImageError(true)}
             className={cn(
@@ -110,76 +112,79 @@ export function MenuItemCard({
           />
         ) : (
           <div className="flex w-full h-full items-center justify-center">
-            <UtensilsCrossed className="w-6 h-6 text-gray-300 dark:text-gray-600" />
+            <UtensilsCrossed className="w-8 h-8 text-gray-300 dark:text-gray-600" />
           </div>
         )}
-        {/* Gradient overlay for depth */}
-        <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-l from-transparent to-white/80 dark:to-gray-900/80 pointer-events-none" />
+        {/* Bottom gradient fade for depth */}
+        <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white/80 to-transparent dark:from-gray-900/80 pointer-events-none" />
       </div>
 
-      {/* ── Content details (left side for RTL) ── */}
-      <div className="flex flex-col justify-between min-w-0 text-right px-2 flex-1 self-stretch gap-1.5">
-        {/* Top: Name + Price */}
+      {/* ════════════════════════════════════════
+          Content — below the image
+          ════════════════════════════════════════ */}
+      <div className="p-4 flex flex-col gap-2">
+        {/* ─── Top: Name (right) + Stars (left) ─── */}
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-snug line-clamp-1 flex-1">
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-snug line-clamp-2 flex-1">
             {name_ar}
           </h3>
-          <span className="text-sm font-black text-[#ef4444] tabular-nums tracking-tight whitespace-nowrap shrink-0">
-            {formatPrice(price)}
-          </span>
+          <div className="flex items-center gap-0.5 shrink-0">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                className={cn(
+                  'w-3 h-3',
+                  i < 4
+                    ? 'fill-amber-400 text-amber-400'
+                    : 'fill-gray-200 text-gray-200 dark:fill-gray-700 dark:text-gray-700'
+                )}
+              />
+            ))}
+            <span className="text-[10px] text-gray-400 dark:text-gray-500 mr-1 font-medium">
+              4.0
+            </span>
+          </div>
         </div>
 
-        {/* Stars */}
-        <div className="flex items-center gap-0.5">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              className={cn(
-                'w-3 h-3',
-                i < 4
-                  ? 'fill-amber-400 text-amber-400'
-                  : 'fill-gray-200 text-gray-200 dark:fill-gray-700 dark:text-gray-700'
-              )}
-            />
-          ))}
-          <span className="text-[10px] text-gray-400 dark:text-gray-500 mr-1 font-medium">
-            4.0
-          </span>
-        </div>
-
-        {/* Description */}
+        {/* ─── Description ─── */}
         {description_ar && (
-          <p className="text-[11px] leading-relaxed text-gray-500 dark:text-gray-400 line-clamp-1">
+          <p className="text-[11px] leading-relaxed text-gray-500 dark:text-gray-400 line-clamp-2">
             {description_ar}
           </p>
         )}
 
-        {/* Bottom: Add button on the left */}
-        <div className="flex justify-start mt-auto pt-1">
+        {/* ─── Price + Add button — vertical stack ─── */}
+        <div className="flex flex-col items-start gap-2 mt-1">
+          {/* Price first */}
+          <span className="text-base font-black text-[#ef4444] tabular-nums tracking-tight">
+            {formatPrice(price)}
+          </span>
+
+          {/* Add button below price */}
           {quantity === 0 ? (
             <button
               onClick={handleAdd}
               disabled={!is_available}
-              className="w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-full shadow-sm hover:bg-red-600 hover:shadow-md active:scale-90 transition-all outline-none"
+              className="w-9 h-9 flex items-center justify-center bg-red-500 text-white rounded-full shadow-sm hover:bg-red-600 hover:shadow-md active:scale-90 transition-all outline-none"
             >
-              <Plus className="w-[18px] h-[18px] stroke-[3]" />
+              <Plus className="w-[20px] h-[20px] stroke-[3]" />
             </button>
           ) : (
-            <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-full px-1.5 py-1 border border-gray-100 dark:border-gray-700 shadow-sm">
+            <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-full px-2 py-1 border border-gray-100 dark:border-gray-700 shadow-sm">
               <button
                 onClick={handleDecrease}
-                className="w-7 h-7 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none active:scale-90 transition-all"
+                className="w-8 h-8 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none active:scale-90 transition-all"
               >
-                <Minus className="w-3.5 h-3.5" />
+                <Minus className="w-4 h-4" />
               </button>
-              <span className="text-sm font-bold w-5 text-center tabular-nums text-gray-900 dark:text-white">
+              <span className="text-sm font-bold w-6 text-center tabular-nums text-gray-900 dark:text-white">
                 {quantity}
               </span>
               <button
                 onClick={handleIncrease}
-                className="w-7 h-7 flex items-center justify-center bg-red-500 text-white rounded-full shadow-sm outline-none active:scale-90 transition-all"
+                className="w-8 h-8 flex items-center justify-center bg-red-500 text-white rounded-full shadow-sm outline-none active:scale-90 transition-all"
               >
-                <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                <Plus className="w-4 h-4 stroke-[3]" />
               </button>
             </div>
           )}
