@@ -63,26 +63,51 @@ export async function createOrder(): Promise<{ success: boolean; orderId?: strin
     return { success: false, error: 'السلة فارغة' };
   }
 
-  // ─── التحقق من وجود Telegram WebApp + initData + مستخدم مع إعادة المحاولة ───
-  // قد لا تكون حزمة Telegram WebApp SDK قد اكتمل تحميلها عند أول محاولة
-  let tg = getTelegramWebApp();
-  let telegramUser = getTelegramUser();
+  // ─── التحقق من وجود Telegram WebApp + initData + مستخدم ───
+  // يتم الفصل بين التحقق من WebApp (هل نحن داخل Telegram؟) وتحقق البيانات (initData + user)
+  // لإعطاء تشخيص دقيق في حال فشل أحد الخطوات
 
-  if (!tg?.initData || !telegramUser?.id) {
-    // إعادة المحاولة حتى 1.5 ثانية
-    for (let i = 0; i < 3; i++) {
+  // المرحلة 1: هل نحن داخل Telegram أصلاً؟
+  let tg = getTelegramWebApp();
+  if (!tg) {
+    console.warn('[createOrder] Telegram.WebApp غير متاح — التطبيق ليس داخل Telegram');
+    return { success: false, error: 'يرجى فتح التطبيق من داخل Telegram' };
+  }
+
+  // المرحلة 2: انتظار تحميل initData (حتى 2.5 ثانية)
+  if (!tg.initData) {
+    for (let i = 0; i < 5; i++) {
       await new Promise(resolve => setTimeout(resolve, 500));
       tg = getTelegramWebApp();
-      telegramUser = getTelegramUser();
-      if (tg?.initData && telegramUser?.id) break;
+      if (tg?.initData) break;
     }
   }
 
-  try {
-    // التحقق النهائي — يجب وجود كل من initData والمستخدم
-    if (!tg?.initData || !telegramUser?.id) {
-      return { success: false, error: 'يرجى فتح التطبيق من داخل Telegram' };
+  // المرحلة 3: انتظار تحميل بيانات المستخدم (حتى 2.5 ثانية)
+  let telegramUser = getTelegramUser();
+  if (!telegramUser?.id) {
+    for (let i = 0; i < 5; i++) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      telegramUser = getTelegramUser();
+      if (telegramUser?.id) break;
     }
+  }
+
+  // تشخيص دقيق للخطأ مع log في الـ console
+  if (!tg?.initData || !telegramUser?.id) {
+    console.warn('[createOrder] فشل التحقق من Telegram:', {
+      webAppExists: !!tg,
+      initDataExists: !!tg?.initData,
+      initDataLength: tg?.initData?.length || 0,
+      initDataUnsafe: tg?.initDataUnsafe ? { ...tg.initDataUnsafe, hash: '(مخفي)' } : null,
+      userExists: !!telegramUser,
+      userId: telegramUser?.id,
+      userKeys: telegramUser ? Object.keys(telegramUser) : [],
+    });
+    return { success: false, error: 'يرجى فتح التطبيق من داخل Telegram' };
+  }
+
+  try {
 
     // حساب الإجماليات
     const subtotal = cart.subtotal();
