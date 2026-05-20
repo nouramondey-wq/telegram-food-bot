@@ -62,8 +62,8 @@ export function MenuItemCard({
     <div
       dir="rtl"
       className={cn(
-        'flex flex-col h-full bg-white dark:bg-gray-900',
-        'rounded-2xl border border-gray-100 dark:border-gray-800',
+        'flex flex-col h-full bg-yellow-50 dark:bg-gray-900',
+        'rounded-2xl border-4 border-red-500 dark:border-gray-800',
         'shadow-[0_2px_12px_rgba(0,0,0,0.04)]',
         'transition-all duration-200 overflow-hidden',
         !is_available && 'opacity-60 grayscale'
