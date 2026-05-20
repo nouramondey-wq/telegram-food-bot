@@ -97,7 +97,7 @@ export function CategoryFilter({
           onClick={() => handleSelect(null)}
           className="group relative flex-shrink-0 flex flex-col items-center gap-1.5 transition-all duration-300 ease-out outline-none"
         >
-          <div 
+          <div
             className={cn(
               'flex h-16 w-16 items-center justify-center transition-all duration-300 ease-out',
               selectedId === null
@@ -127,14 +127,14 @@ export function CategoryFilter({
               onClick={() => handleSelect(cat.id)}
               className="group relative flex-shrink-0 flex flex-col items-center gap-1.5 transition-all duration-300 ease-out outline-none"
             >
-              <div 
+              <div
                 className={cn(
                   'flex h-16 w-16 items-center justify-center transition-all duration-300 ease-out',
                   isSelected
                     ? 'scale-110 shadow-md bg-white dark:bg-gray-800'
                     : 'bg-gray-50/80 hover:bg-gray-100 dark:bg-gray-800/80 dark:hover:bg-gray-800'
                 )}
-                style={{ borderRadius: '18px' }}
+                style={{ borderRadius: '30px' }}
               >
                 {getCategoryIcon(cat.name_ar)}
               </div>
