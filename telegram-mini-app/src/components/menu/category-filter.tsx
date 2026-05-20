@@ -99,11 +99,12 @@ export function CategoryFilter({
         >
           <div 
             className={cn(
-              'flex h-16 w-16 items-center justify-center rounded-full transition-all duration-300 ease-out',
+              'flex h-16 w-16 items-center justify-center transition-all duration-300 ease-out',
               selectedId === null
                 ? 'scale-110 shadow-md bg-white dark:bg-gray-800'
                 : 'bg-gray-50/80 hover:bg-gray-100 dark:bg-gray-800/80 dark:hover:bg-gray-800'
             )}
+            style={{ borderRadius: '18px' }}
           >
             <span className="text-3xl drop-shadow-sm">✨</span>
           </div>
@@ -128,11 +129,12 @@ export function CategoryFilter({
             >
               <div 
                 className={cn(
-                  'flex h-16 w-16 items-center justify-center rounded-full transition-all duration-300 ease-out',
+                  'flex h-16 w-16 items-center justify-center transition-all duration-300 ease-out',
                   isSelected
                     ? 'scale-110 shadow-md bg-white dark:bg-gray-800'
                     : 'bg-gray-50/80 hover:bg-gray-100 dark:bg-gray-800/80 dark:hover:bg-gray-800'
                 )}
+                style={{ borderRadius: '18px' }}
               >
                 {getCategoryIcon(cat.name_ar)}
               </div>
