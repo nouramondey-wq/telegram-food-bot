@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Plus, Minus, Star, UtensilsCrossed } from 'lucide-react';
+import { Plus, Minus, UtensilsCrossed } from 'lucide-react';
 
 import { useCartStore } from '@/stores/cart-store';
 import { formatPrice, cn } from '@/lib/utils';
@@ -84,80 +84,70 @@ export function MenuItemCard({
     <div
       dir="rtl"
       className={cn(
-        'w-full h-auto flex items-center p-3 gap-3 mb-3',
-        'bg-white dark:bg-gray-900',
-        'rounded-2xl border border-gray-100 dark:border-gray-800',
-        'shadow-sm',
+        'w-full bg-white dark:bg-gray-900',
+        'border border-gray-100 dark:border-gray-800 rounded-2xl',
+        'overflow-hidden shadow-sm flex items-center p-3 gap-3 h-auto mb-3',
         'transition-all duration-200 hover:shadow-md',
-        !is_available && 'opacity-60 grayscale',
-        'overflow-hidden'
+        !is_available && 'opacity-60 grayscale'
       )}
     >
       {/* ════════════════════════════════════════
-          1. القسم الأيمن: الصورة مع Border
+          1. القسم الأيمن: الصورة مع Border أنيق
           ════════════════════════════════════════ */}
-      <div className="w-24 h-24 rounded-xl overflow-hidden shrink-0 border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-        {image_url && !imageError ? (
-          <Image
-            src={image_url}
-            alt={name_ar}
-            width={96}
-            height={96}
-            className={cn(
-              'w-full h-full object-cover transition-all duration-500',
-              imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
-            )}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <div className="flex w-full h-full items-center justify-center">
-            <UtensilsCrossed className="w-6 h-6 text-gray-300 dark:text-gray-600" />
-          </div>
-        )}
-      </div>
+      {image_url && (
+        <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 border border-gray-200 dark:border-gray-700 bg-gray-50">
+          {!imageError ? (
+            <Image
+              src={image_url}
+              alt={name_ar}
+              width={80}
+              height={80}
+              className={cn(
+                'w-full h-full object-cover transition-all duration-500',
+                imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+              )}
+              onLoad={() => setImageLoaded(true)}
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="flex w-full h-full items-center justify-center">
+              <UtensilsCrossed className="w-5 h-5 text-gray-300 dark:text-gray-600" />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ════════════════════════════════════════
           2. القسم الأوسط: اسم المنتج + الوصف
           ════════════════════════════════════════ */}
-      <div className="flex-1 flex flex-col gap-1 text-right min-w-0">
-        <h3 className="font-black text-sm text-gray-900 dark:text-white leading-tight break-words line-clamp-2">
+      <div className="flex-1 flex flex-col gap-1 text-right min-w-0 px-1 self-start pt-0.5">
+        <h3 className="font-black text-sm text-gray-900 dark:text-white leading-tight break-words">
           {name_ar}
         </h3>
         {description_ar && (
-          <p className="text-xs text-gray-400 dark:text-gray-500 line-clamp-2 leading-relaxed">
+          <p className="text-[11px] text-gray-400 dark:text-gray-500 line-clamp-2 leading-tight">
             {description_ar}
           </p>
         )}
-        <span className="text-base font-black text-[#ef4444] tabular-nums tracking-tight mt-1">
-          {formatPrice(price)}
-        </span>
       </div>
 
       {/* ════════════════════════════════════════
-          3. القسم الأيسر: النجوم + أزرار التحكم
+          3. القسم الأيسر: النجوم + السعر + التحكم
           ════════════════════════════════════════ */}
-      <div className="flex flex-col items-end justify-between self-stretch shrink-0 min-w-[90px] py-0.5">
+      <div className="flex flex-col items-end justify-between shrink-0 w-28 py-0.5 self-stretch min-h-[80px]">
         {/* ─── التقييم بالنجوم ─── */}
-        <div className="flex items-center gap-1 justify-end">
-          <span className="text-[11px] font-bold text-amber-500 tabular-nums">4.0</span>
-          <div className="flex text-amber-400 text-xs">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={cn(
-                  'w-3 h-3',
-                  i < 4
-                    ? 'fill-amber-400 text-amber-400'
-                    : 'fill-gray-200 text-gray-200 dark:fill-gray-700 dark:text-gray-700'
-                )}
-              />
-            ))}
-          </div>
+        <div className="flex items-center gap-0.5 justify-end">
+          <span className="text-[10px] font-bold text-amber-500 tabular-nums">4.0</span>
+          <span className="text-amber-400 text-xs">★</span>
         </div>
 
-        {/* ─── أزرار التحكم بالكمية ─── */}
-        <div className="flex justify-end w-full mt-2">
+        {/* ─── السعر تحت النجوم ─── */}
+        <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 tabular-nums my-1">
+          {formatPrice(price)}
+        </span>
+
+        {/* ─── أزرار التحكم بالكمية في الأسفل ─── */}
+        <div className="flex justify-end items-center w-full mt-auto">
           {quantity === 0 ? (
             <button
               onClick={handleAdd}
@@ -167,7 +157,7 @@ export function MenuItemCard({
               <Plus className="w-[20px] h-[20px] stroke-[3]" />
             </button>
           ) : (
-            <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 rounded-full px-2 py-1 border border-gray-100 dark:border-gray-700 shadow-sm">
+            <div className="flex items-center gap-1 bg-gray-50 dark:bg-gray-800 rounded-full px-1.5 py-1 border border-gray-100 dark:border-gray-700 shadow-sm">
               <button
                 onClick={handleDecrease}
                 className="w-7 h-7 flex items-center justify-center bg-white dark:bg-gray-700 rounded-full text-gray-700 dark:text-gray-200 shadow-sm outline-none active:scale-90 transition-all"
