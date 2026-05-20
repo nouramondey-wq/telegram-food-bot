@@ -222,15 +222,17 @@ function MenuPageContent() {
         </h2>
 
         {isLoading ? (
-          /* Skeleton loading — grid */
-          <div className="grid grid-cols-2 gap-3">
+          /* Skeleton loading — grid with padding instead of gap for webview support */
+          <div className="grid grid-cols-2 -mx-2">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="flex flex-col rounded-2xl overflow-hidden bg-white shadow-sm h-[200px] w-full min-w-0">
-                <div className="skeleton w-full h-[110px]" />
-                <div className="flex-1 p-2 space-y-2">
-                  <div className="skeleton h-4 w-3/4" />
-                  <div className="skeleton h-3 w-1/2" />
-                  <div className="skeleton h-4 w-1/3 mt-2" />
+              <div key={i} className="w-full min-w-0 p-2">
+                <div className="flex flex-col rounded-2xl overflow-hidden bg-white shadow-sm h-[200px] w-full min-w-0">
+                  <div className="skeleton w-full h-[110px]" />
+                  <div className="flex-1 p-2 space-y-2">
+                    <div className="skeleton h-4 w-3/4" />
+                    <div className="skeleton h-3 w-1/2" />
+                    <div className="skeleton h-4 w-1/3 mt-2" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -247,12 +249,12 @@ function MenuPageContent() {
             </p>
           </div>
         ) : (
-          /* قائمة المواد — شبكة بعمودين */
-          <div className="grid grid-cols-2 gap-3">
+          /* قائمة المواد — شبكة بعمودين بدون استخدام gap لدعم المتصفحات القديمة داخل تليجرام */
+          <div className="grid grid-cols-2 -mx-2">
             {filteredItems.map((item, idx) => (
               <div
                 key={item.id}
-                className="animate-fade-in-up h-full w-full min-w-0"
+                className="animate-fade-in-up h-full w-full min-w-0 p-2"
                 style={{ animationDelay: `${(idx % 8) * 0.035}s` }}
               >
                 <MenuItemCard
