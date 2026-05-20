@@ -92,12 +92,12 @@ export function MenuItemCard({
       </div>
 
       {/* ── Content ── */}
-      {/* Added px-4 for safe inner padding to prevent text/buttons from touching the border */}
-      <div className="flex flex-col flex-1 pt-3 pb-4 px-4 text-right">
+      {/* Reduced padding to px-2.5 to give more room for text and prevent the card from expanding and overlapping */}
+      <div className="flex flex-col flex-1 pt-3 pb-3 px-2.5 text-right w-full min-w-0">
         {/* Title & Action Button Row */}
-        <div className="flex items-start justify-between gap-3 mb-1.5 w-full">
-          {/* min-w-0 and pr-1 to ensure text does not overflow or touch the counter */}
-          <h3 className="text-[14px] font-bold text-gray-900 dark:text-white leading-tight flex-1 min-w-0 break-words">
+        <div className="flex items-start justify-between gap-1.5 mb-1.5 w-full min-w-0">
+          {/* min-w-0 to ensure long words like 'مارغريتا' wrap instead of pushing the container wide */}
+          <h3 className="text-[13px] font-bold text-gray-900 dark:text-white leading-[1.3] flex-1 min-w-0 break-words whitespace-normal">
             {name_ar}
           </h3>
           
