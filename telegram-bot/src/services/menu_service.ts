@@ -39,12 +39,13 @@ export class MenuService {
   async getMenuItemsByCategory(categoryId?: string): Promise<MenuItem[]> {
     let query: any = this.db
       .collection('menu_items')
-      .where('is_available', '==', true)
-      .orderBy('sort_order', 'asc');
+      .where('is_available', '==', true);
 
     if (categoryId) {
       query = query.where('category_id', '==', categoryId);
     }
+
+    query = query.orderBy('sort_order', 'asc');
 
     const snapshot = await query.get();
     const items: MenuItem[] = [];
