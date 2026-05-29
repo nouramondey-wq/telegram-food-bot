@@ -8,3 +8,9 @@ cd telegram-mini-app
 npm run build && npx firebase deploy --only hosting
 cd ..
 
+
+
+لو ربط الفير بيز مش شغال
+
+
+npx firebase-tools login

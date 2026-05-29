@@ -69,9 +69,15 @@ export function MenuItemCard({
         !is_available && 'opacity-60 grayscale'
       )}
     >
-      {/* ── Image ── */}
-      <div 
-        className="relative aspect-[4/3] bg-gray-50 dark:bg-gray-800 overflow-hidden shrink-0"
+      {/* ── Image (clickable → add/increment) ── */}
+      <div
+        role="button"
+        aria-label={quantity === 0 ? `إضافة ${name_ar}` : `زيادة كمية ${name_ar}`}
+        onClick={is_available ? (quantity === 0 ? handleAdd : handleIncrease) : undefined}
+        className={cn(
+          'relative aspect-[4/3] bg-gray-50 dark:bg-gray-800 overflow-hidden shrink-0',
+          is_available ? 'cursor-pointer active:scale-[0.97] transition-transform duration-150' : 'cursor-default'
+        )}
         style={{ borderRadius: '14px', margin: '6px' }}
       >
         {image_url && !imageError ? (

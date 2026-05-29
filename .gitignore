@@ -5,3 +5,5 @@
 .env.example
 firebase/functions/lib/
 nul
+dist/
+node_modules/
