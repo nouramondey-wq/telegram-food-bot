@@ -46,6 +46,43 @@ async function main() {
   const bot = initBot();
 
   // ============================================================
+  // BOT PROFILE SETUP (Description + Commands via Telegram API)
+  // ============================================================
+  try {
+    // وصف البوت الكامل (يظهر في "What can this bot do?")
+    await bot.telegram.setMyDescription(
+      'مطعم نور 🍽️\n\n' +
+      'اطلب أشهى المأكولات بنقرات بسيطة!\n' +
+      '🍔 قائمة متنوعة من المأكولات الشرقية والغربية.\n' +
+      '⚡ توصيل سريع خلال ٢٠-٣٠ دقيقة.\n' +
+      '💳 الدفع عند الاستلام.\n\n' +
+      '📲 اضغط على زر القائمة لتبدأ طلبك!',
+      { language_code: 'ar' }
+    );
+
+    // وصف قصير (يظهر في قائمة البوتات)
+    await bot.telegram.setMyShortDescription(
+      'اطلب من مطعم نور 🍽️ — أشهى المأكولات بنقرة واحدة!',
+      { language_code: 'ar' }
+    );
+
+    // أوامر البوت (تظهر في قائمة / )
+    await bot.telegram.setMyCommands([
+      { command: 'start',    description: '🏠 القائمة الرئيسية' },
+      { command: 'menu',     description: '🍔 عرض قائمة الطعام' },
+      { command: 'status',   description: '📋 حالة طلباتي' },
+      { command: 'order',    description: '📝 تفاصيل طلب معين' },
+      { command: 'cancel',   description: '❌ إلغاء طلب' },
+      { command: 'location', description: '📍 موقع المطعم' },
+      { command: 'help',     description: 'ℹ️ المساعدة' },
+    ]);
+
+    console.log('✅ Bot profile (description + commands) updated');
+  } catch (err) {
+    console.warn('⚠️ Could not update bot profile:', err);
+  }
+
+  // ============================================================
   // MIDDLEWARE PIPELINE (ORDER MATTERS)
   // ============================================================
 
