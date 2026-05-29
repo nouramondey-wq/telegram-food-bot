@@ -5,7 +5,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 export const env = {
   bot: {
-    token: process.env.BOT_TOKEN || '',
+    token: process.env.BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN || '',
     username: process.env.BOT_USERNAME || '',
     mode: process.env.BOT_MODE || 'polling', // 'polling' | 'webhook'
     webhookUrl: process.env.WEBHOOK_URL || '',
@@ -47,7 +47,7 @@ export const env = {
 // Validation
 export function validateEnv(): void {
   const missing: string[] = [];
-  if (!env.bot.token) missing.push('BOT_TOKEN');
+  if (!env.bot.token) missing.push('BOT_TOKEN or TELEGRAM_BOT_TOKEN');
   if (!env.firebase.projectId) missing.push('FIREBASE_PROJECT_ID');
   if (!env.firebase.privateKey) missing.push('FIREBASE_PRIVATE_KEY');
   if (!env.firebase.clientEmail) missing.push('FIREBASE_CLIENT_EMAIL');
