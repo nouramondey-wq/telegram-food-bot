@@ -76,7 +76,7 @@ export function CategoryFilter({
 
   return (
     <div
-      className="sticky top-0 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-transparent"
+      className="sticky top-0 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl"
     >
       <div
         ref={scrollRef}

@@ -1,0 +1,113 @@
+ ملخص شامل لمشروع مطعم نور
+🏗️ معمارية المشروع — 4 مكونات رئيسية
+food/
+├── telegram-mini-app/       ← واجهة العميل (Next.js 16)
+├── telegram-bot/            ← البوت + API Server (Node.js/Telegraf)
+├── restaurant_admin_app/    ← تطبيق إدارة المطعم (Flutter)
+└── firebase/                ← قواعد Firestore + Cloud Functions
+قاعدة البيانات المشتركة: Firebase Firestore (مشروع my-restaurant-app-de879)
+
+📱 1. Telegram Mini App (Next.js 16 + TypeScript)
+الغرض: واجهة الطلب التي يفتحها العميل داخل تليجرام
+
+الصفحات:
+الصفحة	المسار	الوصف
+القائمة	/	عرض المنتجات مع فلتر الفئات والبحث
+السلة	/cart	مراجعة الطلب + تأكيد الإرسال
+طلباتي	/orders	تتبع حالة الطلبات real-time
+حسابي	/profile	بيانات المستخدم
+Stack التقني:
+Framework: Next.js 16 / React 19 (Static Export → Firebase Hosting)
+State: Zustand (مع persist في localStorage للسلة)
+Data: Firebase Firestore (real-time onSnapshot)
+Styling: Tailwind CSS 4 + CSS variables لثيم تليجرام
+خط: Cairo Arabic (Google Fonts)
+RTL: كامل الواجهة باتجاه يمين لشمال
+المكونات الأساسية:
+CategoryFilter — شريط أفقي قابل للتمرير مع أيقونات emoji ذكية
+MenuItemCard — بطاقة منتج شبكة 2-عمود مع عداد كمية مدمج
+BottomNav — شريط تنقل سفلي ثابت (z-100) مع badge السلة
+FloatingCheckoutButton — زر عائم فوق الـ nav يظهر عند إضافة أصناف
+المشكلة التاريخية المحلولة:
+Tailwind لا يُجمَّع بشكل صحيح في بيئة الإنتاج → الحل: Inline Styles للـ grid layout
+
+🤖 2. Telegram Bot (Node.js + Telegraf + Express)
+الغرض: بوت تليجرام + خادم API يعمل على Railway
+
+Commands المتاحة:
+الأمر	الوظيفة
+/start	رسالة ترحيب + زر فتح Mini App
+/menu	عرض قائمة المطعم
+/status	حالة آخر طلب
+/order	تفاصيل الطلبات
+/cancel	إلغاء طلب
+/help	مساعدة
+/location	موقع المطعم
+API Endpoints:
+Endpoint	الوظيفة
+POST /api/validate	التحقق من initData تليجرام
+POST /api/order/reorder	إعادة طلب سابق
+POST /api/seed	زرع البيانات التجريبية
+GET /health	فحص حالة الخادم
+POST /webhook	استقبال تحديثات تليجرام
+الـ Middleware Pipeline:
+Log → Private Chat Only → Rate Limit → Filter Updates → Customer Auth → Block Check
+FirestoreOrderListener (بديل Cloud Functions):
+يستمع real-time لـ Firestore
+طلب جديد → FCM push لتطبيق Flutter الإداري + Telegram alert للأدمن
+تغيير حالة → إشعار تليجرام للعميل
+📊 3. Restaurant Admin App (Flutter)
+الغرض: تطبيق موبايل لإدارة المطعم (Android/Web)
+
+الشاشات:
+Login → تسجيل دخول آمن
+Dashboard → لوحة تحكم + إحصائيات
+Orders → إدارة الطلبات real-time
+Menu → إدارة القائمة والأصناف
+Reports → تقارير المبيعات
+Settings → إعدادات المطعم
+الـ Stack:
+State: Provider
+Notifications: FCM (Firebase Cloud Messaging)
+Sound: خدمة صوت للتنبيه عند ورود طلب جديد
+RTL: عربي كامل (ar_AE)
+🔥 4. Firebase (Backend as a Service)
+Collections في Firestore:
+Collection	البيانات
+categories	فئات القائمة (مقبلات، سلطات، برغر...)
+menu_items	أصناف القائمة مع السعر والصورة
+orders	الطلبات مع timeline الحالة
+settings/order_counter	عداد تسلسلي لأرقام الطلبات
+analytics	أحداث تحليلية
+قواعد Firestore Security:
+في firebase/firestore.rules
+🔄 تدفق الطلب الكامل
+العميل في تليجرام
+     ↓
+يفتح Mini App → يختار أصناف → يضيف للسلة (Zustand + localStorage)
+     ↓
+يضغط "تأكيد الطلب"
+     ↓
+createOrder() → Firestore Transaction → ينشئ طلب + يزيد عداد الرقم
+     ↓
+FirestoreOrderListener (في Bot server) يكتشف الطلب الجديد
+     ↓
+يرسل FCM Push → Flutter Admin App (تنبيه صوتي + إشعار)
+يرسل Telegram Alert → مجموعة الأدمن
+     ↓
+المدير يغير الحالة: pending → confirmed → preparing → ready → delivered
+     ↓
+FirestoreOrderListener يكتشف التغيير → يرسل رسالة تليجرام للعميل
+⚙️ بيانات البيئة الحالية
+المتغير	القيمة
+Bot Token	@NourNasserfoodBot
+Firebase Project	my-restaurant-app-de879
+Mini App URL	https://my-restaurant-app-de879.web.app
+Hosting	Railway (bot) + Firebase Hosting (mini app)
+Tax Rate	15%
+🧩 ملاحظات مهمة على الكود الحالي
+حساب item_total في السلة — الـ addons تُحسب مرة واحدة وليس × الكمية (محتمل bug)
+Category Filter — sticky top-0 z-30 لكن الـ header كمان z-30 → قد يكون فيه تعارض
+Bot .env — يحتوي على RESTAURANT_NAME=My Restaurant بدل "مطعم نور"
+Admin App — يحمل اسم مطعم الذواقة في main.dart بدل "مطعم نور"
+Mini App — يستخدم Static Export (out/) للنشر على Firebase Hosting

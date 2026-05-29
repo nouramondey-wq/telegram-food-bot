@@ -138,10 +138,18 @@ function MenuPageContent() {
       )}
 
       {/* الهيدر - Glassmorphism */}
-      <header className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-100/80 dark:border-gray-800/80 shadow-sm">
+      <header className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-sm">
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
-            {/* Left side: Search */}
+            {/* Right side (RTL first): Title & Icon */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center">
+                <Store className="w-6 h-6 text-[#1a202c] dark:text-gray-100" />
+              </div>
+              <h1 className="text-xl font-black text-[#1a202c] dark:text-gray-100 tracking-tight">مطعم نور</h1>
+            </div>
+
+            {/* Left side (RTL last): Search */}
             <button
               onClick={() => {
                 setShowSearch(!showSearch);
@@ -156,14 +164,6 @@ function MenuPageContent() {
             >
               <Search className="w-5 h-5" />
             </button>
-
-            {/* Right side: Title & Icon */}
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-black text-[#1a202c] dark:text-gray-100 tracking-tight">مطعم نور </h1>
-              <div className="flex items-center justify-center">
-                <Store className="w-6 h-6 text-[#1a202c] dark:text-gray-100" />
-              </div>
-            </div>
           </div>
 
           {/* شريط البحث */}
