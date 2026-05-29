@@ -84,7 +84,6 @@ async function main() {
     console.warn('⚠️ Could not update bot profile:', err);
   }
 
-
   // ============================================================
   // MIDDLEWARE PIPELINE (ORDER MATTERS)
   // ============================================================
@@ -114,7 +113,7 @@ async function main() {
     if (session?.customerId) {
       const blocked = await isCustomerBlocked(session.customerId);
       if (blocked) {
-        console.warn(`🚫 Blocked user ${ctx.from?.id} attempted interaction`);
+        console.warn(`🛑 Blocked user ${ctx.from?.id} attempted interaction`);
         return; // Silently ignore blocked users
       }
     }
@@ -148,17 +147,17 @@ async function main() {
   bot.hears('ℹ️ عن المطعم', async (ctx) => {
     await ctx.reply(
       `🏪 **${env.restaurant.name}**\n\n` +
-      `نقدم ألذ المأكولات الشرقية والغربية.\n` +
+      `نقدم أشهى المأكولات الشرقية والغربية.\n` +
       `📍 ${env.restaurant.address}\n` +
       `📞 ${env.restaurant.phone}\n\n` +
-      `اطلب الآن بنقرات بسيطة! 😊`,
+      `نحن هنا لخدمتك دائماً! 😊`,
       { parse_mode: 'Markdown' }
     );
   });
 
   bot.hears('🕐 أوقات العمل', async (ctx) => {
     await ctx.reply(
-      `🕐 **أوقات العمل**\n\n` +
+      `🕒 **أوقات العمل**\n\n` +
       `${env.restaurant.workingHours}`,
       { parse_mode: 'Markdown' }
     );
@@ -168,7 +167,7 @@ async function main() {
     await ctx.reply(
       `📞 **للتواصل معنا:**\n\n` +
       `${env.restaurant.phone}\n\n` +
-      `نحن هنا لخدمتك! 😊`,
+      `نسعد بخدمتكم! 💚`,
       { parse_mode: 'Markdown' }
     );
   });
@@ -176,7 +175,7 @@ async function main() {
   bot.hears('🏠 القائمة الرئيسية', async (ctx) => {
     const { getMainKeyboard } = require('./bot/keyboards/main_keyboard');
     const keyboard = getMainKeyboard();
-    await ctx.reply('🏠 القائمة الرئيسية:', {
+    await ctx.reply('👇 القائمة الرئيسية:', {
       reply_markup: keyboard.reply_markup,
     });
   });
@@ -184,16 +183,12 @@ async function main() {
   // ============================================================
   // START API + WEBHOOK SERVER
   // ============================================================
-  // For production (Render): Express handles Telegram webhook + API
-  // For development (local): Express handles API, Telegraf handles polling
   if (env.bot.mode === 'webhook') {
-    // Production: Express handles both API and Telegram webhook
     startApiServer(bot);
-    console.log(`🌐 Webhook mode: waiting for Telegram updates via Express`);
+    console.log(`📡 Webhook mode: waiting for Telegram updates via Express`);
   } else {
-    // Development: API server without bot (bot uses polling)
     startApiServer();
-    console.log('🤖 Bot starting in polling mode...');
+    console.log('📡 Bot starting in polling mode...');
 
     await bot.launch({
       dropPendingUpdates: true,
@@ -202,24 +197,20 @@ async function main() {
   }
 
   console.log(`\n🎉 ${env.restaurant.name} is LIVE!`);
-  console.log(`📱 Telegram: https://t.me/${env.bot.username}`);
-  console.log(`🌐 Mini App: ${env.miniApp.url}`);
-  console.log(`\n🚀 Press Ctrl+C to stop\n`);
+  console.log(`🤖 Telegram: https://t.me/${env.bot.username}`);
+  console.log(`📱 Mini App: ${env.miniApp.url}`);
+  console.log(`\n🛑 Press Ctrl+C to stop\n`);
 
   // ============================================================
   // GRACEFUL SHUTDOWN
   // ============================================================
   const shutdown = async (signal: string) => {
     console.log(`\n🛑 Received ${signal}. Shutting down gracefully...`);
-
     if (env.bot.mode === 'webhook') {
-      // In webhook mode, bot doesn't "launch" — just stop the process
       bot.stop(signal);
     } else {
       bot.stop(signal);
     }
-
-    // Allow pending operations to complete
     setTimeout(() => {
       console.log('👋 Goodbye!');
       process.exit(0);
