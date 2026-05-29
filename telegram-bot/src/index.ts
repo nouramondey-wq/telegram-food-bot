@@ -49,38 +49,41 @@ async function main() {
   // BOT PROFILE SETUP (Description + Commands via Telegram API)
   // ============================================================
   try {
-    // وصف البوت الكامل (يظهر في "What can this bot do?")
-    await bot.telegram.setMyDescription(
+    const desc =
       'مطعم نور 🍽️\n\n' +
       'اطلب أشهى المأكولات بنقرات بسيطة!\n' +
       '🍔 قائمة متنوعة من المأكولات الشرقية والغربية.\n' +
       '⚡ توصيل سريع خلال ٢٠-٣٠ دقيقة.\n' +
       '💳 الدفع عند الاستلام.\n\n' +
-      '📲 اضغط على زر القائمة لتبدأ طلبك!',
-      { language_code: 'ar' }
-    );
+      '📲 اضغط على زر القائمة لتبدأ طلبك!';
 
-    // وصف قصير (يظهر في قائمة البوتات)
-    await bot.telegram.setMyShortDescription(
-      'اطلب من مطعم نور 🍽️ — أشهى المأكولات بنقرة واحدة!',
-      { language_code: 'ar' }
-    );
+    const shortDesc = 'اطلب من مطعم نور 🍽️ — أشهى المأكولات بنقرة واحدة!';
 
-    // أوامر البوت (تظهر في قائمة / )
-    await bot.telegram.setMyCommands([
-      { command: 'start',    description: '🏠 القائمة الرئيسية' },
-      { command: 'menu',     description: '🍔 عرض قائمة الطعام' },
-      { command: 'status',   description: '📋 حالة طلباتي' },
-      { command: 'order',    description: '📝 تفاصيل طلب معين' },
-      { command: 'cancel',   description: '❌ إلغاء طلب' },
-      { command: 'location', description: '📍 موقع المطعم' },
-      { command: 'help',     description: 'ℹ️ المساعدة' },
-    ]);
+    const commands = [
+      { command: 'start',    description: 'القائمة الرئيسية' },
+      { command: 'menu',     description: 'عرض قائمة الطعام' },
+      { command: 'status',   description: 'حالة طلباتي' },
+      { command: 'order',    description: 'تفاصيل طلب معين' },
+      { command: 'cancel',   description: 'الغاء طلب' },
+      { command: 'location', description: 'موقع المطعم' },
+      { command: 'help',     description: 'المساعدة' },
+    ];
 
-    console.log('✅ Bot profile (description + commands) updated');
+    // ── ضبط الـ DEFAULT (لكل المستخدمين بغض النظر عن اللغة)
+    await bot.telegram.setMyDescription(desc);
+    await bot.telegram.setMyShortDescription(shortDesc);
+    await bot.telegram.setMyCommands(commands);
+
+    // ── ضبط النسخة العربية كذلك تحديداً
+    await bot.telegram.setMyDescription(desc, { language_code: 'ar' });
+    await bot.telegram.setMyShortDescription(shortDesc, { language_code: 'ar' });
+    await bot.telegram.setMyCommands(commands, { language_code: 'ar' } as any);
+
+    console.log('✅ Bot profile (description + commands) updated for all languages');
   } catch (err) {
     console.warn('⚠️ Could not update bot profile:', err);
   }
+
 
   // ============================================================
   // MIDDLEWARE PIPELINE (ORDER MATTERS)
