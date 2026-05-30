@@ -75,8 +75,8 @@ async function main() {
     await bot.telegram.setMyCommands(commands);
 
     // ── ضبط النسخة العربية كذلك تحديداً
-    await bot.telegram.setMyDescription(desc, { language_code: 'ar' });
-    await bot.telegram.setMyShortDescription(shortDesc, { language_code: 'ar' });
+    await (bot.telegram as any).setMyDescription(desc, { language_code: 'ar' });
+    await (bot.telegram as any).setMyShortDescription(shortDesc, { language_code: 'ar' });
     await bot.telegram.setMyCommands(commands, { language_code: 'ar' } as any);
 
     console.log('✅ Bot profile (description + commands) updated for all languages');
