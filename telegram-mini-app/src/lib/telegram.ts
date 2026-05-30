@@ -79,9 +79,33 @@ export function initTelegramApp() {
 }
 
 // الحصول على معلومات المستخدم من Telegram
+// مع حفظ البيانات في localStorage كـ fallback للموبايل
+const TELEGRAM_USER_KEY = 'tg_user_cache';
+
 export function getTelegramUser() {
+  if (typeof window === 'undefined') return null;
+
   const webApp = getTelegramWebApp();
-  return webApp?.initDataUnsafe?.user || null;
+  const user = webApp?.initDataUnsafe?.user || null;
+
+  if (user?.id) {
+    // حفظ في localStorage عند أول مرة نجاح
+    try {
+      localStorage.setItem(TELEGRAM_USER_KEY, JSON.stringify(user));
+    } catch {}
+    return user;
+  }
+
+  // Fallback: حاول من localStorage (يفيد عند تأخر Telegram على الموبايل)
+  try {
+    const cached = localStorage.getItem(TELEGRAM_USER_KEY);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (parsed?.id) return parsed;
+    }
+  } catch {}
+
+  return null;
 }
 
 // تحديث زر Main Button

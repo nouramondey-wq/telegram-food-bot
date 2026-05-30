@@ -117,6 +117,15 @@ export async function createOrder(): Promise<{ success: boolean; orderId?: strin
     const tax = cart.tax();
     const total = cart.total();
 
+    // ── تسجيل بيانات المستخدم للتشخيص ──
+    console.log('[createOrder] بيانات المستخدم:', {
+      telegram_id: telegramUser?.id?.toString() || 'EMPTY - لا يوجد',
+      username: telegramUser?.username || 'غير متوفر',
+      first_name: telegramUser?.first_name || 'غير متوفر',
+      webApp_exists: !!getTelegramWebApp(),
+      initData_exists: !!getTelegramWebApp()?.initData,
+    });
+
     // الحصول على رقم الطلب وإنشاء الطلب في транзаكشن واحدة
     const settingsRef = doc(db, 'settings', 'order_counter');
     let orderNumber = 1;
@@ -211,17 +220,20 @@ export function useMyOrders(maxOrders = 20) {
       const q = query(
         collection(db, 'orders'),
         where('customer.telegram_id', '==', telegramUser.id.toString()),
-        orderBy('created_at', 'desc'),
         limit(maxOrders)
       );
 
       unsubscribe = onSnapshot(
         q,
         (snapshot) => {
-          const orderList = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as Order[];
+          const orderList = snapshot.docs
+            .map((doc) => ({ id: doc.id, ...doc.data() } as Order))
+            // ترتيب تنازلي حسب تاريخ الإنشاء (client-side)
+            .sort((a, b) => {
+              const aTime = a.created_at?.toMillis?.() ?? 0;
+              const bTime = b.created_at?.toMillis?.() ?? 0;
+              return bTime - aTime;
+            });
           setOrders(orderList);
           setLoading(false);
         },

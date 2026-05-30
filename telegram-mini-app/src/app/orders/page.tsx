@@ -137,6 +137,9 @@ function OrdersListView() {
             <div>
               <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 leading-tight">طلباتي</h1>
               <p className="text-[11px] text-gray-400 dark:text-gray-500 font-medium">تتبع طلباتك السابقة والحالية</p>
+              <p className="text-[10px] text-emerald-500 font-bold mt-1">
+                ID: {typeof window !== 'undefined' ? (JSON.parse(localStorage.getItem('tg_user_cache') || '{}')?.id || 'مفقود') : ''}
+              </p>
             </div>
           </div>
         </div>

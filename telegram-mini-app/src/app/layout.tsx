@@ -30,6 +30,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ar" dir="rtl" className={cairo.variable}>
+      <head>
+        {/* سكربت Telegram WebApp - يُحمل بشكل متزامن قبل الرندر لضمان توفره */}
+        <script src="https://telegram.org/js/telegram-web-app.js" async={false} defer={false} />
+      </head>
       <body
         className={`${cairo.className} bg-gray-50 text-gray-900 antialiased`}
         style={{
@@ -60,12 +64,6 @@ export default function RootLayout({
           {/* Toast notifications */}
           <Toaster />
         </ToastProvider>
-
-        {/* سكربت Telegram WebApp - beforeInteractive to load before React hydrates */}
-        <Script
-          src="https://telegram.org/js/telegram-web-app.js"
-          strategy="beforeInteractive"
-        />
       </body>
     </html>
   );

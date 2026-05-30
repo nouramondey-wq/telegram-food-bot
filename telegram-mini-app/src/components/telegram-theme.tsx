@@ -19,8 +19,15 @@ export function TelegramThemeScript() {
 
   useEffect(() => {
     try {
+      // ── تهيئة Telegram للكل ──
+      const webApp = (window as any).Telegram?.WebApp;
+      if (webApp) {
+        webApp.ready();
+        webApp.expand();
+      }
+
       // محاولة قراءة Telegram Theme
-      const tg = (window as any).Telegram?.WebApp;
+      const tg = webApp;
       if (tg?.themeParams) {
         const tp = tg.themeParams;
         setTheme({

@@ -11,10 +11,7 @@ import { useCartStore } from '@/stores/cart-store';
 import { formatPrice, cn } from '@/lib/utils';
 import { Store, Search, ChevronLeft, RefreshCw, Sparkles, ShoppingCart, ArrowLeft } from 'lucide-react';
 
-// تهيئة Telegram WebApp عند تحميل الصفحة
-if (typeof window !== 'undefined') {
-  initTelegramApp();
-}
+// تمت تهيئة Telegram WebApp عالمياً في layout.tsx
 
 export default function MenuPage() {
   return (
