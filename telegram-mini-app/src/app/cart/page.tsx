@@ -41,6 +41,16 @@ export default function CartPage() {
   const [error, setError] = useState<string | null>(null);
   const [orderSnapshot, setOrderSnapshot] = useState<CartItem[] | null>(null);
   const [orderTotal, setOrderTotal] = useState<number>(0);
+  const [customerName, setCustomerName] = useState<string>('');
+
+  React.useEffect(() => {
+    try {
+      const user = getTelegramUser();
+      if (user?.first_name) {
+        setCustomerName(`- ${user.first_name}`);
+      }
+    } catch (err) {}
+  }, []);
 
   const handleCheckout = async () => {
     if (items.length === 0) return;
@@ -89,12 +99,12 @@ export default function CartPage() {
           <div className="mb-8 px-8 py-4 rounded-3xl shadow-xl shadow-emerald-500/20 text-center" style={{ background: 'linear-gradient(135deg, #059669, #10b981)' }}>
             <p className="text-emerald-100 text-xs font-semibold mb-1">رقم طلبك</p>
             <p className="text-white text-4xl font-black tabular-nums" style={{ direction: 'ltr' }}>
-              #{orderNumber} {typeof window !== 'undefined' ? `- ${getTelegramUser()?.first_name || ''}` : ''}
+              #{orderNumber} {customerName}
             </p>
           </div>
 
           {/* Items receipt */}
-          <div className="w-full max-w-sm rounded-3xl overflow-hidden shadow-lg shadow-gray-200/60 mb-6" style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.6)' }}>
+          <div className="w-full max-w-sm rounded-3xl overflow-hidden shadow-lg shadow-gray-200/60 mb-6" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
             <div className="px-5 py-4 border-b border-gray-100/80">
               <p className="font-black text-gray-800 text-sm">ملخص الطلب</p>
             </div>
@@ -360,6 +370,7 @@ export default function CartPage() {
               {/* CTA Button */}
               <div className="px-4 pb-4 pt-1">
                 <button
+                  type="button"
                   onClick={handleCheckout}
                   disabled={isCheckingOut || items.length === 0}
                   className="w-full py-4 rounded-2xl font-black text-base text-white flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
