@@ -26,6 +26,12 @@ export function TelegramThemeScript() {
         webApp.expand();
       }
 
+      // ── تخزين بيانات المستخدم فوراً عند فتح التطبيق ──
+      // حتى لا تضيع إذا تغير رابط الـ URL بسبب Next.js Routing
+      import('@/lib/telegram').then(({ getTelegramUser }) => {
+        getTelegramUser();
+      });
+
       // محاولة قراءة Telegram Theme
       const tg = webApp;
       if (tg?.themeParams) {

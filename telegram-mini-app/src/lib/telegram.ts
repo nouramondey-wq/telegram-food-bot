@@ -85,18 +85,54 @@ const TELEGRAM_USER_KEY = 'tg_user_cache';
 export function getTelegramUser() {
   if (typeof window === 'undefined') return null;
 
-  const webApp = getTelegramWebApp();
-  const user = webApp?.initDataUnsafe?.user || null;
+  let user = null;
 
+  // 1. المحاولة عبر Telegram SDK (الطريقة الأساسية)
+  try {
+    const webApp = getTelegramWebApp();
+    user = webApp?.initDataUnsafe?.user || null;
+
+    // 1.5 المحاولة من initData الخام إذا كان initDataUnsafe فارغاً
+    if (!user?.id && webApp?.initData) {
+      const dataParams = new URLSearchParams(webApp.initData);
+      const userStr = dataParams.get('user');
+      if (userStr) {
+        const parsedUser = JSON.parse(decodeURIComponent(userStr));
+        if (parsedUser?.id) user = parsedUser;
+      }
+    }
+  } catch {}
+
+  // 2. المحاولة يدوياً عبر URL Hash (إذا فشل الـ SDK أو ضاعت البيانات)
+  if (!user?.id) {
+    try {
+      const hash = window.location.hash.slice(1);
+      const params = new URLSearchParams(hash);
+      const tgWebAppData = params.get('tgWebAppData');
+      if (tgWebAppData) {
+        const dataParams = new URLSearchParams(tgWebAppData);
+        const userStr = dataParams.get('user');
+        if (userStr) {
+          const parsedUser = JSON.parse(decodeURIComponent(userStr));
+          if (parsedUser?.id) {
+            user = parsedUser;
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[getTelegramUser] Failed to parse hash manually:', err);
+    }
+  }
+
+  // 3. الحفظ في الـ Cache إذا نجحنا
   if (user?.id) {
-    // حفظ في localStorage عند أول مرة نجاح
     try {
       localStorage.setItem(TELEGRAM_USER_KEY, JSON.stringify(user));
     } catch {}
     return user;
   }
 
-  // Fallback: حاول من localStorage (يفيد عند تأخر Telegram على الموبايل)
+  // 4. المحاولة من الـ Cache كحل أخير (Fallback)
   try {
     const cached = localStorage.getItem(TELEGRAM_USER_KEY);
     if (cached) {
