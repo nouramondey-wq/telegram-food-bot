@@ -296,6 +296,28 @@ export default function CartPage() {
               </div>
             </div>
 
+            {/* ── Phone ── */}
+            <div className="rounded-3xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', boxShadow: '0 2px 20px rgba(0,0,0,0.06)', border: '1px solid rgba(255,255,255,0.8)' }}>
+              <div className="flex items-center gap-2.5 px-4 pt-4 pb-2">
+                <div className="w-7 h-7 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #e0e7ff, #c7d2fe)' }}>
+                  <span className="text-sm">📱</span>
+                </div>
+                <label htmlFor="order-phone" className="text-sm font-black text-gray-800">رقم الهاتف للتواصل <span className="text-red-500">*</span></label>
+              </div>
+              <div className="px-4 pb-4">
+                <input
+                  id="order-phone"
+                  type="tel"
+                  dir="ltr"
+                  value={useCartStore((s) => s.phone) || ''}
+                  onChange={(e) => useCartStore.getState().setPhone(e.target.value)}
+                  placeholder="05xxxxxxxxx"
+                  className="w-full px-4 py-3 text-sm text-gray-800 rounded-2xl transition-all duration-200 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', textAlign: 'left' }}
+                />
+              </div>
+            </div>
+
             {/* ── Order Summary ── */}
             <div className="rounded-3xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)', boxShadow: '0 2px 20px rgba(0,0,0,0.06)', border: '1px solid rgba(255,255,255,0.8)' }}>
               {/* Header */}

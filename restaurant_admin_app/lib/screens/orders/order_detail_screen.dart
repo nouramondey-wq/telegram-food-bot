@@ -111,6 +111,11 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       const Divider(),
                       _buildInfoRow('Telegram', '@${order.customer['telegram_username']}'),
                     ],
+                    if (order.customer['phone'] != null &&
+                        order.customer['phone'].toString().isNotEmpty) ...[
+                      const Divider(),
+                      _buildInfoRow('رقم الهاتف', order.customer['phone'].toString()),
+                    ],
                     const Divider(),
                     _buildInfoRow('المصدر', 'Telegram Mini App'),
                   ],

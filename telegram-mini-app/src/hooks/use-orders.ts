@@ -69,6 +69,10 @@ export async function createOrder(): Promise<{ success: boolean; orderId?: strin
     return { success: false, error: 'السلة فارغة' };
   }
 
+  if (!cart.phone || cart.phone.trim().length < 8) {
+    return { success: false, error: 'يرجى إدخال رقم هاتف صحيح للتواصل' };
+  }
+
   // ─── التحقق من وجود Telegram WebApp + initData + مستخدم ───
   // يتم الفصل بين التحقق من WebApp (هل نحن داخل Telegram؟) وتحقق البيانات (initData + user)
   // لإعطاء تشخيص دقيق في حال فشل أحد الخطوات
@@ -170,6 +174,7 @@ export async function createOrder(): Promise<{ success: boolean; orderId?: strin
           telegram_id: telegramUser?.id?.toString() || '',
           telegram_username: telegramUser?.username || '',
           first_name: telegramUser?.first_name || '',
+          phone: cart.phone || '',
         },
         created_at: serverTimestamp(),
         updated_at: serverTimestamp(),

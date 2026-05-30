@@ -26,6 +26,7 @@ export interface CartItem {
 export interface CartState {
   items: CartItem[];
   notes: string;
+  phone: string;
 
   // الإجراءات
   addItem: (item: Omit<CartItem, 'item_total'>) => void;
@@ -33,6 +34,7 @@ export interface CartState {
   updateQuantity: (menuItemId: string, quantity: number) => void;
   clearCart: () => void;
   setNotes: (notes: string) => void;
+  setPhone: (phone: string) => void;
   toggleAddon: (menuItemId: string, addon: CartAddon) => void;
 
   // الحسابات
@@ -50,6 +52,9 @@ export const useCartStore = create<CartState>()(
     (set, get) => ({
       items: [],
       notes: '',
+      phone: '',
+
+      setPhone: (phone) => set({ phone }),
 
       // إضافة صنف للسلة
       addItem: (newItem) => {
