@@ -238,7 +238,7 @@ class DashboardScreen extends StatelessWidget {
           ),
           child: Center(
             child: Text(
-              '#${order.orderNumber}',
+              order.displayOrderNumber,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: AppTheme.getStatusColor(order.status),
@@ -248,7 +248,7 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
         title: Text(
-          'طلب #${order.orderNumber}',
+          order.displayOrderNumber,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(

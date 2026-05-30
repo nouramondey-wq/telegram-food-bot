@@ -26,9 +26,10 @@ export const onNewOrder = functions.firestore
       // 1. إرسال إشعار إلى أجهزة المطعم عبر FCM
       const adminTokens = await getAdminDeviceTokens();
       if (adminTokens.length > 0) {
+        const customerName = order.customer?.first_name ? ` - ${order.customer.first_name}` : '';
         const notificationPayload: admin.messaging.MessagingPayload = {
           notification: {
-            title: `📦 طلب جديد #${order.order_number}`,
+            title: `📦 طلب جديد #${order.order_number}${customerName}`,
             body: `طلب بقيمة ${order.total} ر.س - ${order.items?.length || 0} أصناف`,
             sound: 'default',
           },
