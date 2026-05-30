@@ -13,7 +13,7 @@ export function formatPrice(price: number): string {
     currency: 'SAR',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(price);
+  }).format(price || 0);
 }
 
 // تنسيق التاريخ بالعربية

@@ -19,6 +19,7 @@ import {
   Sparkles,
   UtensilsCrossed,
   Tag,
+  AlertCircle,
 } from 'lucide-react';
 
 export default function CartPage() {
@@ -100,7 +101,7 @@ export default function CartPage() {
             <div className="px-5 py-3 space-y-2.5">
               {(orderSnapshot || items).map((item) => (
                 <div key={item.menu_item_id} className="flex justify-between items-center gap-3 text-sm">
-                  <span className="font-bold text-emerald-600 tabular-nums shrink-0">{formatPrice(item.item_total)}</span>
+                  <span className="font-bold text-emerald-600 tabular-nums shrink-0">{formatPrice(item.item_total || (item.quantity * item.unit_price))}</span>
                   <div className="flex-1 text-right">
                     <span className="font-semibold text-gray-800">{item.name_ar}</span>
                     <span className="text-gray-400 text-xs mr-1">× {item.quantity}</span>
