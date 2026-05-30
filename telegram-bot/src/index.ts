@@ -151,29 +151,33 @@ async function main() {
 
   bot.hears('ℹ️ عن المطعم', async (ctx) => {
     await ctx.reply(
-      `🏪 **${env.restaurant.name}**\n\n` +
-      `نقدم أشهى المأكولات الشرقية والغربية.\n` +
-      `📍 ${env.restaurant.address}\n` +
-      `📞 ${env.restaurant.phone}\n\n` +
-      `نحن هنا لخدمتك دائماً! 😊`,
-      { parse_mode: 'Markdown' }
-    );
-  });
-
-  bot.hears('🕐 أوقات العمل', async (ctx) => {
-    await ctx.reply(
-      `🕒 **أوقات العمل**\n\n` +
-      `${env.restaurant.workingHours}`,
+      `🏪 *عن ${env.restaurant.name || 'مطعم نور'}*\n\n` +
+      `✨ خيارك الأول لأشهى المأكولات! نحن نقدم تشكيلة واسعة من الأطباق الشرقية والغربية المحضرة يومياً بأجود المكونات الطازجة.\n\n` +
+      `📍 *موقعنا:* ${env.restaurant.address || 'القاهرة - مصر'}\n` +
+      `🕒 *أوقات العمل:* ${env.restaurant.workingHours || 'يومياً من ١٠ صباحاً إلى ٢ فجراً'}\n` +
+      `🛵 *التوصيل:* متاح وسريع\n\n` +
+      `نسعد دائماً بخدمتكم وتلبية طلباتكم! 😊`,
       { parse_mode: 'Markdown' }
     );
   });
 
   bot.hears('📞 تواصل معنا', async (ctx) => {
+    const phoneNumber = env.restaurant.phone || '+201000000000';
+    const cleanPhone = phoneNumber.replace(/[^0-9]/g, '');
+
     await ctx.reply(
-      `📞 **للتواصل معنا:**\n\n` +
-      `${env.restaurant.phone}\n\n` +
-      `نسعد بخدمتكم! 💚`,
-      { parse_mode: 'Markdown' }
+      `📞 *تواصل مع فريق ${env.restaurant.name || 'مطعم نور'}:*\n\n` +
+      `يسعدنا استقبال استفساراتكم واقتراحاتكم عبر القنوات التالية:\n\n` +
+      `📱 *رقم الهاتف للطلبات:* ${phoneNumber}\n\n` +
+      `نحن هنا لخدمتك دائماً! 💚`,
+      { 
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '💬 تواصل معنا عبر واتساب', url: `https://wa.me/${cleanPhone}` }]
+          ]
+        }
+      }
     );
   });
 
