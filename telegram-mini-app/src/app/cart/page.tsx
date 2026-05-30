@@ -27,6 +27,8 @@ export default function CartPage() {
     items,
     notes,
     setNotes,
+    phone,
+    setPhone,
     updateQuantity,
     removeItem,
     totalItems,
@@ -336,8 +338,8 @@ export default function CartPage() {
                   id="order-phone"
                   type="tel"
                   dir="ltr"
-                  value={useCartStore((s) => s.phone) || ''}
-                  onChange={(e) => useCartStore.getState().setPhone(e.target.value)}
+                  value={phone || ''}
+                  onChange={(e) => setPhone(e.target.value)}
                   placeholder="05xxxxxxxxx"
                   className="w-full px-4 py-3 text-sm text-gray-800 rounded-2xl transition-all duration-200 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                   style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', textAlign: 'left' }}
