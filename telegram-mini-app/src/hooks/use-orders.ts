@@ -16,7 +16,7 @@ import {
 } from 'firebase/firestore';
 import { initFirebase } from '@/lib/firebase';
 import { useCartStore } from '@/stores/cart-store';
-import { getTelegramUser, getTelegramWebApp } from '@/lib/telegram';
+import { getTelegramUser } from '@/lib/telegram';
 
 // ============================================================
 // أنواع البيانات
@@ -73,52 +73,8 @@ export async function createOrder(): Promise<{ success: boolean; orderId?: strin
     return { success: false, error: 'يرجى إدخال رقم هاتف صحيح للتواصل' };
   }
 
-  // ─── التحقق من وجود Telegram WebApp + initData + مستخدم ───
-  // يتم الفصل بين التحقق من WebApp (هل نحن داخل Telegram؟) وتحقق البيانات (initData + user)
-  // لإعطاء تشخيص دقيق في حال فشل أحد الخطوات
-
-  // المرحلة 1: هل نحن داخل Telegram أصلاً؟
-  let tg = getTelegramWebApp();
-  if (!tg) {
-    console.warn('[createOrder] Telegram.WebApp غير متاح — التطبيق ليس داخل Telegram');
-    return { success: false, error: 'يرجى فتح التطبيق من داخل Telegram' };
-  }
-
-  // المرحلة 2: انتظار تحميل initData (حتى 2.5 ثانية)
-  if (!tg.initData) {
-    for (let i = 0; i < 5; i++) {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      tg = getTelegramWebApp();
-      if (tg?.initData) break;
-    }
-  }
-
-  // المرحلة 3: انتظار تحميل بيانات المستخدم (حتى 2.5 ثانية)
-  let telegramUser = getTelegramUser();
-  if (!telegramUser?.id) {
-    for (let i = 0; i < 5; i++) {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      telegramUser = getTelegramUser();
-      if (telegramUser?.id) break;
-    }
-  }
-
-  // ─── التحقق النهائي ───
-  // نكتفي بوجود بيانات المستخدم (telegramUser?.id) — لا نحتاج initData بالضرورة
-  // لأن على الموبايل WebView، initData قد يكون فاضياً بينما initDataUnsafe.user موجود
-  // (الـ WebApp موجود ✅ يثبت أننا داخل Telegram أصلاً)
-  if (!telegramUser?.id) {
-    console.warn('[createOrder] فشل الحصول على بيانات مستخدم Telegram:', {
-      webAppExists: !!tg,
-      initDataExists: !!tg?.initData,
-      initDataLength: tg?.initData?.length || 0,
-      initDataUnsafeUser: tg?.initDataUnsafe?.user || null,
-      userKeys: telegramUser ? Object.keys(telegramUser) : [],
-    });
-    // في حالة فشل الحصول على userId، نحاول إنشاء الطلب بدون بيانات المستخدم كـ fallback
-    // (يسمح للطلب بالمرور حتى لو ما جات بيانات التليجرام)
-    console.warn('[createOrder] تكملة الطلب بدون بيانات مستخدم (fallback)');
-  }
+  // قراءة بيانات Telegram مباشرة (المستخدم بالفعل في التطبيق — لا حاجة للانتظار)
+  const telegramUser = getTelegramUser();
 
   try {
 
@@ -126,15 +82,6 @@ export async function createOrder(): Promise<{ success: boolean; orderId?: strin
     const subtotal = cart.subtotal();
     const tax = cart.tax();
     const total = cart.total();
-
-    // ── تسجيل بيانات المستخدم للتشخيص ──
-    console.log('[createOrder] بيانات المستخدم:', {
-      telegram_id: telegramUser?.id?.toString() || 'EMPTY - لا يوجد',
-      username: telegramUser?.username || 'غير متوفر',
-      first_name: telegramUser?.first_name || 'غير متوفر',
-      webApp_exists: !!getTelegramWebApp(),
-      initData_exists: !!getTelegramWebApp()?.initData,
-    });
 
     // الحصول على رقم الطلب وإنشاء الطلب في транзаكشن واحدة
     const settingsRef = doc(db, 'settings', 'order_counter');
