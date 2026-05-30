@@ -140,8 +140,13 @@ async function main() {
   // TEXT HANDLERS (non-command messages)
   // ============================================================
   bot.hears('📋 طلباتي', async (ctx) => {
-    ctx.state['command'] = 'status';
-    await ctx.reply('/status');
+    await ctx.reply('تفضل بالدخول لتتبع طلباتك السابقة والحالية 📋👇', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '📋 فتح طلباتي', web_app: { url: env.miniApp.url + '/orders' } }]
+        ]
+      }
+    });
   });
 
   bot.hears('ℹ️ عن المطعم', async (ctx) => {

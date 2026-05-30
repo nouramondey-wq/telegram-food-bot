@@ -70,17 +70,23 @@ export function setupStartCommand(bot: any) {
       }
     }
 
-    // ── Default Welcome ──
     const welcomeMessage = 
-      `السلام عليكم! 👋\n\n` +
-      `أهلاً بك يا *${firstName}* في *${env.restaurant.name}* 🏪\n\n` +
-      `🍔 نقدم أشهى المأكولات الشرقية والغربية\n` +
-      `⚡ اطلب الآن واستلم خلال ٢٠-٣٠ دقيقة\n` +
-      `💳 الدفع عند الاستلام\n\n` +
-      `👇 اختر من القائمة أدناه:`;
+      `أهلاً بك يا *${firstName}* في 🏪 *${env.restaurant.name}*!\n\n` +
+      `اضغط على الزر بالأسفل لتصفح قائمتنا اللذيذة والطلب فوراً 🍔👇\n\n` +
+      `⚡ تسليم سريع | 💳 دفع عند الاستلام`;
 
     await ctx.reply(welcomeMessage, {
       parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: '🚀 ابدأ الطلب الآن', web_app: { url: env.miniApp.url } }]
+        ]
+      }
+    });
+
+    // إرسال الكيبورد الأساسي في رسالة منفصلة صامتة لضمان وجوده
+    await ctx.reply('👇 يمكنك دائماً استخدام هذه القائمة السريعة:', {
+      disable_notification: true,
       reply_markup: getMainKeyboard().reply_markup,
     });
   });
