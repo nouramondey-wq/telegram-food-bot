@@ -198,7 +198,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
               else
                 ...filteredOrders.take(5).map((order) => ListTile(
                       leading: Text(
-                        '#${order.orderNumber}',
+                        order.displayOrderNumber,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppTheme.getStatusColor(order.status),

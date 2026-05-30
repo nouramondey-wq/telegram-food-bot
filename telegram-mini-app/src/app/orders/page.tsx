@@ -218,8 +218,8 @@ function OrdersListView() {
                     <div className="flex items-center justify-between mb-2.5">
                       <div className="flex items-center gap-2">
                         <span className="text-lg">{getStatusEmoji(order.status)}</span>
-                        <span className="font-extrabold text-gray-900 dark:text-white tabular-nums">
-                          #{order.order_number}
+                        <span className="font-extrabold text-gray-900 dark:text-white tabular-nums" style={{ direction: 'ltr' }}>
+                          #{order.order_number} {order.customer?.first_name ? `- ${order.customer.first_name}` : ''}
                         </span>
                       </div>
                       <span className={cn(
@@ -389,8 +389,8 @@ function OrderDetailView({ orderId, onBack }: { orderId: string; onBack: () => v
               <ArrowLeft className="w-5 h-5 text-gray-500 dark:text-gray-400 transform rotate-180" />
             </button>
             <div>
-              <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 leading-tight">
-                الطلب #{order.order_number}
+              <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 leading-tight" style={{ direction: 'ltr', textAlign: 'right' }}>
+                الطلب #{order.order_number} {order.customer?.first_name ? `- ${order.customer.first_name}` : ''}
               </h1>
               <p className="text-[11px] text-gray-400 dark:text-gray-500">
                 {order.created_at && formatDate(order.created_at.toDate())}

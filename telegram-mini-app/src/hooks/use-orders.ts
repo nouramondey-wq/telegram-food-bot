@@ -48,6 +48,12 @@ export interface Order {
     delivered?: Timestamp;
     cancelled?: Timestamp;
   };
+  customer?: {
+    first_name?: string;
+    last_name?: string;
+    username?: string;
+    telegram_id?: string;
+  };
   created_at?: Timestamp;
   updated_at?: Timestamp;
 }

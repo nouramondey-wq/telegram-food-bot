@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { useCartStore, CartItem } from '@/stores/cart-store';
 import { formatPrice, cn } from '@/lib/utils';
-import { hapticFeedback, hapticNotification } from '@/lib/telegram';
+import { hapticFeedback, hapticNotification, getTelegramUser } from '@/lib/telegram';
 import { createOrder } from '@/hooks/use-orders';
 import {
   Trash2,
@@ -87,7 +87,9 @@ export default function CartPage() {
           {/* Order number badge */}
           <div className="mb-8 px-8 py-4 rounded-3xl shadow-xl shadow-emerald-500/20 text-center" style={{ background: 'linear-gradient(135deg, #059669, #10b981)' }}>
             <p className="text-emerald-100 text-xs font-semibold mb-1">رقم طلبك</p>
-            <p className="text-white text-5xl font-black tabular-nums">#{orderNumber}</p>
+            <p className="text-white text-4xl font-black tabular-nums" style={{ direction: 'ltr' }}>
+              #{orderNumber} {typeof window !== 'undefined' ? `- ${getTelegramUser()?.first_name || ''}` : ''}
+            </p>
           </div>
 
           {/* Items receipt */}

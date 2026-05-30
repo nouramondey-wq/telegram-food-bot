@@ -133,4 +133,13 @@ class OrderModel {
 
   /// هل الطلب نشط (لم يكتمل بعد)؟
   bool get isActive => !['delivered', 'cancelled'].contains(status);
+
+  /// رقم الطلب واسم العميل للعرض
+  String get displayOrderNumber {
+    final firstName = customer['first_name'] as String?;
+    if (firstName != null && firstName.isNotEmpty) {
+      return '#$orderNumber - $firstName';
+    }
+    return '#$orderNumber';
+  }
 }

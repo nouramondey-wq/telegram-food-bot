@@ -33,7 +33,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         final order = orders.first;
         return Scaffold(
           appBar: AppBar(
-            title: Text('طلب #${order.orderNumber}'),
+            title: Text(order.displayOrderNumber),
+            centerTitle: true,
+            elevation: 0,
             actions: [
               // طباعة
               IconButton(
