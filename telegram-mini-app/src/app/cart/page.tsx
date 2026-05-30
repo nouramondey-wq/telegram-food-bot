@@ -54,21 +54,37 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     if (items.length === 0) return;
+
+    // ── التقاط البيانات محلياً قبل أي شيء (sync) ──
+    // هذا ضروري لأن createOrder ستمسح السلة لاحقاً
+    const snapshotItems = items.map(i => ({ ...i }));
+    const snapshotTotal = total();
+
     hapticFeedback('medium');
     setIsCheckingOut(true);
     setError(null);
-    setOrderSnapshot([...items]);
-    setOrderTotal(total());
-    const result = await createOrder();
-    if (result.success) {
-      hapticNotification('success');
-      setOrderNumber(result.orderNumber || 0);
-      setShowSuccess(true);
-    } else {
-      hapticNotification('error');
-      setError(result.error || 'حدث خطأ');
+
+    try {
+      const result = await createOrder();
+
+      if (result.success) {
+        // حفظ الـ snapshot في الـ state مع رقم الطلب معاً
+        setOrderSnapshot(snapshotItems);
+        setOrderTotal(snapshotTotal);
+        setOrderNumber(result.orderNumber ?? 0);
+        try { hapticNotification('success'); } catch (_) {}
+        setShowSuccess(true);
+      } else {
+        try { hapticNotification('error'); } catch (_) {}
+        setError(result.error || 'حدث خطأ أثناء الإرسال');
+        setIsCheckingOut(false);
+      }
+    } catch (err: unknown) {
+      console.error('[handleCheckout] Unhandled error:', err);
+      const msg = err instanceof Error ? err.message : String(err);
+      setError(`خطأ: ${msg}`);
+      setIsCheckingOut(false);
     }
-    setIsCheckingOut(false);
   };
 
   /* ══════════════════════════════════════════════════════ */
