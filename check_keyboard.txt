@@ -1,0 +1,32 @@
+﻿import { Markup } from 'telegraf';
+import { env } from '../../config/env';
+
+// Γî¿∩╕Å ┘ä┘ê╪¡╪⌐ ╪º┘ä┘à┘ü╪º╪¬┘è╪¡ ╪º┘ä╪▒╪ª┘è╪│┘è╪⌐ (╪ú╪│┘ü┘ä ╪º┘ä╪┤╪º╪┤╪⌐)
+export function getMainKeyboard() {
+  return Markup.keyboard([
+    [Markup.button.webApp('≡ƒìö ┘ü╪¬╪¡ ╪º┘ä┘é╪º╪ª┘à╪⌐', env.miniApp.url)],
+    [Markup.button.text('≡ƒôï ╪╖┘ä╪¿╪º╪¬┘è'), Markup.button.text('Γä╣∩╕Å ╪╣┘å ╪º┘ä┘à╪╖╪╣┘à')],
+    [Markup.button.text('≡ƒòÉ ╪ú┘ê┘é╪º╪¬ ╪º┘ä╪╣┘à┘ä'), Markup.button.text('≡ƒô₧ ╪¬┘ê╪º╪╡┘ä ┘à╪╣┘å╪º')],
+  ])
+    .resize()
+    .persistent(); // ╪¬╪¿┘é┘ë ╪¡╪¬┘ë ╪¿╪╣╪» ╪Ñ╪╣╪º╪»╪⌐ ╪¬╪┤╪║┘è┘ä ╪º┘ä╪¿┘ê╪¬
+}
+
+// Γî¿∩╕Å ┘ä┘ê╪¡╪⌐ ╪º┘ä┘à┘ü╪º╪¬┘è╪¡ ╪¿╪╣╪» ╪º┘ä╪╖┘ä╪¿
+export function getPostOrderKeyboard() {
+  return Markup.keyboard([
+    [Markup.button.webApp('≡ƒìö ┘ü╪¬╪¡ ╪º┘ä┘é╪º╪ª┘à╪⌐', env.miniApp.url)],
+    [Markup.button.text('≡ƒôï ╪╖┘ä╪¿╪º╪¬┘è'), Markup.button.text('≡ƒÅá ╪º┘ä┘é╪º╪ª┘à╪⌐ ╪º┘ä╪▒╪ª┘è╪│┘è╪⌐')],
+  ])
+    .resize()
+    .persistent();
+}
+
+// Γî¿∩╕Å ┘ä┘ê╪¡╪⌐ ╪º┘ä┘à┘ü╪º╪¬┘è╪¡ ┘ä┘ä╪▒╪¼╪╣┘è┘è┘å (╪º╪«╪¬┘è╪º╪▒┘è)
+export function getBackKeyboard() {
+  return Markup.keyboard([
+    [Markup.button.text('≡ƒÅá ╪º┘ä┘é╪º╪ª┘à╪⌐ ╪º┘ä╪▒╪ª┘è╪│┘è╪⌐')],
+  ])
+    .resize()
+    .persistent();
+}

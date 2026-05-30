@@ -189,41 +189,60 @@ export function useMyOrders(maxOrders = 20) {
 
   useEffect(() => {
     const { db } = initFirebase();
-    const telegramUser = getTelegramUser();
-    if (!telegramUser) {
-      setLoading(false);
-      return;
-    }
+    let unsubscribe: (() => void) | undefined;
 
-    const q = query(
-      collection(db, 'orders'),
-      where('customer.telegram_id', '==', telegramUser.id.toString()),
-      orderBy('created_at', 'desc'),
-      limit(maxOrders)
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const orderList = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Order[];
-        setOrders(orderList);
-        setLoading(false);
-      },
-      (err) => {
-        console.error('Error fetching orders:', err);
-        setError('فشل تحميل الطلبات');
-        setLoading(false);
+    const subscribe = async () => {
+      // ── انتظار تحميل Telegram WebApp (حتى 3 ثواني) ──
+      let telegramUser = getTelegramUser();
+      if (!telegramUser?.id) {
+        for (let i = 0; i < 6; i++) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+          telegramUser = getTelegramUser();
+          if (telegramUser?.id) break;
+        }
       }
-    );
 
-    return unsubscribe;
+      if (!telegramUser?.id) {
+        console.warn('[useMyOrders] لم يتم الحصول على بيانات مستخدم Telegram');
+        setLoading(false);
+        return;
+      }
+
+      const q = query(
+        collection(db, 'orders'),
+        where('customer.telegram_id', '==', telegramUser.id.toString()),
+        orderBy('created_at', 'desc'),
+        limit(maxOrders)
+      );
+
+      unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const orderList = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as Order[];
+          setOrders(orderList);
+          setLoading(false);
+        },
+        (err) => {
+          console.error('Error fetching orders:', err);
+          setError('فشل تحميل الطلبات');
+          setLoading(false);
+        }
+      );
+    };
+
+    subscribe();
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [maxOrders]);
 
   return { orders, loading, error };
 }
+
 
 // ============================================================
 // جلب تفاصيل طلب محدد (real-time)
